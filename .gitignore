@@ -1,0 +1,43 @@
+# Node modules and pnpm
+node_modules/
+.pnpm/
+.pnpm-store/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.d.ts.map
+
+# IDE settings
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+.Trashes
+
+# Test coverage
+coverage/
+*.lcov
+
+# Env variables
+.env
+.env.*.local
+
+# Prettier
+.prettier-cache/
+
+# ESLint
+.eslintcache
+
+example

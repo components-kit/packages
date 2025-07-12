@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components-kit/react": ["libs/react/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
