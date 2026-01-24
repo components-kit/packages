@@ -55,6 +55,8 @@ src/
   routes/
     __root.tsx          # Root layout route
     index.tsx           # Home page (component showcase)
+index.html              # HTML with CSS/fonts placeholders
+vite.config.ts          # Vite config with build-time URL injection
 ```
 
 ## Key Implementation Notes
@@ -62,6 +64,26 @@ src/
 ### No "use client" Needed
 
 Unlike Next.js, Vite applications don't require the `"use client"` directive since all code runs on the client by default.
+
+### CSS and Fonts Loading
+
+CSS and fonts are loaded at build time using Vite's `transformIndexHtml` hook to prevent flash of unstyled content (FOUC):
+
+1. **index.html** contains placeholder URLs (`__BUNDLE_URL__`, `__FONTS_URL__`)
+2. **vite.config.ts** replaces placeholders with actual URLs at build/dev time
+3. CSS links in `<head>` are render-blocking, ensuring styles load before content
+
+```ts
+// vite.config.ts
+{
+  name: "inject-components-kit-assets",
+  transformIndexHtml(html) {
+    return html
+      .replace(/__BUNDLE_URL__/g, `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`)
+      .replace(/__FONTS_URL__/g, `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`);
+  },
+}
+```
 
 ### File-Based Routing
 

@@ -119,39 +119,55 @@ export default function RootLayout({
 
 #### Vite / React SPA
 
-```tsx
-// App.tsx or main.tsx
-import { useEffect } from "react";
+Use Vite's `transformIndexHtml` hook to inject CSS at build time, preventing flash of unstyled content (FOUC):
 
-const BASE_URL = import.meta.env.VITE_COMPONENTS_KIT_URL;
-const API_KEY = import.meta.env.VITE_COMPONENTS_KIT_KEY;
-const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`;
-const FONTS_URL = `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`;
+```ts
+// vite.config.ts
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
 
-function App() {
-  useEffect(() => {
-    // Preload CSS bundle
-    const preload = document.createElement("link");
-    preload.rel = "preload";
-    preload.href = BUNDLE_URL;
-    preload.as = "style";
-    document.head.appendChild(preload);
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, ".", "VITE_");
+  const BASE_URL = env.VITE_COMPONENTS_KIT_URL ?? "";
+  const API_KEY = env.VITE_COMPONENTS_KIT_KEY ?? "";
 
-    // Load CSS bundle
-    const stylesheet = document.createElement("link");
-    stylesheet.rel = "stylesheet";
-    stylesheet.href = BUNDLE_URL;
-    document.head.appendChild(stylesheet);
+  return {
+    plugins: [
+      react(),
+      {
+        name: "inject-components-kit-assets",
+        transformIndexHtml(html) {
+          return html
+            .replace(/__BUNDLE_URL__/g, `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`)
+            .replace(/__FONTS_URL__/g, `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`);
+        },
+      },
+    ],
+  };
+});
+```
 
-    // Load fonts
-    const fonts = document.createElement("link");
-    fonts.rel = "stylesheet";
-    fonts.href = FONTS_URL;
-    document.head.appendChild(fonts);
-  }, []);
+```html
+<!-- index.html -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  return <>{/* your app */}</>;
-}
+    <!-- Preload and load CSS bundle (render-blocking) -->
+    <link rel="preload" href="__BUNDLE_URL__" as="style" />
+    <link rel="stylesheet" href="__BUNDLE_URL__" />
+
+    <!-- Load fonts -->
+    <link rel="stylesheet" href="__FONTS_URL__" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
 ```
 
 ## Core Concepts
