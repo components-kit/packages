@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     "**/pnpm-lock.yaml",
     "**/node_modules",
     "**/dist",
+    "**/next-env.d.ts",
   ]),
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
   {
@@ -29,7 +30,7 @@ const eslintConfig = defineConfig([
     rules: {
       "consistent-return": "error",
       eqeqeq: "error",
-      "no-console": "error",
+      "no-console": ["error", { allow: ["warn", "error"] }],
       "no-else-return": "error",
       "no-param-reassign": ["error", { props: true }],
       "no-undef": "off",

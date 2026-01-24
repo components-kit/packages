@@ -1,2 +1,3 @@
 pnpm eslint
+pnpm test
 pnpm build
