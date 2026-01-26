@@ -17,14 +17,14 @@
   ],
   "author": "ComponentsKit Team",
   "license": "MIT",
-  "homepage": "https://github.com/components-kit/components-kit/tree/main/packages/libs/react#readme",
+  "homepage": "https://componentskit.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/components-kit/components-kit.git",
-    "directory": "packages/libs/react"
+    "url": "https://github.com/components-kit/packages.git",
+    "directory": "libs/react"
   },
   "bugs": {
-    "url": "https://github.com/components-kit/components-kit/issues"
+    "url": "https://github.com/components-kit/packages/issues"
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

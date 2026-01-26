@@ -281,4 +281,4 @@ interface User {
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/components-kit/components-kit/blob/main/packages/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/components-kit/packages/blob/main/LICENSE) for details.
