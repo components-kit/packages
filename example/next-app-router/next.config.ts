@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: ["@components-kit/react"],
+  transpilePackages: ["@components-kit/react", "@components-kit/loader-nextjs"],
 };
 
 export default nextConfig;

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@components-kit/loader-nextjs": "link:../../libs/loader-nextjs",
     "@components-kit/react": "link:../../libs/react",
     "@tanstack/react-table": "^8.21.2",
     "downshift": "^9.0.8",

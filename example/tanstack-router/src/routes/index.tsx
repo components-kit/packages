@@ -17,7 +17,7 @@ import {
   Text,
   Textarea,
 } from "@components-kit/react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 // Sample data for Table
@@ -73,6 +73,11 @@ function HomePage() {
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
       <p>All 15 components from @components-kit/react (raw/unstyled)</p>
+      <p>
+        <Link to="/esm-demo">
+          Go to ESM Demo (preloads on hover)
+        </Link>
+      </p>
       <hr />
 
       {/* 1. Alert */}
