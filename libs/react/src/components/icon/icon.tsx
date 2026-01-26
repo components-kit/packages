@@ -32,14 +32,18 @@ import {
  * - Accepts any valid React node as children (SVGs, icon components, etc.)
  *
  * ## Accessibility
- * This component should follow proper icon accessibility practices:
- * - **Decorative icons**: Use `aria-hidden="true"` when the icon is purely decorative
- *   and doesn't convey meaning (e.g., icon next to text that describes the same thing)
- * - **Meaningful icons**: Use `aria-label` to describe the icon's meaning when it
- *   conveys information not available in surrounding text
- * - **Interactive icons**: When used in buttons, ensure the parent button has an
- *   accessible name via `aria-label` or visible text
+ * This component includes `aria-hidden="true"` by default because most icons are
+ * decorative (e.g., icon next to text that describes the same thing).
+ *
+ * For **meaningful icons** that convey information not available in surrounding text:
+ * - Override with `aria-hidden={false}` and add `aria-label` to describe the meaning
  * - Use `role="img"` with `aria-label` for standalone meaningful icons
+ *
+ * For **interactive icons** (in buttons):
+ * - Keep the default `aria-hidden="true"` on the icon
+ * - Provide `aria-label` on the parent button element instead
+ *
+ * Additional tips:
  * - Consider using `<title>` element inside SVGs for tooltip and accessibility
  * - For icon-only buttons, always provide `aria-label` on the button element
  *
@@ -66,22 +70,22 @@ import {
  * </Icon>
  *
  * @example
- * // Decorative icon (hidden from screen readers)
- * <Icon aria-hidden="true" width="16px" height="16px">
+ * // Decorative icon (default behavior, aria-hidden="true" is automatic)
+ * <Icon width="16px" height="16px">
  *   <CheckmarkSvg />
  * </Icon>
  * <span>Success</span>
  *
  * @example
- * // Meaningful icon with accessible label
- * <Icon aria-label="Warning" role="img" width="20px" height="20px">
+ * // Meaningful icon with accessible label (override aria-hidden)
+ * <Icon aria-hidden={false} aria-label="Warning" role="img" width="20px" height="20px">
  *   <WarningSvg />
  * </Icon>
  *
  * @example
- * // Icon button with accessibility
+ * // Icon button with accessibility (aria-hidden="true" is automatic on Icon)
  * <button aria-label="Close dialog">
- *   <Icon aria-hidden="true">
+ *   <Icon>
  *     <CloseSvg />
  *   </Icon>
  * </button>
@@ -154,6 +158,7 @@ const Icon = createPolymorphicComponent<"span", IconOwnProps>(
 
     return (
       <Component
+        aria-hidden="true"
         {...rest}
         className={className}
         style={iconStyle}

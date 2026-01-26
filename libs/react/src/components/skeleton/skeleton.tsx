@@ -23,12 +23,14 @@ import { CSSProperties, forwardRef, HTMLAttributes } from "react";
  * - Forwards refs correctly for DOM access
  *
  * ## Accessibility
- * For proper accessibility, consider the following:
- * - Use `aria-busy="true"` on the container being loaded to indicate loading state
- * - Use `aria-label` to describe what content is loading (e.g., "Loading user profile")
- * - Use `role="status"` with `aria-live="polite"` for screen reader announcements
- * - Skeletons are typically decorative; the loading state should be communicated
- *   at a higher level (e.g., on the parent container)
+ * This component includes `aria-hidden="true"` by default because skeletons are
+ * decorative placeholders. The loading state should be communicated at a higher
+ * level (e.g., on the parent container) using:
+ * - `aria-busy="true"` on the container being loaded
+ * - `aria-label` to describe what content is loading (e.g., "Loading user profile")
+ * - `role="status"` with `aria-live="polite"` for screen reader announcements
+ *
+ * If you need to override the default `aria-hidden`, you can pass `aria-hidden={false}`.
  *
  * @param {string} [height] - The height of the skeleton (e.g., "100px", "50%").
  * @param {string} [width] - The width of the skeleton (e.g., "200px", "100%").
@@ -87,6 +89,7 @@ const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
 
     return (
       <div
+        aria-hidden="true"
         {...rest}
         className={className}
         style={skeletonStyle}

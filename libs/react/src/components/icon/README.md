@@ -14,20 +14,20 @@ import { Icon } from '@components-kit/react';
   </svg>
 </Icon>
 
-// Decorative icon (hidden from screen readers)
-<Icon aria-hidden="true" width="16px" height="16px">
+// Decorative icon (aria-hidden="true" is the default)
+<Icon width="16px" height="16px">
   <CheckmarkSvg />
 </Icon>
 <span>Success</span>
 
-// Meaningful icon with accessible label
-<Icon aria-label="Warning" role="img" width="20px" height="20px">
+// Meaningful icon with accessible label (override aria-hidden)
+<Icon aria-hidden={false} aria-label="Warning" role="img" width="20px" height="20px">
   <WarningSvg />
 </Icon>
 
-// Icon button with accessibility
+// Icon button with accessibility (aria-hidden="true" is automatic on Icon)
 <button aria-label="Close dialog">
-  <Icon aria-hidden="true">
+  <Icon>
     <CloseSvg />
   </Icon>
 </button>
@@ -57,12 +57,14 @@ Also accepts all HTML attributes for the rendered element.
 
 ## Accessibility
 
-### Decorative Icons
+This component includes `aria-hidden="true"` by default because most icons are decorative.
 
-Icons next to text that describes the same thing should be hidden:
+### Decorative Icons (Default)
+
+Icons next to text that describes the same thing are hidden automatically:
 
 ```tsx
-<Icon aria-hidden="true">
+<Icon>
   <MailIcon />
 </Icon>
 <span>Email</span>
@@ -70,21 +72,21 @@ Icons next to text that describes the same thing should be hidden:
 
 ### Meaningful Icons
 
-Icons that convey information need accessible labels:
+Icons that convey information need to override `aria-hidden` and add accessible labels:
 
 ```tsx
-<Icon aria-label="Email sent successfully" role="img">
+<Icon aria-hidden={false} aria-label="Email sent successfully" role="img">
   <CheckIcon />
 </Icon>
 ```
 
 ### Icon Buttons
 
-Always provide `aria-label` on the button, not the icon:
+Keep the default `aria-hidden="true"` on the icon and provide `aria-label` on the button:
 
 ```tsx
 <button aria-label="Delete item">
-  <Icon aria-hidden="true">
+  <Icon>
     <TrashIcon />
   </Icon>
 </button>
@@ -92,7 +94,8 @@ Always provide `aria-label` on the button, not the icon:
 
 ### Best Practices
 
-- Use `aria-hidden="true"` for decorative icons to reduce screen reader noise
+- Decorative icons are hidden by default (`aria-hidden="true"`)
+- For meaningful icons, use `aria-hidden={false}` with `aria-label`
 - Ensure sufficient color contrast for icon visibility
 - Don't rely solely on color to convey icon meaning
 - Keep icon sizes appropriate for touch targets (minimum 44x44px for interactive)

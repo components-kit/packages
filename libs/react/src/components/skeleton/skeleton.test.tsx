@@ -224,8 +224,10 @@ describe("Skeleton Component", () => {
       expect(skeleton).toBeInTheDocument();
     });
 
-    it("supports role attribute", () => {
-      render(<Skeleton role="status" />);
+    it("supports role attribute (requires aria-hidden override)", () => {
+      // By default, Skeleton has aria-hidden="true". To make it accessible,
+      // consumers must override with aria-hidden={false}
+      render(<Skeleton aria-hidden={false} role="status" />);
 
       const skeleton = screen.getByRole("status");
       expect(skeleton).toBeInTheDocument();
@@ -249,18 +251,27 @@ describe("Skeleton Component", () => {
       expect(skeleton).toHaveAttribute("aria-live", "polite");
     });
 
-    it("supports aria-hidden for decorative skeletons", () => {
-      render(
-        <Skeleton aria-hidden="true" data-testid="skeleton-hidden" />
-      );
+    it("has aria-hidden=true by default (decorative)", () => {
+      render(<Skeleton data-testid="skeleton-hidden" />);
 
       const skeleton = screen.getByTestId("skeleton-hidden");
       expect(skeleton).toHaveAttribute("aria-hidden", "true");
     });
 
-    it("works with role=status and aria-label combination", () => {
+    it("allows aria-hidden to be overridden to false", () => {
+      render(<Skeleton aria-hidden={false} data-testid="skeleton-visible" />);
+
+      const skeleton = screen.getByTestId("skeleton-visible");
+      // aria-hidden={false} renders as aria-hidden="false" in DOM, which unhides the element
+      expect(skeleton).toHaveAttribute("aria-hidden", "false");
+    });
+
+    it("works with role=status and aria-label combination (requires aria-hidden override)", () => {
+      // By default, Skeleton has aria-hidden="true". To make it accessible,
+      // consumers must override with aria-hidden={false}
       render(
         <Skeleton
+          aria-hidden={false}
           aria-label="Loading user profile"
           data-testid="skeleton-accessible"
           role="status"

@@ -252,9 +252,9 @@ describe("Icon Component", () => {
   });
 
   describe("Accessibility", () => {
-    it("supports aria-hidden for decorative icons", () => {
+    it("has aria-hidden=true by default (decorative)", () => {
       render(
-        <Icon aria-hidden="true" data-testid="icon">
+        <Icon data-testid="icon">
           <svg />
         </Icon>
       );
@@ -263,9 +263,22 @@ describe("Icon Component", () => {
       expect(icon).toHaveAttribute("aria-hidden", "true");
     });
 
-    it("supports aria-label for meaningful icons", () => {
+    it("allows aria-hidden to be overridden to false", () => {
       render(
-        <Icon aria-label="Close button" role="img">
+        <Icon aria-hidden={false} data-testid="icon">
+          <svg />
+        </Icon>
+      );
+
+      const icon = screen.getByTestId("icon");
+      // aria-hidden={false} renders as aria-hidden="false" in DOM, which unhides the element
+      expect(icon).toHaveAttribute("aria-hidden", "false");
+    });
+
+    it("supports aria-label for meaningful icons (requires aria-hidden override)", () => {
+      // For meaningful icons, consumers must override aria-hidden={false}
+      render(
+        <Icon aria-hidden={false} aria-label="Close button" role="img">
           <svg />
         </Icon>
       );
@@ -274,9 +287,11 @@ describe("Icon Component", () => {
       expect(icon).toBeInTheDocument();
     });
 
-    it("supports role attribute", () => {
+    it("supports role attribute (requires aria-hidden override)", () => {
+      // By default, Icon has aria-hidden="true". To make it accessible,
+      // consumers must override with aria-hidden={false}
       render(
-        <Icon data-testid="icon" role="img">
+        <Icon aria-hidden={false} data-testid="icon" role="img">
           <svg />
         </Icon>
       );

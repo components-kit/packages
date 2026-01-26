@@ -57,7 +57,7 @@ Also accepts all standard `div` HTML attributes.
 
 ## Accessibility
 
-Skeletons are typically decorative; communicate loading state at a higher level:
+This component includes `aria-hidden="true"` by default because skeletons are decorative placeholders. The loading state should be communicated at a higher level (on the parent container).
 
 ```tsx
 // Container with loading state
@@ -76,8 +76,13 @@ Skeletons are typically decorative; communicate loading state at a higher level:
 </div>
 ```
 
+If you need to override the default `aria-hidden`, you can pass `aria-hidden={false}`.
+
 ### Best Practices
 
+- Skeletons are hidden from screen readers by default (`aria-hidden="true"`)
+- Use `aria-busy="true"` on the container being loaded
+- Use `aria-label` to describe what content is loading
 - Match skeleton dimensions to expected content size
 - Use consistent animation across the application
 - Group related skeletons with `aria-busy` on the container
