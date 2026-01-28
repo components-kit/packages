@@ -18,6 +18,7 @@ import {
   Table,
   Text,
   Textarea,
+  toast,
 } from "@components-kit/react";
 import { useState } from "react";
 
@@ -73,7 +74,7 @@ export default function Home() {
   return (
     <main>
       <h1>Components Kit - Next.js SSR Example</h1>
-      <p>All 15 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 16 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -101,8 +102,12 @@ export default function Home() {
         <Badge variantName="success">Success</Badge>{" "}
         <Badge variantName="warning">Warning</Badge>{" "}
         <Badge variantName="error">Error</Badge>{" "}
-        <Badge size="sm" variantName="default">Small</Badge>{" "}
-        <Badge size="lg" variantName="default">Large</Badge>
+        <Badge size="sm" variantName="default">
+          Small
+        </Badge>{" "}
+        <Badge size="lg" variantName="default">
+          Large
+        </Badge>
       </section>
 
       {/* 3. Button */}
@@ -116,20 +121,36 @@ export default function Home() {
         </div>
         <br />
         <div>
-          <Button size="sm" variantName="primary">Small</Button>{" "}
-          <Button size="md" variantName="primary">Medium</Button>{" "}
-          <Button size="lg" variantName="primary">Large</Button>
+          <Button size="sm" variantName="primary">
+            Small
+          </Button>{" "}
+          <Button size="md" variantName="primary">
+            Medium
+          </Button>{" "}
+          <Button size="lg" variantName="primary">
+            Large
+          </Button>
         </div>
         <br />
         <div>
-          <Button leadingIcon={<SearchIcon />} variantName="primary">With Icon</Button>{" "}
-          <Button isLoading variantName="primary">Loading</Button>{" "}
-          <Button disabled variantName="primary">Disabled</Button>
+          <Button leadingIcon={<SearchIcon />} variantName="primary">
+            With Icon
+          </Button>{" "}
+          <Button isLoading variantName="primary">
+            Loading
+          </Button>{" "}
+          <Button disabled variantName="primary">
+            Disabled
+          </Button>
         </div>
         <br />
         <div>
           <Button asChild variantName="outline">
-            <a href="https://example.com" rel="noopener noreferrer" target="_blank">
+            <a
+              href="https://example.com"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               As Link (asChild)
             </a>
           </Button>
@@ -146,7 +167,10 @@ export default function Home() {
             variantName="default"
             onChange={(e) => setCheckboxChecked(e.target.checked)}
           />
-          <label htmlFor="cb1"> Controlled (checked: {String(checkboxChecked)})</label>
+          <label htmlFor="cb1">
+            {" "}
+            Controlled (checked: {String(checkboxChecked)})
+          </label>
         </div>
         <div>
           <Checkbox id="cb2" defaultChecked variantName="default" />
@@ -161,21 +185,41 @@ export default function Home() {
       {/* 5. Heading */}
       <section>
         <h2>5. Heading</h2>
-        <Heading as="h1" variantName="h1">Heading 1</Heading>
-        <Heading as="h2" variantName="h2">Heading 2</Heading>
-        <Heading as="h3" variantName="h3">Heading 3</Heading>
-        <Heading as="h4" variantName="h4">Heading 4</Heading>
-        <Heading as="h5" variantName="h5">Heading 5</Heading>
-        <Heading as="h6" variantName="h6">Heading 6</Heading>
+        <Heading as="h1" variantName="h1">
+          Heading 1
+        </Heading>
+        <Heading as="h2" variantName="h2">
+          Heading 2
+        </Heading>
+        <Heading as="h3" variantName="h3">
+          Heading 3
+        </Heading>
+        <Heading as="h4" variantName="h4">
+          Heading 4
+        </Heading>
+        <Heading as="h5" variantName="h5">
+          Heading 5
+        </Heading>
+        <Heading as="h6" variantName="h6">
+          Heading 6
+        </Heading>
       </section>
 
       {/* 6. Icon */}
       <section>
         <h2>6. Icon</h2>
-        <Icon aria-hidden="true" height="16px" width="16px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="24px" width="24px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="32px" width="32px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="48px" width="48px"><SearchIcon /></Icon>
+        <Icon aria-hidden="true" height="16px" width="16px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="24px" width="24px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="32px" width="32px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="48px" width="48px">
+          <SearchIcon />
+        </Icon>
       </section>
 
       {/* 7. Input */}
@@ -194,11 +238,21 @@ export default function Home() {
         </div>
         <div>
           <label htmlFor="input2">Email: </label>
-          <Input id="input2" placeholder="you@example.com" type="email" variantName="default" />
+          <Input
+            id="input2"
+            placeholder="you@example.com"
+            type="email"
+            variantName="default"
+          />
         </div>
         <div>
           <label htmlFor="input3">Disabled: </label>
-          <Input id="input3" disabled placeholder="Disabled" variantName="default" />
+          <Input
+            id="input3"
+            disabled
+            placeholder="Disabled"
+            variantName="default"
+          />
         </div>
       </section>
 
@@ -259,7 +313,14 @@ export default function Home() {
         <p>Content above</p>
         <Separator />
         <p>Content below</p>
-        <div style={{ alignItems: "center", display: "flex", gap: "8px", height: "24px" }}>
+        <div
+          style={{
+            alignItems: "center",
+            display: "flex",
+            gap: "8px",
+            height: "24px",
+          }}
+        >
           <span>Left</span>
           <Separator orientation="vertical" />
           <span>Middle</span>
@@ -288,7 +349,10 @@ export default function Home() {
             variantName="default"
             onChange={(e) => setSwitchChecked(e.target.checked)}
           />
-          <label htmlFor="sw1"> Controlled (checked: {String(switchChecked)})</label>
+          <label htmlFor="sw1">
+            {" "}
+            Controlled (checked: {String(switchChecked)})
+          </label>
         </div>
         <div>
           <Switch id="sw2" defaultChecked variantName="default" />
@@ -317,12 +381,20 @@ export default function Home() {
       {/* 14. Text */}
       <section>
         <h2>14. Text</h2>
-        <Text as="p" variantName="body">This is body text (p).</Text>
-        <Text as="span" variantName="caption">This is caption text (span).</Text>
+        <Text as="p" variantName="body">
+          This is body text (p).
+        </Text>
+        <Text as="span" variantName="caption">
+          This is caption text (span).
+        </Text>
         <br />
-        <Text as="strong" variantName="bold">This is bold text (strong).</Text>
+        <Text as="strong" variantName="bold">
+          This is bold text (strong).
+        </Text>
         <br />
-        <Text as="em" variantName="italic">This is italic text (em).</Text>
+        <Text as="em" variantName="italic">
+          This is italic text (em).
+        </Text>
       </section>
 
       {/* 15. Textarea */}
@@ -344,7 +416,208 @@ export default function Home() {
         <div>
           <label htmlFor="ta2">Disabled: </label>
           <br />
-          <Textarea id="ta2" disabled placeholder="Disabled" rows={2} variantName="default" />
+          <Textarea
+            id="ta2"
+            disabled
+            placeholder="Disabled"
+            rows={2}
+            variantName="default"
+          />
+        </div>
+      </section>
+
+      {/* 16. Toast */}
+      <section>
+        <h2>16. Toast</h2>
+        <p>
+          <strong>Note:</strong> Toast uses Sonner. The{" "}
+          <code>&lt;Toaster /&gt;</code> component is imported from{" "}
+          <code>sonner</code> directly in <code>layout.tsx</code>, not from{" "}
+          <code>@components-kit/react</code>.
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {/* Basic toast */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                title: "Success",
+                variantName: "success",
+              })
+            }
+          >
+            Basic Toast
+          </Button>
+
+          {/* Toast with description */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                description: "Your changes have been saved successfully.",
+                title: "Settings saved",
+                variantName: "success",
+              })
+            }
+          >
+            With Description
+          </Button>
+
+          {/* Toast with action button */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                button: {
+                  label: "Undo",
+                  onClick: () => alert("Undo action clicked"),
+                },
+                description: "The item has been removed from your list.",
+                title: "Item deleted",
+                variantName: "info",
+              })
+            }
+          >
+            With Action
+          </Button>
+
+          {/* Different variants */}
+          <Button
+            variantName="secondary"
+            onClick={() =>
+              toast({
+                description: "This is an informational message.",
+                title: "Information",
+                variantName: "info",
+              })
+            }
+          >
+            Info Variant
+          </Button>
+
+          <Button
+            variantName="secondary"
+            onClick={() =>
+              toast({
+                description: "Please review your input before proceeding.",
+                title: "Warning",
+                variantName: "warning",
+              })
+            }
+          >
+            Warning Variant
+          </Button>
+
+          <Button
+            variantName="destructive"
+            onClick={() =>
+              toast({
+                description: "An error occurred while processing your request.",
+                title: "Error",
+                variantName: "error",
+              })
+            }
+          >
+            Error Variant
+          </Button>
+
+          {/* Different positions */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the top right.",
+                position: "top-right",
+                title: "Top Right",
+                variantName: "info",
+              })
+            }
+          >
+            Top Right
+          </Button>
+
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the top center.",
+                position: "top-center",
+                title: "Top Center",
+                variantName: "info",
+              })
+            }
+          >
+            Top Center
+          </Button>
+
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the bottom left.",
+                position: "bottom-left",
+                title: "Bottom Left",
+                variantName: "info",
+              })
+            }
+          >
+            Bottom Left
+          </Button>
+
+          {/* Custom duration */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast will disappear in 10 seconds.",
+                duration: 10000,
+                title: "Long duration",
+                variantName: "info",
+              })
+            }
+          >
+            10s Duration
+          </Button>
+
+          {/* Title only */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                title: "Quick notification",
+                variantName: "default",
+              })
+            }
+          >
+            Title Only
+          </Button>
+
+          {/* Rich content */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                button: {
+                  label: "View details",
+                  onClick: () => alert("View details clicked"),
+                },
+                description: (
+                  <div>
+                    <p>Version 2.0.0 is ready to install.</p>
+                    <ul>
+                      <li>Performance improvements</li>
+                      <li>Bug fixes</li>
+                      <li>New features</li>
+                    </ul>
+                  </div>
+                ),
+                title: "Update Available",
+                variantName: "info",
+              })
+            }
+          >
+            Rich Content
+          </Button>
         </div>
       </section>
 

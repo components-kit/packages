@@ -13,7 +13,9 @@
     "figma",
     "design-system",
     "downshift",
-    "tanstack-table"
+    "tanstack-table",
+    "sonner",
+    "toast"
   ],
   "author": "ComponentsKit Team",
   "license": "MIT",
@@ -60,7 +62,8 @@
     "@tanstack/react-table": "^8.0.0",
     "downshift": "^9.0.0",
     "react": "^18.0.0 || ^19.0.0",
-    "react-dom": "^18.0.0 || ^19.0.0"
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "sonner": "^1.0.0 || ^2.0.0"
   },
   "peerDependenciesMeta": {
     "@tanstack/react-table": {
@@ -74,6 +77,9 @@
     },
     "react-dom": {
       "optional": false
+    },
+    "sonner": {
+      "optional": true
     }
   },
   "dependencies": {},

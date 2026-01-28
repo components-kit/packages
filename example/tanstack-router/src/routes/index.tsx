@@ -16,6 +16,7 @@ import {
   Table,
   Text,
   Textarea,
+  toast,
 } from "@components-kit/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
@@ -72,7 +73,7 @@ function HomePage() {
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 15 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 16 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -344,6 +345,200 @@ function HomePage() {
           <label htmlFor="ta2">Disabled: </label>
           <br />
           <Textarea id="ta2" disabled placeholder="Disabled" rows={2} variantName="default" />
+        </div>
+      </section>
+
+      {/* 16. Toast */}
+      <section>
+        <h2>16. Toast</h2>
+        <p>
+          <strong>Note:</strong> Toast uses Sonner. The <code>&lt;Toaster /&gt;</code> component is
+          imported from <code>sonner</code> directly in <code>__root.tsx</code>, not from{" "}
+          <code>@components-kit/react</code>.
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+          {/* Basic toast */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                title: "Success",
+                variantName: "success",
+              })
+            }
+          >
+            Basic Toast
+          </Button>
+
+          {/* Toast with description */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                description: "Your changes have been saved successfully.",
+                title: "Settings saved",
+                variantName: "success",
+              })
+            }
+          >
+            With Description
+          </Button>
+
+          {/* Toast with action button */}
+          <Button
+            variantName="primary"
+            onClick={() =>
+              toast({
+                button: {
+                  label: "Undo",
+                  onClick: () => alert("Undo action clicked"),
+                },
+                description: "The item has been removed from your list.",
+                title: "Item deleted",
+                variantName: "info",
+              })
+            }
+          >
+            With Action
+          </Button>
+
+          {/* Different variants */}
+          <Button
+            variantName="secondary"
+            onClick={() =>
+              toast({
+                description: "This is an informational message.",
+                title: "Information",
+                variantName: "info",
+              })
+            }
+          >
+            Info Variant
+          </Button>
+
+          <Button
+            variantName="secondary"
+            onClick={() =>
+              toast({
+                description: "Please review your input before proceeding.",
+                title: "Warning",
+                variantName: "warning",
+              })
+            }
+          >
+            Warning Variant
+          </Button>
+
+          <Button
+            variantName="destructive"
+            onClick={() =>
+              toast({
+                description: "An error occurred while processing your request.",
+                title: "Error",
+                variantName: "error",
+              })
+            }
+          >
+            Error Variant
+          </Button>
+
+          {/* Different positions */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the top right.",
+                position: "top-right",
+                title: "Top Right",
+                variantName: "info",
+              })
+            }
+          >
+            Top Right
+          </Button>
+
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the top center.",
+                position: "top-center",
+                title: "Top Center",
+                variantName: "info",
+              })
+            }
+          >
+            Top Center
+          </Button>
+
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast appears at the bottom left.",
+                position: "bottom-left",
+                title: "Bottom Left",
+                variantName: "info",
+              })
+            }
+          >
+            Bottom Left
+          </Button>
+
+          {/* Custom duration */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                description: "This toast will disappear in 10 seconds.",
+                duration: 10000,
+                title: "Long duration",
+                variantName: "info",
+              })
+            }
+          >
+            10s Duration
+          </Button>
+
+          {/* Title only */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                title: "Quick notification",
+                variantName: "default",
+              })
+            }
+          >
+            Title Only
+          </Button>
+
+          {/* Rich content */}
+          <Button
+            variantName="outline"
+            onClick={() =>
+              toast({
+                button: {
+                  label: "View details",
+                  onClick: () => alert("View details clicked"),
+                },
+                description: (
+                  <div>
+                    <p>Version 2.0.0 is ready to install.</p>
+                    <ul>
+                      <li>Performance improvements</li>
+                      <li>Bug fixes</li>
+                      <li>New features</li>
+                    </ul>
+                  </div>
+                ),
+                title: "Update Available",
+                variantName: "info",
+              })
+            }
+          >
+            Rich Content
+          </Button>
         </div>
       </section>
 
