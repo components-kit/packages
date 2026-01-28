@@ -2,6 +2,8 @@ import "./globals.css";
 
 import type { Metadata } from "next";
 
+import { Toaster } from "sonner";
+
 const BASE_URL = process.env.NEXT_PUBLIC_COMPONENTS_KIT_URL;
 const API_KEY = process.env.NEXT_PUBLIC_COMPONENTS_KIT_KEY;
 const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`;
@@ -30,7 +32,10 @@ export default function RootLayout({
         <link href={BUNDLE_URL} rel="stylesheet" />
         <link href={FONTS_URL} rel="stylesheet" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

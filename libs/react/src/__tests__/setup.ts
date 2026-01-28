@@ -2,7 +2,13 @@ import "@testing-library/jest-dom/vitest";
 
 import { vi } from "vitest";
 
- 
+// Mock pointer capture APIs for Sonner toast swipe interactions
+if (typeof HTMLElement !== "undefined") {
+  HTMLElement.prototype.setPointerCapture = vi.fn();
+  HTMLElement.prototype.releasePointerCapture = vi.fn();
+  HTMLElement.prototype.hasPointerCapture = vi.fn(() => false);
+}
+
 const originalError = console.error;
 
 /**
