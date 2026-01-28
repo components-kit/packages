@@ -266,6 +266,8 @@ Before submitting a pull request, ensure:
 - [ ] Accessibility guidelines are followed
 - [ ] Changes are exported from index.tsx if needed
 
+**Note:** You do NOT need to update CHANGELOG.md - maintainers handle this at release time.
+
 ### Review Process
 
 1. Create a pull request with a clear description
@@ -273,6 +275,59 @@ Before submitting a pull request, ensure:
 3. Wait for CI checks to pass
 4. Address review feedback
 5. Once approved, maintainers will merge
+
+## CHANGELOG Maintenance
+
+### Policy: Maintainer-Updated at Release Time
+
+**Contributors do NOT need to update CHANGELOG.md in their PRs.** The CHANGELOG is maintained by project maintainers at release time.
+
+### Why This Approach?
+
+- Reduces merge conflicts during active development
+- Lower overhead for external contributors
+- Maintainers review all changes holistically at release time
+- Your Conventional Commit messages help us track changes
+
+### What Contributors Should Do
+
+Instead of updating CHANGELOG, please:
+
+1. **Write clear Conventional Commits** - We use your commit messages to build the CHANGELOG:
+   ```
+   feat: add loading state to Button
+   fix: correct focus ring on Input
+   docs: update README examples
+   ```
+
+2. **Describe changes in your PR** - Provide a clear description of what changed and why
+
+3. **Link related issues** - Reference any issues your PR addresses
+
+### For Maintainers: Release Process
+
+When cutting a new release:
+
+1. Review all merged PRs and commits since last release:
+   ```bash
+   git log v0.1.1..HEAD --oneline
+   ```
+
+2. Update CHANGELOG.md with all changes in appropriate sections (Added, Changed, Fixed, etc.)
+
+3. Follow [Keep a Changelog](https://keepachangelog.com/) format
+
+4. Create release commit:
+   ```bash
+   # Edit CHANGELOG.md and libs/react/CHANGELOG.md
+   # Bump version in package.json files
+   git add CHANGELOG.md libs/react/CHANGELOG.md libs/react/package.json
+   git commit -m "chore: release v0.1.2"
+   git tag v0.1.2
+   git push && git push --tags
+   ```
+
+5. Publish to npm: `npm publish`
 
 ## Reporting Issues
 
