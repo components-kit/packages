@@ -14,6 +14,7 @@ This example demonstrates using ComponentsKit components in a Next.js App Router
 - **@components-kit/react** (local)
 - **@tanstack/react-table** (for Table component)
 - **downshift** (for Select component)
+- **sonner** (for Toast component)
 
 ## Getting Started
 
@@ -72,14 +73,15 @@ export function MyComponent() {
 
 ### Optional Dependencies
 
-This example includes both optional peer dependencies:
+This example includes all optional peer dependencies:
 
 - `@tanstack/react-table` - Required for the Table component
 - `downshift` - Required for the Select component
+- `sonner` - Required for the Toast component
 
 ## Component Showcase
 
-The example demonstrates all 16 components:
+The example demonstrates all 18 components:
 
 1. **Alert** - Contextual feedback with icon, heading, action
 2. **Badge** - Status indicators with size variants
@@ -97,6 +99,8 @@ The example demonstrates all 16 components:
 14. **Table** - Data table with sorting, pagination
 15. **Text** - Semantic text elements
 16. **Textarea** - Multi-line input with auto-resize
+17. **Toast** - Notifications with Sonner integration
+18. **Tabs** - Accessible tabbed panels with keyboard navigation
 
 ## Learn More
 
