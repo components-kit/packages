@@ -34,6 +34,9 @@ npm install @tanstack/react-table
 
 # Optional - only if using Select component
 npm install downshift
+
+# Optional - only if using Toast component
+npm install sonner
 ```
 
 ## Quick Start
@@ -243,6 +246,90 @@ import Link from "next/link";
 | [Table](libs/react/src/components/table/README.md)            | Data table with sorting, pagination, selection, and expansion            | `@tanstack/react-table` |
 | [Text](libs/react/src/components/text/README.md)              | Polymorphic text element (p, span, strong, em, etc.)                     | -                       |
 | [Textarea](libs/react/src/components/textarea/README.md)      | Multi-line text input with auto-resize                                   | -                       |
+| [Toast](libs/react/src/components/toast/README.md)            | Toast notification function with semantic markup                          | `sonner`                |
+| [Tabs](libs/react/src/components/tabs/README.md)              | Accessible tabs for organizing content into panels                       | -                       |
+
+## Toast Component Setup
+
+The Toast component requires special setup since it uses [Sonner](https://sonner.emilkowal.ski/) for toast management.
+
+### Installation
+
+```bash
+npm install sonner
+```
+
+### Setup
+
+Import `<Toaster />` from `sonner` (not from `@components-kit/react`) and add it to your app root:
+
+```tsx
+// Next.js App Router - app/layout.tsx
+import { Toaster } from "sonner";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Toaster />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+```tsx
+// Vite / React SPA - App.tsx
+import { Toaster } from "sonner";
+
+function App() {
+  return (
+    <>
+      <Toaster />
+      {/* your app */}
+    </>
+  );
+}
+```
+
+### Usage
+
+Import the `toast` function from `@components-kit/react`:
+
+```tsx
+import { toast } from "@components-kit/react";
+
+function MyComponent() {
+  return (
+    <button
+      onClick={() =>
+        toast({
+          title: "Success",
+          description: "Your changes have been saved.",
+          variantName: "success",
+        })
+      }
+    >
+      Save Changes
+    </button>
+  );
+}
+```
+
+With action button:
+
+```tsx
+toast({
+  title: "Item deleted",
+  description: "The item has been removed from your list.",
+  button: {
+    label: "Undo",
+    onClick: () => console.log("Undo clicked"),
+  },
+  variantName: "info",
+});
+```
 
 ## Accessibility
 
@@ -262,6 +349,8 @@ Example accessibility features:
 | Checkbox  | Label association, `aria-invalid`                 |
 | Select    | ARIA listbox pattern, type-ahead search           |
 | Table     | `aria-sort`, `aria-selected`, keyboard navigation |
+| Toast     | `role="status"`, `aria-live="polite"`, native button with keyboard support |
+| Tabs      | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation` |
 
 ## TypeScript
 

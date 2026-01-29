@@ -14,6 +14,7 @@ import {
   Skeleton,
   Switch,
   Table,
+  Tabs,
   Text,
   Textarea,
   toast,
@@ -73,7 +74,7 @@ function HomePage() {
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 16 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 17 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -540,6 +541,67 @@ function HomePage() {
             Rich Content
           </Button>
         </div>
+      </section>
+
+      {/* 17. Tabs */}
+      <section>
+        <h2>17. Tabs</h2>
+        <h3>Basic</h3>
+        <Tabs
+          defaultValue="tab1"
+          tabs={[
+            { id: "tab1", label: "Account" },
+            { id: "tab2", label: "Security" },
+            { id: "tab3", label: "Notifications" },
+          ]}
+          variantName="default"
+        >
+          <div data-tab-panel="tab1">Account settings content</div>
+          <div data-tab-panel="tab2">Security settings content</div>
+          <div data-tab-panel="tab3">Notification preferences content</div>
+        </Tabs>
+        <br />
+        <h3>With Icons</h3>
+        <Tabs
+          defaultValue="info"
+          tabs={[
+            { icon: <InfoIcon />, id: "info", label: "Info" },
+            { icon: <SearchIcon />, id: "search", label: "Search" },
+          ]}
+          variantName="default"
+        >
+          <div data-tab-panel="info">Information panel</div>
+          <div data-tab-panel="search">Search panel</div>
+        </Tabs>
+        <br />
+        <h3>Vertical</h3>
+        <Tabs
+          defaultValue="general"
+          orientation="vertical"
+          tabs={[
+            { id: "general", label: "General" },
+            { id: "advanced", label: "Advanced" },
+          ]}
+          variantName="default"
+        >
+          <div data-tab-panel="general">General options</div>
+          <div data-tab-panel="advanced">Advanced options</div>
+        </Tabs>
+        <br />
+        <h3>With Disabled Tab</h3>
+        <Tabs
+          defaultValue="enabled"
+          tabs={[
+            { id: "enabled", label: "Available" },
+            { disabled: true, id: "locked", label: "Locked" },
+            { id: "other", label: "Other" },
+          ]}
+          variantName="default"
+        >
+          <div data-tab-panel="enabled">This tab is accessible</div>
+          <div data-tab-panel="locked">This tab is locked</div>
+          <div data-tab-panel="other">Other content</div>
+        </Tabs>
       </section>
 
       <hr />

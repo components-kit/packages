@@ -4,7 +4,7 @@
 
 **ComponentsKit** is a modern, headless React component library designed for accessibility and TypeScript safety. It's a monorepo with:
 
-- **14 accessible components** with zero production dependencies
+- **18 accessible components** with zero production dependencies
 - **Headless/unstyled design** — all styling via `data-*` attributes for CSS
 - **Figma design system sync** — CSS updates without code redeployment
 - **Polymorphic components** — render as any HTML element via `as` prop
@@ -21,15 +21,17 @@
 | `example/next-app-router/` | Next.js 15 SSR example |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example |
 
-### Components (14 total)
+### Components (18 total)
 
 | Component | Lines | Complexity | Key Features |
 |-----------|-------|------------|--------------|
 | Table | 870+ | High | Sorting, pagination, filtering, row selection (TanStack Table) |
 | Select | 550 | High | Dropdown with groups, type-ahead, keyboard nav (Downshift) |
+| Tabs | ~300 | Medium | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook) |
 | Slot | 267 | Medium | Enables `asChild` pattern, smart prop merging |
 | Icon | 178 | Medium | Polymorphic, aria-hidden by default |
 | Button | 168 | Medium | Polymorphic, asChild, loading states |
+| Toast | ~150 | Medium | Sonner integration, semantic markup, action button |
 | Textarea | ~150 | Low | Auto-resize support |
 | Input | ~120 | Low | Text input variants |
 | Checkbox | ~120 | Low | Indeterminate state |
@@ -87,10 +89,15 @@
 │  │ RadioGroup  │  │    Alert    │  │    Badge    │  │    Icon     │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                      │
-│  │   Heading   │  │    Text     │  │  Separator  │  ┌─────────────┐    │
-│  │ polymorphic │  │ polymorphic │  │             │  │  Skeleton   │    │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │   Heading   │  │    Text     │  │  Separator  │  │  Skeleton   │    │
+│  │ polymorphic │  │ polymorphic │  │             │  │             │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
+│                                                                          │
+│  ┌─────────────┐  ┌─────────────┐                                        │
+│  │    Toast    │  │    Tabs     │                                        │
+│  │   sonner    │  │ roving tab  │                                        │
+│  └─────────────┘  └─────────────┘                                        │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
          │
@@ -119,14 +126,14 @@
 │                    PEER DEPENDENCIES                            │
 ├────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  Required:                  Optional:                           │
-│  ┌─────────────┐           ┌─────────────┐  ┌──────────────┐   │
-│  │  React 18+  │           │  downshift  │  │ @tanstack/   │   │
-│  │  or 19      │           │   (9.0+)    │  │ react-table  │   │
-│  └──────┬──────┘           └──────┬──────┘  └──────┬───────┘   │
-│         │                         │                 │           │
-│         ▼                         ▼                 ▼           │
-│  All Components              Select only       Table only       │
+│  Required:                  Optional:                                    │
+│  ┌─────────────┐           ┌─────────────┐  ┌──────────────┐  ┌────────┐│
+│  │  React 18+  │           │  downshift  │  │ @tanstack/   │  │ sonner ││
+│  │  or 19      │           │   (9.0+)    │  │ react-table  │  │ (2.0+) ││
+│  └──────┬──────┘           └──────┬──────┘  └──────┬───────┘  └───┬────┘│
+│         │                         │                 │              │     │
+│         ▼                         ▼                 ▼              ▼     │
+│  All Components              Select only       Table only     Toast only │
 │                                                                 │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -139,7 +146,7 @@
 packages/
 ├── libs/react/                      # Main library
 │   ├── src/
-│   │   ├── components/              # 14 component directories
+│   │   ├── components/              # 18 component directories
 │   │   │   ├── alert/
 │   │   │   ├── badge/
 │   │   │   ├── button/
@@ -154,8 +161,10 @@ packages/
 │   │   │   ├── slot/
 │   │   │   ├── switch/
 │   │   │   ├── table/
+│   │   │   ├── tabs/
 │   │   │   ├── text/
-│   │   │   └── textarea/
+│   │   │   ├── textarea/
+│   │   │   └── toast/
 │   │   ├── types/                   # TypeScript type definitions
 │   │   ├── utils/                   # Utility functions
 │   │   └── index.tsx                # Main export barrel
