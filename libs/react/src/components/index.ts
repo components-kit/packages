@@ -5,6 +5,7 @@ export * from "./checkbox";
 export * from "./heading";
 export * from "./icon";
 export * from "./input";
+export * from "./progress";
 export * from "./radio-group";
 export * from "./select";
 export * from "./separator";

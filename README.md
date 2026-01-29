@@ -237,6 +237,7 @@ import Link from "next/link";
 | [Heading](libs/react/src/components/heading/README.md)        | Polymorphic heading (h1-h6) with semantic hierarchy                      | -                       |
 | [Icon](libs/react/src/components/icon/README.md)              | Flexible icon wrapper with consistent sizing                             | -                       |
 | [Input](libs/react/src/components/input/README.md)            | Text input with type variants                                            | -                       |
+| [Progress](libs/react/src/components/progress/README.md)      | Linear progress bar with label, determinate/indeterminate modes          | -                       |
 | [RadioGroup](libs/react/src/components/radio-group/README.md) | Radio button group with RadioGroupItem                                   | -                       |
 | [Select](libs/react/src/components/select/README.md)          | Dropdown with keyboard navigation and custom rendering                   | `downshift`             |
 | [Separator](libs/react/src/components/separator/README.md)    | Visual divider (horizontal/vertical)                                     | -                       |
@@ -347,6 +348,7 @@ Example accessibility features:
 | Alert     | `role="alert"`, `aria-live="polite"`              |
 | Button    | `aria-disabled`, `aria-busy` for loading          |
 | Checkbox  | Label association, `aria-invalid`                 |
+| Progress  | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label |
 | Select    | ARIA listbox pattern, type-ahead search           |
 | Table     | `aria-sort`, `aria-selected`, keyboard navigation |
 | Toast     | `role="status"`, `aria-live="polite"`, native button with keyboard support |

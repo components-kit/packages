@@ -4,7 +4,7 @@
 
 **ComponentsKit** is a modern, headless React component library designed for accessibility and TypeScript safety. It's a monorepo with:
 
-- **18 accessible components** with zero production dependencies
+- **19 accessible components** with zero production dependencies
 - **Headless/unstyled design** — all styling via `data-*` attributes for CSS
 - **Figma design system sync** — CSS updates without code redeployment
 - **Polymorphic components** — render as any HTML element via `as` prop
@@ -21,7 +21,7 @@
 | `example/next-app-router/` | Next.js 15 SSR example |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example |
 
-### Components (18 total)
+### Components (19 total)
 
 | Component | Lines | Complexity | Key Features |
 |-----------|-------|------------|--------------|
@@ -33,6 +33,7 @@
 | Button | 168 | Medium | Polymorphic, asChild, loading states |
 | Toast | ~150 | Medium | Sonner integration, semantic markup, action button |
 | Textarea | ~150 | Low | Auto-resize support |
+| Progress | ~150 | Low | Label, determinate/indeterminate, CSS custom property |
 | Input | ~120 | Low | Text input variants |
 | Checkbox | ~120 | Low | Indeterminate state |
 | Switch | ~100 | Low | Toggle control |
@@ -94,10 +95,10 @@
 │  │ polymorphic │  │ polymorphic │  │             │  │             │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
-│  ┌─────────────┐  ┌─────────────┐                                        │
-│  │    Toast    │  │    Tabs     │                                        │
-│  │   sonner    │  │ roving tab  │                                        │
-│  └─────────────┘  └─────────────┘                                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                        │
+│  │    Toast    │  │    Tabs     │  │  Progress   │                        │
+│  │   sonner    │  │ roving tab  │  │  label/a11y │                        │
+│  └─────────────┘  └─────────────┘  └─────────────┘                        │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
          │
@@ -146,7 +147,7 @@
 packages/
 ├── libs/react/                      # Main library
 │   ├── src/
-│   │   ├── components/              # 18 component directories
+│   │   ├── components/              # 19 component directories
 │   │   │   ├── alert/
 │   │   │   ├── badge/
 │   │   │   ├── button/
@@ -154,6 +155,7 @@ packages/
 │   │   │   ├── heading/
 │   │   │   ├── icon/
 │   │   │   ├── input/
+│   │   │   ├── progress/
 │   │   │   ├── radio-group/
 │   │   │   ├── select/
 │   │   │   ├── separator/

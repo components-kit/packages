@@ -9,6 +9,7 @@ import {
   Heading,
   Icon,
   Input,
+  Progress,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -75,7 +76,7 @@ export default function Home() {
   return (
     <main>
       <h1>Components Kit - Next.js SSR Example</h1>
-      <p>All 17 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 18 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -257,9 +258,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. RadioGroup */}
+      {/* 8. Progress */}
       <section>
-        <h2>8. RadioGroup</h2>
+        <h2>8. Progress</h2>
+        <h3>With Label</h3>
+        <Progress label="Uploading files..." value={50} variantName="default" />
+        <br />
+        <Progress label="Processing..." value={80} variantName="success" />
+        <h3>Determinate (aria-label)</h3>
+        <Progress aria-label="Just started" value={10} variantName="default" />
+        <h3>Custom Range</h3>
+        <Progress
+          aria-valuetext="Step 3 of 5"
+          label="Steps completed"
+          max={5}
+          min={0}
+          value={3}
+          variantName="default"
+        />
+        <h3>Complete</h3>
+        <Progress label="Complete" value={100} variantName="success" />
+        <h3>Indeterminate (loading)</h3>
+        <Progress label="Loading..." variantName="default" />
+      </section>
+
+      {/* 9. RadioGroup */}
+      <section>
+        <h2>9. RadioGroup</h2>
         <RadioGroup aria-label="Select option" variantName="default">
           <div>
             <RadioGroupItem
@@ -295,9 +320,9 @@ export default function Home() {
         <p>Selected: {radioValue}</p>
       </section>
 
-      {/* 9. Select */}
+      {/* 10. Select */}
       <section>
-        <h2>9. Select</h2>
+        <h2>10. Select</h2>
         <Select
           options={["Apple", "Banana", "Cherry", "Date"]}
           placeholder="Select a fruit..."
@@ -308,9 +333,9 @@ export default function Home() {
         <p>Selected: {selectValue ?? "none"}</p>
       </section>
 
-      {/* 10. Separator */}
+      {/* 11. Separator */}
       <section>
-        <h2>10. Separator</h2>
+        <h2>11. Separator</h2>
         <p>Content above</p>
         <Separator />
         <p>Content below</p>
@@ -330,9 +355,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 11. Skeleton */}
+      {/* 12. Skeleton */}
       <section>
-        <h2>11. Skeleton</h2>
+        <h2>12. Skeleton</h2>
         <Skeleton height="20px" variantName="skeleton" width="200px" />
         <br />
         <Skeleton height="16px" variantName="skeleton" width="150px" />
@@ -340,9 +365,9 @@ export default function Home() {
         <Skeleton height="100px" variantName="skeleton" width="100px" />
       </section>
 
-      {/* 12. Switch */}
+      {/* 13. Switch */}
       <section>
-        <h2>12. Switch</h2>
+        <h2>13. Switch</h2>
         <div>
           <Switch
             id="sw1"
@@ -365,9 +390,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 13. Table */}
+      {/* 14. Table */}
       <section>
-        <h2>13. Table</h2>
+        <h2>14. Table</h2>
         <Table
           aria-label="Users table"
           columns={columns}
@@ -379,9 +404,9 @@ export default function Home() {
         />
       </section>
 
-      {/* 14. Text */}
+      {/* 15. Text */}
       <section>
-        <h2>14. Text</h2>
+        <h2>15. Text</h2>
         <Text as="p" variantName="body">
           This is body text (p).
         </Text>
@@ -398,9 +423,9 @@ export default function Home() {
         </Text>
       </section>
 
-      {/* 15. Textarea */}
+      {/* 16. Textarea */}
       <section>
-        <h2>15. Textarea</h2>
+        <h2>16. Textarea</h2>
         <div>
           <label htmlFor="ta1">Message: </label>
           <br />
@@ -427,9 +452,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 16. Toast */}
+      {/* 17. Toast */}
       <section>
-        <h2>16. Toast</h2>
+        <h2>17. Toast</h2>
         <p>
           <strong>Note:</strong> Toast uses Sonner. The{" "}
           <code>&lt;Toaster /&gt;</code> component is imported from{" "}
@@ -622,9 +647,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 17. Tabs */}
+      {/* 18. Tabs */}
       <section>
-        <h2>17. Tabs</h2>
+        <h2>18. Tabs</h2>
         <h3>Basic</h3>
         <Tabs
           defaultValue="tab1"
