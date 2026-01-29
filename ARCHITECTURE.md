@@ -4,7 +4,7 @@
 
 **ComponentsKit** is a modern, headless React component library designed for accessibility and TypeScript safety. It's a monorepo with:
 
-- **19 accessible components** with zero production dependencies
+- **20 accessible components** with zero production dependencies
 - **Headless/unstyled design** — all styling via `data-*` attributes for CSS
 - **Figma design system sync** — CSS updates without code redeployment
 - **Polymorphic components** — render as any HTML element via `as` prop
@@ -21,7 +21,7 @@
 | `example/next-app-router/` | Next.js 15 SSR example |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example |
 
-### Components (19 total)
+### Components (20 total)
 
 | Component | Lines | Complexity | Key Features |
 |-----------|-------|------------|--------------|
@@ -44,6 +44,7 @@
 | Text | ~50 | Low | Polymorphic text |
 | Separator | ~40 | Low | Visual divider |
 | Skeleton | ~40 | Low | Loading placeholder |
+| Slider | ~200 | Medium | Keyboard nav, pointer drag, controlled/uncontrolled (useSlider hook) |
 
 ### Core Patterns
 
@@ -95,10 +96,10 @@
 │  │ polymorphic │  │ polymorphic │  │             │  │             │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                        │
-│  │    Toast    │  │    Tabs     │  │  Progress   │                        │
-│  │   sonner    │  │ roving tab  │  │  label/a11y │                        │
-│  └─────────────┘  └─────────────┘  └─────────────┘                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
+│  │    Toast    │  │    Tabs     │  │  Progress   │  │   Slider    │    │
+│  │   sonner    │  │ roving tab  │  │  label/a11y │  │  drag/keys  │    │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
          │
@@ -147,7 +148,7 @@
 packages/
 ├── libs/react/                      # Main library
 │   ├── src/
-│   │   ├── components/              # 19 component directories
+│   │   ├── components/              # 20 component directories
 │   │   │   ├── alert/
 │   │   │   ├── badge/
 │   │   │   ├── button/
@@ -160,6 +161,7 @@ packages/
 │   │   │   ├── select/
 │   │   │   ├── separator/
 │   │   │   ├── skeleton/
+│   │   │   ├── slider/
 │   │   │   ├── slot/
 │   │   │   ├── switch/
 │   │   │   ├── table/

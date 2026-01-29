@@ -242,6 +242,7 @@ import Link from "next/link";
 | [Select](libs/react/src/components/select/README.md)          | Dropdown with keyboard navigation and custom rendering                   | `downshift`             |
 | [Separator](libs/react/src/components/separator/README.md)    | Visual divider (horizontal/vertical)                                     | -                       |
 | [Skeleton](libs/react/src/components/skeleton/README.md)      | Loading placeholder with customizable dimensions                         | -                       |
+| [Slider](libs/react/src/components/slider/README.md)          | Range input with keyboard navigation and pointer drag support            | -                       |
 | [Slot](libs/react/src/components/slot/README.md)              | Utility for prop merging and asChild pattern                             | -                       |
 | [Switch](libs/react/src/components/switch/README.md)          | Binary toggle control                                                    | -                       |
 | [Table](libs/react/src/components/table/README.md)            | Data table with sorting, pagination, selection, and expansion            | `@tanstack/react-table` |
@@ -350,6 +351,7 @@ Example accessibility features:
 | Checkbox  | Label association, `aria-invalid`                 |
 | Progress  | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label |
 | Select    | ARIA listbox pattern, type-ahead search           |
+| Slider    | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation |
 | Table     | `aria-sort`, `aria-selected`, keyboard navigation |
 | Toast     | `role="status"`, `aria-live="polite"`, native button with keyboard support |
 | Tabs      | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation` |

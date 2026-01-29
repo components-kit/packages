@@ -13,6 +13,7 @@ import {
   Select,
   Separator,
   Skeleton,
+  Slider,
   Switch,
   Table,
   Tabs,
@@ -71,11 +72,12 @@ function HomePage() {
   const [textareaValue, setTextareaValue] = useState("");
   const [radioValue, setRadioValue] = useState("option1");
   const [selectValue, setSelectValue] = useState<string>();
+  const [sliderValue, setSliderValue] = useState(50);
 
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 18 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 19 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -103,8 +105,12 @@ function HomePage() {
         <Badge variantName="success">Success</Badge>{" "}
         <Badge variantName="warning">Warning</Badge>{" "}
         <Badge variantName="error">Error</Badge>{" "}
-        <Badge size="sm" variantName="default">Small</Badge>{" "}
-        <Badge size="lg" variantName="default">Large</Badge>
+        <Badge size="sm" variantName="default">
+          Small
+        </Badge>{" "}
+        <Badge size="lg" variantName="default">
+          Large
+        </Badge>
       </section>
 
       {/* 3. Button */}
@@ -118,20 +124,36 @@ function HomePage() {
         </div>
         <br />
         <div>
-          <Button size="sm" variantName="primary">Small</Button>{" "}
-          <Button size="md" variantName="primary">Medium</Button>{" "}
-          <Button size="lg" variantName="primary">Large</Button>
+          <Button size="sm" variantName="primary">
+            Small
+          </Button>{" "}
+          <Button size="md" variantName="primary">
+            Medium
+          </Button>{" "}
+          <Button size="lg" variantName="primary">
+            Large
+          </Button>
         </div>
         <br />
         <div>
-          <Button leadingIcon={<SearchIcon />} variantName="primary">With Icon</Button>{" "}
-          <Button isLoading variantName="primary">Loading</Button>{" "}
-          <Button disabled variantName="primary">Disabled</Button>
+          <Button leadingIcon={<SearchIcon />} variantName="primary">
+            With Icon
+          </Button>{" "}
+          <Button isLoading variantName="primary">
+            Loading
+          </Button>{" "}
+          <Button disabled variantName="primary">
+            Disabled
+          </Button>
         </div>
         <br />
         <div>
           <Button asChild variantName="outline">
-            <a href="https://example.com" rel="noopener noreferrer" target="_blank">
+            <a
+              href="https://example.com"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               As Link (asChild)
             </a>
           </Button>
@@ -148,7 +170,10 @@ function HomePage() {
             variantName="default"
             onChange={(e) => setCheckboxChecked(e.target.checked)}
           />
-          <label htmlFor="cb1"> Controlled (checked: {String(checkboxChecked)})</label>
+          <label htmlFor="cb1">
+            {" "}
+            Controlled (checked: {String(checkboxChecked)})
+          </label>
         </div>
         <div>
           <Checkbox id="cb2" defaultChecked variantName="default" />
@@ -163,21 +188,41 @@ function HomePage() {
       {/* 5. Heading */}
       <section>
         <h2>5. Heading</h2>
-        <Heading as="h1" variantName="h1">Heading 1</Heading>
-        <Heading as="h2" variantName="h2">Heading 2</Heading>
-        <Heading as="h3" variantName="h3">Heading 3</Heading>
-        <Heading as="h4" variantName="h4">Heading 4</Heading>
-        <Heading as="h5" variantName="h5">Heading 5</Heading>
-        <Heading as="h6" variantName="h6">Heading 6</Heading>
+        <Heading as="h1" variantName="h1">
+          Heading 1
+        </Heading>
+        <Heading as="h2" variantName="h2">
+          Heading 2
+        </Heading>
+        <Heading as="h3" variantName="h3">
+          Heading 3
+        </Heading>
+        <Heading as="h4" variantName="h4">
+          Heading 4
+        </Heading>
+        <Heading as="h5" variantName="h5">
+          Heading 5
+        </Heading>
+        <Heading as="h6" variantName="h6">
+          Heading 6
+        </Heading>
       </section>
 
       {/* 6. Icon */}
       <section>
         <h2>6. Icon</h2>
-        <Icon aria-hidden="true" height="16px" width="16px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="24px" width="24px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="32px" width="32px"><InfoIcon /></Icon>{" "}
-        <Icon aria-hidden="true" height="48px" width="48px"><SearchIcon /></Icon>
+        <Icon aria-hidden="true" height="16px" width="16px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="24px" width="24px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="32px" width="32px">
+          <InfoIcon />
+        </Icon>{" "}
+        <Icon aria-hidden="true" height="48px" width="48px">
+          <SearchIcon />
+        </Icon>
       </section>
 
       {/* 7. Input */}
@@ -196,11 +241,21 @@ function HomePage() {
         </div>
         <div>
           <label htmlFor="input2">Email: </label>
-          <Input id="input2" placeholder="you@example.com" type="email" variantName="default" />
+          <Input
+            id="input2"
+            placeholder="you@example.com"
+            type="email"
+            variantName="default"
+          />
         </div>
         <div>
           <label htmlFor="input3">Disabled: </label>
-          <Input id="input3" disabled placeholder="Disabled" variantName="default" />
+          <Input
+            id="input3"
+            disabled
+            placeholder="Disabled"
+            variantName="default"
+          />
         </div>
       </section>
 
@@ -285,7 +340,14 @@ function HomePage() {
         <p>Content above</p>
         <Separator />
         <p>Content below</p>
-        <div style={{ alignItems: "center", display: "flex", gap: "8px", height: "24px" }}>
+        <div
+          style={{
+            alignItems: "center",
+            display: "flex",
+            gap: "8px",
+            height: "24px",
+          }}
+        >
           <span>Left</span>
           <Separator orientation="vertical" />
           <span>Middle</span>
@@ -314,7 +376,10 @@ function HomePage() {
             variantName="default"
             onChange={(e) => setSwitchChecked(e.target.checked)}
           />
-          <label htmlFor="sw1"> Controlled (checked: {String(switchChecked)})</label>
+          <label htmlFor="sw1">
+            {" "}
+            Controlled (checked: {String(switchChecked)})
+          </label>
         </div>
         <div>
           <Switch id="sw2" defaultChecked variantName="default" />
@@ -343,12 +408,20 @@ function HomePage() {
       {/* 15. Text */}
       <section>
         <h2>15. Text</h2>
-        <Text as="p" variantName="body">This is body text (p).</Text>
-        <Text as="span" variantName="caption">This is caption text (span).</Text>
+        <Text as="p" variantName="body">
+          This is body text (p).
+        </Text>
+        <Text as="span" variantName="caption">
+          This is caption text (span).
+        </Text>
         <br />
-        <Text as="strong" variantName="bold">This is bold text (strong).</Text>
+        <Text as="strong" variantName="bold">
+          This is bold text (strong).
+        </Text>
         <br />
-        <Text as="em" variantName="italic">This is italic text (em).</Text>
+        <Text as="em" variantName="italic">
+          This is italic text (em).
+        </Text>
       </section>
 
       {/* 16. Textarea */}
@@ -370,7 +443,13 @@ function HomePage() {
         <div>
           <label htmlFor="ta2">Disabled: </label>
           <br />
-          <Textarea id="ta2" disabled placeholder="Disabled" rows={2} variantName="default" />
+          <Textarea
+            id="ta2"
+            disabled
+            placeholder="Disabled"
+            rows={2}
+            variantName="default"
+          />
         </div>
       </section>
 
@@ -378,8 +457,9 @@ function HomePage() {
       <section>
         <h2>17. Toast</h2>
         <p>
-          <strong>Note:</strong> Toast uses Sonner. The <code>&lt;Toaster /&gt;</code> component is
-          imported from <code>sonner</code> directly in <code>__root.tsx</code>, not from{" "}
+          <strong>Note:</strong> Toast uses Sonner. The{" "}
+          <code>&lt;Toaster /&gt;</code> component is imported from{" "}
+          <code>sonner</code> directly in <code>__root.tsx</code>, not from{" "}
           <code>@components-kit/react</code>.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -627,6 +707,51 @@ function HomePage() {
           <div data-tab-panel="locked">This tab is locked</div>
           <div data-tab-panel="other">Other content</div>
         </Tabs>
+      </section>
+
+      {/* 19. Slider */}
+      <section>
+        <h2>19. Slider</h2>
+        <h3>Controlled</h3>
+        <label id="slider-controlled">Volume: {sliderValue}</label>
+        <Slider
+          aria-labelledby="slider-controlled"
+          value={sliderValue}
+          variantName="default"
+          onValueChange={setSliderValue}
+        />
+        <h3>Uncontrolled (defaultValue)</h3>
+        <Slider
+          aria-label="Brightness"
+          defaultValue={75}
+          variantName="default"
+        />
+        <h3>Custom Range & Step</h3>
+        <Slider
+          aria-label="Temperature"
+          defaultValue={22}
+          max={40}
+          min={0}
+          step={0.5}
+          variantName="default"
+        />
+        <h3>Disabled</h3>
+        <Slider
+          aria-label="Locked slider"
+          defaultValue={30}
+          disabled
+          variantName="default"
+        />
+        <h3>With aria-valuetext</h3>
+        <Slider
+          aria-label="Priority"
+          aria-valuetext="Medium priority"
+          defaultValue={3}
+          max={5}
+          min={1}
+          step={1}
+          variantName="default"
+        />
       </section>
 
       <hr />
