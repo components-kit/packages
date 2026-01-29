@@ -28,6 +28,7 @@ Each component has its own detailed README in `src/components/<name>/README.md`:
 | Heading | [README](src/components/heading/README.md) |
 | Icon | [README](src/components/icon/README.md) |
 | Input | [README](src/components/input/README.md) |
+| Progress | [README](src/components/progress/README.md) |
 | RadioGroup | [README](src/components/radio-group/README.md) |
 | Select | [README](src/components/select/README.md) |
 | Separator | [README](src/components/separator/README.md) |
