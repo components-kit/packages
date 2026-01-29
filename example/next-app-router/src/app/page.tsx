@@ -15,6 +15,7 @@ import {
   Select,
   Separator,
   Skeleton,
+  Slider,
   Switch,
   Table,
   Tabs,
@@ -72,11 +73,12 @@ export default function Home() {
   const [textareaValue, setTextareaValue] = useState("");
   const [radioValue, setRadioValue] = useState("option1");
   const [selectValue, setSelectValue] = useState<string>();
+  const [sliderValue, setSliderValue] = useState(50);
 
   return (
     <main>
       <h1>Components Kit - Next.js SSR Example</h1>
-      <p>All 18 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 19 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -706,6 +708,51 @@ export default function Home() {
           <div data-tab-panel="locked">This tab is locked</div>
           <div data-tab-panel="other">Other content</div>
         </Tabs>
+      </section>
+
+      {/* 19. Slider */}
+      <section>
+        <h2>19. Slider</h2>
+        <h3>Controlled</h3>
+        <label id="slider-controlled">Volume: {sliderValue}</label>
+        <Slider
+          aria-labelledby="slider-controlled"
+          value={sliderValue}
+          variantName="default"
+          onValueChange={setSliderValue}
+        />
+        <h3>Uncontrolled (defaultValue)</h3>
+        <Slider
+          aria-label="Brightness"
+          defaultValue={75}
+          variantName="default"
+        />
+        <h3>Custom Range & Step</h3>
+        <Slider
+          aria-label="Temperature"
+          defaultValue={22}
+          max={40}
+          min={0}
+          step={0.5}
+          variantName="default"
+        />
+        <h3>Disabled</h3>
+        <Slider
+          aria-label="Locked slider"
+          defaultValue={30}
+          disabled
+          variantName="default"
+        />
+        <h3>With aria-valuetext</h3>
+        <Slider
+          aria-label="Priority"
+          aria-valuetext="Medium priority"
+          defaultValue={3}
+          max={5}
+          min={1}
+          step={1}
+          variantName="default"
+        />
       </section>
 
       <hr />

@@ -33,6 +33,7 @@ Each component has its own detailed README in `src/components/<name>/README.md`:
 | Select | [README](src/components/select/README.md) |
 | Separator | [README](src/components/separator/README.md) |
 | Skeleton | [README](src/components/skeleton/README.md) |
+| Slider | [README](src/components/slider/README.md) |
 | Slot | [README](src/components/slot/README.md) |
 | Switch | [README](src/components/switch/README.md) |
 | Table | [README](src/components/table/README.md) |
