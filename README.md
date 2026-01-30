@@ -237,6 +237,7 @@ import Link from "next/link";
 | [Heading](libs/react/src/components/heading/README.md)        | Polymorphic heading (h1-h6) with semantic hierarchy                      | -                       |
 | [Icon](libs/react/src/components/icon/README.md)              | Flexible icon wrapper with consistent sizing                             | -                       |
 | [Input](libs/react/src/components/input/README.md)            | Text input with type variants                                            | -                       |
+| [Pagination](libs/react/src/components/pagination/README.md)  | Accessible pagination with offset (numeric) and cursor-based modes       | -                       |
 | [Progress](libs/react/src/components/progress/README.md)      | Linear progress bar with label, determinate/indeterminate modes          | -                       |
 | [RadioGroup](libs/react/src/components/radio-group/README.md) | Radio button group with RadioGroupItem                                   | -                       |
 | [Select](libs/react/src/components/select/README.md)          | Dropdown with keyboard navigation and custom rendering                   | `downshift`             |
@@ -353,6 +354,7 @@ Example accessibility features:
 | Select    | ARIA listbox pattern, type-ahead search           |
 | Slider    | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation |
 | Table     | `aria-sort`, `aria-selected`, keyboard navigation |
+| Pagination | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation |
 | Toast     | `role="status"`, `aria-live="polite"`, native button with keyboard support |
 | Tabs      | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation` |
 

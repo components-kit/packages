@@ -4,7 +4,7 @@
 
 **ComponentsKit** is a modern, headless React component library designed for accessibility and TypeScript safety. It's a monorepo with:
 
-- **20 accessible components** with zero production dependencies
+- **21 accessible components** with zero production dependencies
 - **Headless/unstyled design** — all styling via `data-*` attributes for CSS
 - **Figma design system sync** — CSS updates without code redeployment
 - **Polymorphic components** — render as any HTML element via `as` prop
@@ -21,7 +21,7 @@
 | `example/next-app-router/` | Next.js 15 SSR example |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example |
 
-### Components (20 total)
+### Components (21 total)
 
 | Component | Lines | Complexity | Key Features |
 |-----------|-------|------------|--------------|
@@ -35,6 +35,7 @@
 | Textarea | ~150 | Low | Auto-resize support |
 | Progress | ~150 | Low | Label, determinate/indeterminate, CSS custom property |
 | Input | ~120 | Low | Text input variants |
+| Pagination | ~200 | Medium | Offset/cursor modes, ellipsis, controlled/uncontrolled (usePagination hook) |
 | Checkbox | ~120 | Low | Indeterminate state |
 | Switch | ~100 | Low | Toggle control |
 | RadioGroup | ~100 | Low | Radio group pattern |
@@ -101,6 +102,11 @@
 │  │   sonner    │  │ roving tab  │  │  label/a11y │  │  drag/keys  │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
+│  ┌─────────────┐                                                         │
+│  │ Pagination  │                                                         │
+│  │ offset/curs │                                                         │
+│  └─────────────┘                                                         │
+│                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
          │
          ▼
@@ -148,7 +154,7 @@
 packages/
 ├── libs/react/                      # Main library
 │   ├── src/
-│   │   ├── components/              # 20 component directories
+│   │   ├── components/              # 21 component directories
 │   │   │   ├── alert/
 │   │   │   ├── badge/
 │   │   │   ├── button/
@@ -156,6 +162,7 @@ packages/
 │   │   │   ├── heading/
 │   │   │   ├── icon/
 │   │   │   ├── input/
+│   │   │   ├── pagination/
 │   │   │   ├── progress/
 │   │   │   ├── radio-group/
 │   │   │   ├── select/
