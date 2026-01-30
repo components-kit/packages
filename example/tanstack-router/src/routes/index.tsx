@@ -7,6 +7,7 @@ import {
   Heading,
   Icon,
   Input,
+  Pagination,
   Progress,
   RadioGroup,
   RadioGroupItem,
@@ -73,11 +74,13 @@ function HomePage() {
   const [radioValue, setRadioValue] = useState("option1");
   const [selectValue, setSelectValue] = useState<string>();
   const [sliderValue, setSliderValue] = useState(50);
+  const [paginationPage, setPaginationPage] = useState(1);
+  const [cursorPage, setCursorPage] = useState(1);
 
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 19 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 20 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -752,6 +755,44 @@ function HomePage() {
           step={1}
           variantName="default"
         />
+      </section>
+
+      {/* 20. Pagination */}
+      <section>
+        <h2>20. Pagination</h2>
+        <h3>Offset Mode (Uncontrolled)</h3>
+        <Pagination defaultPage={1} totalPages={10} />
+        <h3>Offset Mode (Controlled)</h3>
+        <Pagination
+          page={paginationPage}
+          totalPages={10}
+          onPageChange={setPaginationPage}
+        />
+        <p>Current page: {paginationPage}</p>
+        <h3>Custom Siblings</h3>
+        <Pagination defaultPage={10} siblings={2} totalPages={20} />
+        <h3>With First/Last Buttons</h3>
+        <Pagination defaultPage={5} showFirstLast totalPages={50} />
+        <h3>Cursor Mode</h3>
+        <Pagination
+          hasNextPage={cursorPage < 5}
+          hasPreviousPage={cursorPage > 1}
+          onNext={() => setCursorPage((p) => Math.min(p + 1, 5))}
+          onPrevious={() => setCursorPage((p) => Math.max(p - 1, 1))}
+        />
+        <p>Cursor page: {cursorPage}</p>
+        <h3>Cursor Mode with First/Last</h3>
+        <Pagination
+          hasNextPage={true}
+          hasPreviousPage={true}
+          showFirstLast
+          onFirst={() => alert("First")}
+          onLast={() => alert("Last")}
+          onNext={() => alert("Next")}
+          onPrevious={() => alert("Previous")}
+        />
+        <h3>Disabled</h3>
+        <Pagination defaultPage={3} disabled totalPages={10} />
       </section>
 
       <hr />
