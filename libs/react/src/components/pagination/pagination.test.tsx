@@ -1117,7 +1117,7 @@ describe("Pagination - Ref Forwarding", () => {
       />,
     );
     expect(refValue).toBeInstanceOf(HTMLElement);
-    expect(refValue?.tagName).toBe("NAV");
+    expect(refValue!.tagName).toBe("NAV");
   });
 });
 
