@@ -4,21 +4,15 @@ import { useCombobox } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
-  ReactNode,
   useCallback,
   useId,
   useMemo,
   useState,
 } from "react";
 
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
+import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import {
-  defaultIsEqual,
   filterRenderItems,
   itemToString,
   processOptions,
@@ -39,9 +33,9 @@ import {
  * - Controlled and uncontrolled modes for both value and input text
  * - Support for string and object values via generic `<T>`
  * - Custom filter function support
- * - Custom trigger and item rendering via render props
  * - Option groups, separators, and disabled items
  * - Full accessibility (WAI-ARIA Combobox with Listbox Popup pattern)
+ * - CSS-based styling via data attributes
  *
  * @remarks
  * Built on Downshift's `useCombobox` hook.
@@ -77,9 +71,8 @@ import {
  * ## Best Practices
  * - Provide a descriptive `aria-label` if no visible label
  * - Use `filterFn` for custom matching (e.g., fuzzy search)
- * - Use `isEqual` when working with object values
+ * - Use `getOptionValue` when working with object values
  * - Use groups and separators to organize large option sets
- * - Consider custom `renderItem` for rich option display
  *
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
@@ -91,10 +84,8 @@ import {
  * @param {string} [placeholder="Search..."] - Placeholder text for the input.
  * @param {boolean} [disabled=false] - Whether the combobox is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
- * @param {(a: T, b: T) => boolean} [isEqual] - Custom equality function for object values.
+ * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes.
- * @param {(context: ItemRenderContext<T>) => ReactNode} [renderItem] - Custom item renderer.
- * @param {(context: ComboboxTriggerRenderContext<T>) => ReactNode} [renderTrigger] - Custom trigger renderer.
  *
  * @example
  * ```tsx
@@ -164,20 +155,11 @@ import {
  *
  * @example
  * ```tsx
- * // Custom rendering
- * <Combobox
- *   options={options}
- *   renderTrigger={({ inputValue, isOpen, placeholder }) => (
- *     <div>
- *       <input value={inputValue} placeholder={placeholder} />
- *       <ChevronDown />
- *     </div>
- *   )}
- *   renderItem={({ option, isSelected, isHighlighted }) => (
- *     <div style={{ fontWeight: isHighlighted ? 'bold' : 'normal' }}>
- *       {option.label} {isSelected && <Check />}
- *     </div>
- *   )}
+ * // Object values
+ * <Combobox<User>
+ *   options={users.map(u => ({ value: u, label: u.name }))}
+ *   getOptionValue={(u) => u.id}
+ *   onValueChange={setSelectedUser}
  * />
  * ```
  */
@@ -185,17 +167,6 @@ import {
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
-
-/**
- * Context provided to custom trigger renderer.
- */
-interface ComboboxTriggerRenderContext<T = string> {
-  disabled: boolean;
-  inputValue: string;
-  isOpen: boolean;
-  placeholder: string;
-  selectedItem: NormalizedItem<T> | null;
-}
 
 // -----------------------------------------------------------------------------
 // Combobox Props
@@ -224,14 +195,18 @@ interface ComboboxProps<T = string> extends Omit<
    */
   filterFn?: (option: NormalizedItem<T>, inputValue: string) => boolean;
   /**
+   * Function to extract a unique primitive key from option values.
+   * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
+   */
+  getOptionValue?: (option: T) => number | string;
+  /**
    * Controlled input value.
    */
   inputValue?: string;
-  /**
-   * Function to compare two values for equality.
-   * Required for object values where reference equality won't work.
-   */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
   /**
    * Callback when input text changes.
    */
@@ -249,14 +224,6 @@ interface ComboboxProps<T = string> extends Omit<
    * @default "Search..."
    */
   placeholder?: string;
-  /**
-   * Custom item renderer.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
-   * Custom trigger content renderer (wraps the input area).
-   */
-  renderTrigger?: (context: ComboboxTriggerRenderContext<T>) => ReactNode;
   /**
    * Controlled selected value.
    */
@@ -278,14 +245,12 @@ function ComboboxInner<T = string>(
     defaultValue,
     disabled = false,
     filterFn,
+    getOptionValue,
     inputValue: controlledInputValue,
-    isEqual = defaultIsEqual,
     onInputValueChange,
     onValueChange,
     options,
     placeholder = "Search...",
-    renderItem: customRenderItem,
-    renderTrigger: customRenderTrigger,
     value,
     variantName,
     ...rest
@@ -331,18 +296,36 @@ function ComboboxInner<T = string>(
   // Find controlled/initial selected item
   const controlledItem = useMemo(() => {
     if (value === undefined) return undefined;
-    return (
-      allSelectableItems.find((item) => isEqual(item.value, value)) ?? null
-    );
-  }, [allSelectableItems, value, isEqual]);
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(value);
+      return (
+        allSelectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
+    // Fallback to reference equality for primitives
+    return allSelectableItems.find((item) => item.value === value) ?? null;
+  }, [allSelectableItems, value, getOptionValue]);
 
   const initialItem = useMemo(() => {
     if (defaultValue === undefined) return null;
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(defaultValue);
+      return (
+        allSelectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
     return (
-      allSelectableItems.find((item) => isEqual(item.value, defaultValue)) ??
-      null
+      allSelectableItems.find((item) => item.value === defaultValue) ?? null
     );
-  }, [allSelectableItems, defaultValue, isEqual]);
+  }, [allSelectableItems, defaultValue, getOptionValue]);
 
   // Use Downshift useCombobox with filtered items
   const {
@@ -375,15 +358,6 @@ function ComboboxInner<T = string>(
     selectedItem: controlledItem,
   });
 
-  // Trigger render context
-  const triggerContext: ComboboxTriggerRenderContext<T> = {
-    disabled,
-    inputValue: currentInputValue,
-    isOpen,
-    placeholder,
-    selectedItem,
-  };
-
   return (
     <div
       {...rest}
@@ -395,26 +369,22 @@ function ComboboxInner<T = string>(
       ref={ref}
     >
       {/* Input area */}
-      {customRenderTrigger ? (
-        customRenderTrigger(triggerContext)
-      ) : (
-        <div data-ck="combobox-input-wrapper">
-          <input
-            {...getInputProps({ disabled, id: inputId })}
-            aria-disabled={disabled || undefined}
-            data-ck="combobox-input"
-            placeholder={placeholder}
-          />
-          <button
-            {...getToggleButtonProps({ disabled })}
-            aria-label="toggle menu"
-            data-ck="combobox-trigger"
-            data-state={isOpen ? "open" : "closed"}
-            tabIndex={-1}
-            type="button"
-          />
-        </div>
-      )}
+      <div data-ck="combobox-input-wrapper">
+        <input
+          {...getInputProps({ disabled, id: inputId })}
+          aria-disabled={disabled || undefined}
+          data-ck="combobox-input"
+          placeholder={placeholder}
+        />
+        <button
+          {...getToggleButtonProps({ disabled })}
+          aria-label="toggle menu"
+          data-ck="combobox-trigger"
+          data-state={isOpen ? "open" : "closed"}
+          tabIndex={-1}
+          type="button"
+        />
+      </div>
 
       {/* Dropdown content */}
       <div
@@ -456,42 +426,19 @@ function ComboboxInner<T = string>(
             // Item
             const { item, selectableIndex } = renderItem;
             const isSelected = selectedItem
-              ? isEqual(selectedItem.value, item.value)
+              ? getOptionValue
+                ? getOptionValue(selectedItem.value) ===
+                  getOptionValue(item.value)
+                : selectedItem.value === item.value
               : false;
             const isHighlighted = highlightedIndex === selectableIndex;
             const isDisabled = item.disabled ?? false;
-
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected,
-              option: item,
-            };
 
             const itemProps = getItemProps({
               disabled: isDisabled,
               index: selectableIndex,
               item,
             });
-
-            if (customRenderItem) {
-              return (
-                <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={isSelected}
-                  data-ck="combobox-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state={isSelected ? "checked" : "unchecked"}
-                  role="option"
-                >
-                  {customRenderItem(itemContext)}
-                </div>
-              );
-            }
 
             return (
               <div
@@ -522,4 +469,4 @@ const Combobox = forwardRef(ComboboxInner) as unknown as (<T = string>(
 
 Combobox.displayName = "Combobox";
 
-export { Combobox, type ComboboxProps, type ComboboxTriggerRenderContext };
+export { Combobox, type ComboboxProps };

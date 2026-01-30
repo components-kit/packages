@@ -58,21 +58,6 @@ import { Combobox } from '@components-kit/react';
   }
 />
 
-// Custom rendering
-<Combobox
-  options={options}
-  renderTrigger={({ inputValue, isOpen, placeholder }) => (
-    <div>
-      <input value={inputValue} placeholder={placeholder} />
-      <ChevronDown />
-    </div>
-  )}
-  renderItem={({ option, isSelected, isHighlighted }) => (
-    <div style={{ fontWeight: isHighlighted ? 'bold' : 'normal' }}>
-      {option.label} {isSelected && <Check />}
-    </div>
-  )}
-/>
 ```
 
 ## Props
@@ -89,10 +74,8 @@ import { Combobox } from '@components-kit/react';
 | `placeholder` | `string` | `"Search..."` | Placeholder text for the input |
 | `disabled` | `boolean` | `false` | Disables the combobox |
 | `variantName` | `string` | - | Variant name for styling |
-| `isEqual` | `(a: T, b: T) => boolean` | - | Custom equality function for object values |
+| `getOptionValue` | `(option: T) => string \| number` | - | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 | `filterFn` | `(option, inputValue) => boolean` | - | Custom filter function (default: case-insensitive includes) |
-| `renderTrigger` | `(context) => ReactNode` | - | Custom trigger renderer |
-| `renderItem` | `(context) => ReactNode` | - | Custom item renderer |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -154,7 +137,98 @@ Also accepts all standard `div` HTML attributes.
 
 - Provide a descriptive `aria-label` if no visible label
 - Use `filterFn` for custom matching (e.g., fuzzy search)
-- Use `isEqual` when working with object values
+- Use `getOptionValue` when working with object values
 - Use groups and separators to organize large option sets
-- Consider custom `renderItem` for rich option display
 - Disable options rather than hiding them when possible
+
+## Object Values
+
+When working with object values, use `getOptionValue` to extract a unique primitive key for proper selection comparison:
+
+```tsx
+import { Combobox } from '@components-kit/react';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const users: User[] = [
+  { id: 1, name: 'Alice Johnson', email: 'alice@example.com' },
+  { id: 2, name: 'Bob Smith', email: 'bob@example.com' },
+  { id: 3, name: 'Carol Williams', email: 'carol@example.com' },
+];
+
+function UserPicker() {
+  const [selectedUser, setSelectedUser] = useState<User | undefined>();
+
+  return (
+    <Combobox
+      options={users.map(user => ({
+        value: user,
+        label: `${user.name} (${user.email})`,
+      }))}
+      value={selectedUser}
+      onValueChange={setSelectedUser}
+      getOptionValue={(user) => user.id}
+      placeholder="Search users..."
+      filterFn={(option, inputValue) => {
+        const user = option.value;
+        return (
+          user.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+          user.email.toLowerCase().includes(inputValue.toLowerCase())
+        );
+      }}
+    />
+  );
+}
+```
+
+The `getOptionValue` function is essential for object values because:
+- It enables proper selection comparison without relying on reference equality
+- It provides a stable, unique identifier for each option
+- It works correctly with controlled and uncontrolled modes
+
+## CSS Customization
+
+Use data attributes to style the combobox component:
+
+```css
+/* Style the input wrapper */
+[data-ck="combobox-input-wrapper"] {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Style the input */
+[data-ck="combobox-input"] {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+/* Style the toggle button */
+[data-ck="combobox-trigger"]::after {
+  content: "▼";
+  transition: transform 0.2s;
+}
+
+[data-ck="combobox-trigger"][data-state="open"]::after {
+  transform: rotate(180deg);
+}
+
+/* Style highlighted items */
+[data-ck="combobox-item"][data-highlighted] {
+  background: var(--color-highlight);
+}
+
+/* Style selected items */
+[data-ck="combobox-item"][data-state="checked"]::before {
+  content: "✓";
+  margin-right: 8px;
+}
+```

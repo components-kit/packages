@@ -1,19 +1,11 @@
 "use client";
 
 import { useSelect } from "downshift";
-import { forwardRef, HTMLAttributes, ReactNode, useId, useMemo } from "react";
+import { forwardRef, HTMLAttributes, useId, useMemo } from "react";
 
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
+import type { NormalizedItem, SelectOption } from "../../types/select";
 
-import {
-  defaultIsEqual,
-  itemToString,
-  processOptions,
-} from "../../utils/select";
+import { itemToString, processOptions } from "../../utils/select";
 
 /**
  * A Select component with a simple props-based API.
@@ -29,8 +21,8 @@ import {
  * - Type-ahead character search
  * - Controlled and uncontrolled modes
  * - Support for string and object values
- * - Custom trigger and item rendering via render props
  * - Full accessibility (WAI-ARIA Listbox pattern)
+ * - CSS-based styling via data attributes
  *
  * @example
  * ```tsx
@@ -67,24 +59,10 @@ import {
  *
  * @example
  * ```tsx
- * // Custom rendering
- * <Select
- *   options={options}
- *   renderTrigger={({ selectedItem, placeholder }) => (
- *     <span>{selectedItem?.label || placeholder} <ChevronDown /></span>
- *   )}
- *   renderItem={({ option, isSelected }) => (
- *     <div>{option.label} {isSelected && <Check />}</div>
- *   )}
- * />
- * ```
- *
- * @example
- * ```tsx
  * // Object values
  * <Select<User>
  *   options={users.map(u => ({ value: u, label: u.name }))}
- *   isEqual={(a, b) => a?.id === b?.id}
+ *   getOptionValue={(u) => u.id}
  *   onValueChange={setSelectedUser}
  * />
  * ```
@@ -93,16 +71,6 @@ import {
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
-
-/**
- * Context provided to custom trigger renderer.
- */
-interface TriggerRenderContext<T = string> {
-  disabled: boolean;
-  isOpen: boolean;
-  placeholder: string;
-  selectedItem: NormalizedItem<T> | null;
-}
 
 // -----------------------------------------------------------------------------
 // Select Props
@@ -121,10 +89,14 @@ interface SelectProps<T = string> extends Omit<
    */
   disabled?: boolean;
   /**
-   * Function to compare two values for equality.
+   * Function to extract a unique primitive key from option values.
    * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
    */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
+  getOptionValue?: (option: T) => number | string;
   /**
    * Callback when selection changes.
    */
@@ -138,14 +110,6 @@ interface SelectProps<T = string> extends Omit<
    * @default "Select..."
    */
   placeholder?: string;
-  /**
-   * Custom item renderer.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
-   * Custom trigger content renderer.
-   */
-  renderTrigger?: (context: TriggerRenderContext<T>) => ReactNode;
   /**
    * Controlled value.
    */
@@ -168,12 +132,10 @@ function SelectInner<T = string>(
     className,
     defaultValue,
     disabled = false,
-    isEqual = defaultIsEqual,
+    getOptionValue,
     onValueChange,
     options,
     placeholder = "Select...",
-    renderItem: customRenderItem,
-    renderTrigger: customRenderTrigger,
     value,
     variantName,
     ...rest
@@ -192,15 +154,34 @@ function SelectInner<T = string>(
   // Find controlled/initial selected item
   const controlledItem = useMemo(() => {
     if (value === undefined) return undefined;
-    return selectableItems.find((item) => isEqual(item.value, value)) ?? null;
-  }, [selectableItems, value, isEqual]);
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(value);
+      return (
+        selectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
+    // Fallback to reference equality for primitives
+    return selectableItems.find((item) => item.value === value) ?? null;
+  }, [selectableItems, value, getOptionValue]);
 
   const initialItem = useMemo(() => {
     if (defaultValue === undefined) return null;
-    return (
-      selectableItems.find((item) => isEqual(item.value, defaultValue)) ?? null
-    );
-  }, [selectableItems, defaultValue, isEqual]);
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(defaultValue);
+      return (
+        selectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
+    return selectableItems.find((item) => item.value === defaultValue) ?? null;
+  }, [selectableItems, defaultValue, getOptionValue]);
 
   // Use Downshift for state management
   const {
@@ -223,24 +204,6 @@ function SelectInner<T = string>(
     selectedItem: controlledItem,
   });
 
-  // Trigger render context
-  const triggerContext: TriggerRenderContext<T> = {
-    disabled,
-    isOpen,
-    placeholder,
-    selectedItem,
-  };
-
-  // Default trigger content
-  const defaultTriggerContent = (
-    <span
-      data-ck="select-value"
-      data-placeholder={!selectedItem ? "" : undefined}
-    >
-      {selectedItem?.label ?? placeholder}
-    </span>
-  );
-
   return (
     <div
       {...rest}
@@ -261,9 +224,12 @@ function SelectInner<T = string>(
         data-state={isOpen ? "open" : "closed"}
         type="button"
       >
-        {customRenderTrigger
-          ? customRenderTrigger(triggerContext)
-          : defaultTriggerContent}
+        <span
+          data-ck="select-value"
+          data-placeholder={!selectedItem ? "" : undefined}
+        >
+          {selectedItem?.label ?? placeholder}
+        </span>
       </button>
 
       {/* Content */}
@@ -300,42 +266,19 @@ function SelectInner<T = string>(
             // Item
             const { item, selectableIndex } = renderItem;
             const isSelected = selectedItem
-              ? isEqual(selectedItem.value, item.value)
+              ? getOptionValue
+                ? getOptionValue(selectedItem.value) ===
+                  getOptionValue(item.value)
+                : selectedItem.value === item.value
               : false;
             const isHighlighted = highlightedIndex === selectableIndex;
             const isDisabled = item.disabled ?? false;
-
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected,
-              option: item,
-            };
 
             const itemProps = getItemProps({
               disabled: isDisabled,
               index: selectableIndex,
               item,
             });
-
-            if (customRenderItem) {
-              return (
-                <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={isSelected}
-                  data-ck="select-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state={isSelected ? "checked" : "unchecked"}
-                  role="option"
-                >
-                  {customRenderItem(itemContext)}
-                </div>
-              );
-            }
 
             return (
               <div
@@ -366,4 +309,4 @@ const Select = forwardRef(SelectInner) as unknown as (<T = string>(
 
 Select.displayName = "Select";
 
-export { Select, type SelectProps, type TriggerRenderContext };
+export { Select, type SelectProps };

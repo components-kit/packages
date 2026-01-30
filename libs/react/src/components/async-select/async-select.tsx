@@ -13,17 +13,9 @@ import {
   useState,
 } from "react";
 
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
+import type { NormalizedItem, SelectOption } from "../../types/select";
 
-import {
-  defaultIsEqual,
-  itemToString,
-  processOptions,
-} from "../../utils/select";
+import { itemToString, processOptions } from "../../utils/select";
 
 /**
  * An async select component with debounced search, loading states, and keyboard navigation.
@@ -42,9 +34,9 @@ import {
  * - Pre-loaded options via `initialOptions`
  * - Controlled (`value` + `onValueChange`) and uncontrolled (`defaultValue`) modes
  * - Support for string and object values via generic `<T>`
- * - Custom item rendering via render props
  * - Option groups, separators, and disabled items
  * - Full accessibility (WAI-ARIA Combobox pattern with live regions)
+ * - CSS-based styling via data attributes
  *
  * @remarks
  * This component features:
@@ -86,7 +78,7 @@ import {
  * - Enable `cacheResults` for repeated searches (e.g., user backspacing)
  * - Provide meaningful `loadingContent`, `emptyContent`, and `errorContent`
  * - Use `initialOptions` for common/suggested items before first search
- * - Use `isEqual` when working with object values
+ * - Use `getOptionValue` when working with object values
  *
  * @param {(query: string) => Promise<SelectOption<T>[]>} onSearch - Async search function. Required. Called with the current query string after debounce.
  * @param {T} [value] - Controlled selected value.
@@ -95,8 +87,7 @@ import {
  * @param {string} [placeholder="Search..."] - Placeholder text in the input.
  * @param {boolean} [disabled=false] - Whether the async select is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
- * @param {(a: T, b: T) => boolean} [isEqual] - Custom equality function for object values.
- * @param {(context: ItemRenderContext<T>) => ReactNode} [renderItem] - Custom item renderer.
+ * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {number} [debounceMs=300] - Debounce delay in milliseconds before triggering search.
  * @param {number} [minSearchLength=1] - Minimum characters required before triggering search.
  * @param {SelectOption<T>[]} [initialOptions] - Pre-loaded options shown before the first search.
@@ -163,24 +154,13 @@ import {
  * />
  *
  * @example
- * // Custom item rendering
- * <AsyncSelect
- *   onSearch={searchUsers}
- *   renderItem={({ option, isSelected, isHighlighted }) => (
- *     <div style={{ fontWeight: isSelected ? 'bold' : 'normal' }}>
- *       {option.label} {isSelected && <Check />}
- *     </div>
- *   )}
- * />
- *
- * @example
- * // Object values with isEqual
+ * // Object values
  * <AsyncSelect<User>
  *   onSearch={async (query) => {
  *     const users = await fetchUsers(query);
  *     return users.map(u => ({ value: u, label: u.name }));
  *   }}
- *   isEqual={(a, b) => a?.id === b?.id}
+ *   getOptionValue={(u) => u.id}
  *   onValueChange={setSelectedUser}
  * />
  */
@@ -222,14 +202,18 @@ interface AsyncSelectProps<T = string> extends Omit<
    */
   errorContent?: ReactNode;
   /**
+   * Function to extract a unique primitive key from option values.
+   * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
+   */
+  getOptionValue?: (option: T) => number | string;
+  /**
    * Pre-loaded options shown before the first search.
    */
   initialOptions?: SelectOption<T>[];
-  /**
-   * Function to compare two values for equality.
-   * Required for object values where reference equality won't work.
-   */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
   /**
    * Custom content to display while loading.
    * @default "Loading..."
@@ -255,10 +239,6 @@ interface AsyncSelectProps<T = string> extends Omit<
    */
   placeholder?: string;
   /**
-   * Custom item renderer.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
    * Controlled selected value.
    */
   value?: T;
@@ -281,14 +261,13 @@ function AsyncSelectInner<T = string>(
     disabled = false,
     emptyContent = "No results found",
     errorContent = "An error occurred",
+    getOptionValue,
     initialOptions,
-    isEqual = defaultIsEqual,
     loadingContent = "Loading...",
     minSearchLength = 1,
     onSearch,
     onValueChange,
     placeholder = "Search...",
-    renderItem: customRenderItem,
     value,
     variantName,
     ...rest
@@ -376,15 +355,34 @@ function AsyncSelectInner<T = string>(
   // Find controlled/initial selected item
   const controlledItem = useMemo(() => {
     if (value === undefined) return undefined;
-    return selectableItems.find((item) => isEqual(item.value, value)) ?? null;
-  }, [selectableItems, value, isEqual]);
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(value);
+      return (
+        selectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
+    // Fallback to reference equality for primitives
+    return selectableItems.find((item) => item.value === value) ?? null;
+  }, [selectableItems, value, getOptionValue]);
 
   const initialItem = useMemo(() => {
     if (defaultValue === undefined) return null;
-    return (
-      selectableItems.find((item) => isEqual(item.value, defaultValue)) ?? null
-    );
-  }, [selectableItems, defaultValue, isEqual]);
+
+    if (getOptionValue) {
+      const valueKey = getOptionValue(defaultValue);
+      return (
+        selectableItems.find(
+          (item) => getOptionValue(item.value) === valueKey,
+        ) ?? null
+      );
+    }
+
+    return selectableItems.find((item) => item.value === defaultValue) ?? null;
+  }, [selectableItems, defaultValue, getOptionValue]);
 
   // Use Downshift useCombobox
   const {
@@ -508,42 +506,19 @@ function AsyncSelectInner<T = string>(
             // Item
             const { item, selectableIndex } = renderItem;
             const isSelected = selectedItem
-              ? isEqual(selectedItem.value, item.value)
+              ? getOptionValue
+                ? getOptionValue(selectedItem.value) ===
+                  getOptionValue(item.value)
+                : selectedItem.value === item.value
               : false;
             const isHighlighted = highlightedIndex === selectableIndex;
             const isDisabled = item.disabled ?? false;
-
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected,
-              option: item,
-            };
 
             const itemProps = getItemProps({
               disabled: isDisabled,
               index: selectableIndex,
               item,
             });
-
-            if (customRenderItem) {
-              return (
-                <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={isSelected}
-                  data-ck="async-select-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state={isSelected ? "checked" : "unchecked"}
-                  role="option"
-                >
-                  {customRenderItem(itemContext)}
-                </div>
-              );
-            }
 
             return (
               <div

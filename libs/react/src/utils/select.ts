@@ -20,7 +20,9 @@ function normalizeStringOption(option: string): NormalizedItem<string> {
 /**
  * Normalizes a labeled option to NormalizedItem format.
  */
-function normalizeLabeledOption<T>(option: LabeledOption<T>): NormalizedItem<T> {
+function normalizeLabeledOption<T>(
+  option: LabeledOption<T>,
+): NormalizedItem<T> {
   return {
     disabled: option.disabled ?? false,
     label: option.label ?? String(option.value),
@@ -96,17 +98,6 @@ function processOptions<T>(options: SelectOption<T>[]): {
   }
 
   return { renderItems, selectableItems };
-}
-
-/**
- * Default equality check for values.
- */
-function defaultIsEqual<T>(a: T | undefined, b: T | undefined): boolean {
-  if (a === b) return true;
-  if (a === undefined || b === undefined) return false;
-  if (typeof a === "string" || typeof b === "string") return a === b;
-  // For objects, use JSON comparison
-  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 /**
@@ -223,7 +214,6 @@ function filterRenderItems<T>(
 }
 
 export {
-  defaultIsEqual,
   filterRenderItems,
   itemToString,
   normalizeLabeledOption,

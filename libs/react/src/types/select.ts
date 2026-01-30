@@ -54,20 +54,8 @@ type RenderItem<T = string> =
   | { item: NormalizedItem<T>; selectableIndex: number; type: "item" }
   | { type: "separator" };
 
-/**
- * Context provided to custom item renderer.
- */
-interface ItemRenderContext<T = string> {
-  index: number;
-  isDisabled: boolean;
-  isHighlighted: boolean;
-  isSelected: boolean;
-  option: NormalizedItem<T>;
-}
-
 export {
   type GroupOption,
-  type ItemRenderContext,
   type LabeledOption,
   type NormalizedItem,
   type RenderItem,

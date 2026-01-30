@@ -610,130 +610,76 @@ describe("MultiSelect Component", () => {
     });
   });
 
-  describe("Object Values", () => {
-    interface User {
-      id: number;
-      name: string;
-    }
-
-    const users: User[] = [
-      { id: 1, name: "Alice" },
-      { id: 2, name: "Bob" },
-      { id: 3, name: "Charlie" },
-    ];
-
-    it("supports object values with isEqual", async () => {
-      const onValueChange = vi.fn();
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
       const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+        { id: 3, name: "Charlie" },
+      ];
 
-      render(
-        <MultiSelect<User>
-          isEqual={(a, b) => a?.id === b?.id}
-          options={users.map((u) => ({ label: u.name, value: u }))}
-          onValueChange={onValueChange}
-        />,
-      );
-
-      await user.click(screen.getByRole("combobox"));
-      await user.click(screen.getByRole("option", { name: "Alice" }));
-
-      expect(onValueChange).toHaveBeenCalledWith([users[0]]);
-    });
-
-    it("displays tags for controlled object values", () => {
-      const { container } = render(
-        <MultiSelect<User>
-          isEqual={(a, b) => a?.id === b?.id}
-          options={users.map((u) => ({ label: u.name, value: u }))}
-          value={[users[0], users[2]]}
-        />,
-      );
-
-      const tags = container.querySelectorAll('[data-ck="multi-select-tag"]');
-      expect(tags).toHaveLength(2);
-      expect(tags[0]).toHaveTextContent("Alice");
-      expect(tags[1]).toHaveTextContent("Charlie");
-    });
-  });
-
-  describe("Custom Rendering", () => {
-    it("supports custom tag rendering via renderTag", () => {
-      const { container } = render(
-        <MultiSelect
-          defaultValue={["apple", "banana"]}
-          options={["apple", "banana", "cherry"]}
-          renderTag={({ item, removeItem }) => (
-            <span data-testid={`custom-tag-${item.value}`}>
-              {item.label} <button onClick={removeItem}>x</button>
-            </span>
-          )}
-        />,
-      );
-
-      expect(screen.getByTestId("custom-tag-apple")).toHaveTextContent("apple");
-      expect(screen.getByTestId("custom-tag-banana")).toHaveTextContent(
-        "banana",
-      );
-
-      // Tags should still have data-ck attribute on the wrapper
-      const tags = container.querySelectorAll('[data-ck="multi-select-tag"]');
-      expect(tags).toHaveLength(2);
-    });
-
-    it("passes correct context to renderTag", () => {
-      const renderTag = vi.fn(({ index, isActive, item }) => (
-        <span data-testid={`tag-${index}`}>
-          {item.label} {isActive ? "active" : "inactive"}
-        </span>
-      ));
+      const handleChange = vi.fn();
 
       render(
         <MultiSelect
-          defaultValue={["apple", "banana"]}
-          options={["apple", "banana", "cherry"]}
-          renderTag={renderTag}
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          onValueChange={handleChange}
         />,
       );
 
-      expect(renderTag).toHaveBeenCalledTimes(2);
+      const input = screen.getByRole("combobox");
+      await user.type(input, "Bob");
 
-      // Check first call context
-      expect(renderTag.mock.calls[0][0]).toMatchObject({
-        index: 0,
-        isActive: false,
-        item: { label: "apple", value: "apple" },
-      });
-      expect(typeof renderTag.mock.calls[0][0].removeItem).toBe("function");
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
 
-      // Check second call context
-      expect(renderTag.mock.calls[1][0]).toMatchObject({
-        index: 1,
-        isActive: false,
-        item: { label: "banana", value: "banana" },
-      });
+      expect(handleChange).toHaveBeenCalledWith([users[1]]);
     });
 
-    it("supports custom item rendering via renderItem", async () => {
+    it("correctly identifies selected items with getOptionValue", () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+        { id: 3, name: "Charlie" },
+      ];
+
+      const selectedUsers = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      render(
+        <MultiSelect
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          value={selectedUsers}
+        />,
+      );
+
+      expect(screen.getByText("Alice")).toBeInTheDocument();
+      expect(screen.getByText("Bob")).toBeInTheDocument();
+    });
+
+    it("works without getOptionValue for primitives", async () => {
       const user = userEvent.setup();
+      const handleChange = vi.fn();
+
       render(
         <MultiSelect
-          options={[
-            { label: "Apple", value: "apple" },
-            { label: "Banana", value: "banana" },
-          ]}
-          renderItem={({ isHighlighted, option }) => (
-            <span data-testid={`item-${option.value}`}>
-              {option.label}
-              {isHighlighted && " highlighted"}
-            </span>
-          )}
+          options={["apple", "banana", "cherry"]}
+          onValueChange={handleChange}
         />,
       );
 
-      await user.click(screen.getByRole("combobox"));
+      const input = screen.getByRole("combobox");
+      await user.type(input, "apple");
 
-      expect(screen.getByTestId("item-apple")).toHaveTextContent("Apple");
-      expect(screen.getByTestId("item-banana")).toHaveTextContent("Banana");
+      const appleOption = screen.getByRole("option", { name: "apple" });
+      await user.click(appleOption);
+
+      expect(handleChange).toHaveBeenCalledWith(["apple"]);
     });
   });
 

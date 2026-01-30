@@ -497,13 +497,13 @@ describe("Combobox Component", () => {
       { id: 2, name: "Bob" },
     ];
 
-    it("supports object values with isEqual", async () => {
+    it("supports object values with getOptionValue", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
 
       render(
         <Combobox<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           onValueChange={onValueChange}
         />,
@@ -519,7 +519,7 @@ describe("Combobox Component", () => {
       const user = userEvent.setup();
       render(
         <Combobox<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           value={users[1]}
         />,
@@ -533,63 +533,58 @@ describe("Combobox Component", () => {
     });
   });
 
-  describe("Custom Rendering", () => {
-    it("supports custom trigger rendering via renderTrigger", () => {
-      render(
-        <Combobox
-          options={["apple", "banana"]}
-          placeholder="Search here"
-          renderTrigger={({ inputValue, placeholder }) => (
-            <span data-testid="custom-trigger">
-              {inputValue || placeholder}
-            </span>
-          )}
-        />,
-      );
-
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("Search here");
-    });
-
-    it("passes correct context to renderTrigger", async () => {
-      render(
-        <Combobox
-          options={[{ label: "Apple", value: "apple" }]}
-          placeholder="Search..."
-          renderTrigger={({ isOpen, selectedItem }) => (
-            <span data-testid="custom-trigger">
-              {selectedItem?.label || "None"} - {isOpen ? "Open" : "Closed"}
-            </span>
-          )}
-        />,
-      );
-
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("None - Closed");
-    });
-
-    it("supports custom item rendering via renderItem", async () => {
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
       const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const handleChange = vi.fn();
+
       render(
         <Combobox
-          options={[
-            { label: "Apple", value: "apple" },
-            { label: "Banana", value: "banana" },
-          ]}
-          renderItem={({ isSelected, option }) => (
-            <span data-testid={`item-${option.value}`}>
-              {option.label}
-              {isSelected && " ✓"}
-            </span>
-          )}
-          value="apple"
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          onValueChange={handleChange}
         />,
       );
 
-      await user.click(screen.getByRole("combobox"));
+      const input = screen.getByRole("combobox");
+      await user.type(input, "Bob");
 
-      const appleItem = screen.getByTestId("item-apple");
-      expect(appleItem).toHaveTextContent("Apple ✓");
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
+
+      expect(handleChange).toHaveBeenCalledWith(users[1]);
+    });
+
+    it("correctly identifies selected item with getOptionValue", () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const selectedUser = { id: 1, name: "Alice" };
+
+      render(
+        <Combobox
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          value={selectedUser}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("Alice");
+    });
+
+    it("works without getOptionValue for primitives", () => {
+      render(<Combobox options={["apple", "banana"]} value="apple" />);
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("apple");
     });
   });
 

@@ -1436,4 +1436,90 @@ describe("AsyncSelect Component", () => {
       expect(true).toBe(true);
     });
   });
+
+  // =========================================================================
+  // getOptionValue
+  // =========================================================================
+
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
+      const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const handleChange = vi.fn();
+      const handleSearch = vi
+        .fn()
+        .mockResolvedValue(users.map((u) => ({ label: u.name, value: u })));
+
+      render(
+        <AsyncSelect
+          getOptionValue={(u) => u.id}
+          onSearch={handleSearch}
+          onValueChange={handleChange}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      await user.type(input, "Bob");
+
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "Bob" })).toBeInTheDocument();
+      });
+
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
+
+      expect(handleChange).toHaveBeenCalledWith(users[1]);
+    });
+
+    it("correctly identifies selected item with getOptionValue", async () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const selectedUser = { id: 1, name: "Alice" };
+      const handleSearch = vi
+        .fn()
+        .mockResolvedValue(users.map((u) => ({ label: u.name, value: u })));
+
+      render(
+        <AsyncSelect
+          getOptionValue={(u) => u.id}
+          value={selectedUser}
+          onSearch={handleSearch}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("");
+    });
+
+    it("works without getOptionValue for primitives", async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+      const handleSearch = vi.fn().mockResolvedValue(["apple", "banana"]);
+
+      render(
+        <AsyncSelect onSearch={handleSearch} onValueChange={handleChange} />,
+      );
+
+      const input = screen.getByRole("combobox");
+      await user.type(input, "apple");
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("option", { name: "apple" }),
+        ).toBeInTheDocument();
+      });
+
+      const appleOption = screen.getByRole("option", { name: "apple" });
+      await user.click(appleOption);
+
+      expect(handleChange).toHaveBeenCalledWith("apple");
+    });
+  });
 });

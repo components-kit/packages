@@ -4,21 +4,15 @@ import { useCombobox, useMultipleSelection } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
-  ReactNode,
   useCallback,
   useId,
   useMemo,
   useState,
 } from "react";
 
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
+import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import {
-  defaultIsEqual,
   filterRenderItems,
   itemToString,
   processOptions,
@@ -40,9 +34,9 @@ import {
  * - Controlled (`value` + `onValueChange`) and uncontrolled (`defaultValue`) modes
  * - Maximum selection limit via `maxSelected`
  * - Support for string and object values via generic `<T>`
- * - Custom tag and item rendering via render props
  * - Option groups, separators, and disabled items
  * - Full accessibility (WAI-ARIA Combobox with multiselectable Listbox pattern)
+ * - CSS-based styling via data attributes
  *
  * @remarks
  * - Built on Downshift's `useMultipleSelection` + `useCombobox` hooks
@@ -84,8 +78,7 @@ import {
  *
  * - Set `maxSelected` to prevent overwhelming selections
  * - Provide a descriptive `aria-label` if no visible label
- * - Use `renderTag` for custom chip appearance
- * - Use `isEqual` when working with object values
+ * - Use `getOptionValue` when working with object values
  * - Consider providing visible count of selections
  *
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
@@ -95,11 +88,9 @@ import {
  * @param {string} [placeholder="Search..."] - Placeholder text shown when no items selected.
  * @param {boolean} [disabled=false] - Whether the multi-select is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
- * @param {(a: T, b: T) => boolean} [isEqual] - Custom equality function for object values.
+ * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes.
  * @param {number} [maxSelected] - Maximum number of items that can be selected.
- * @param {(context: ItemRenderContext<T>) => ReactNode} [renderItem] - Custom dropdown item renderer.
- * @param {(context: TagRenderContext<T>) => ReactNode} [renderTag] - Custom tag/chip renderer.
  *
  * @example
  * ```tsx
@@ -158,36 +149,10 @@ import {
  *
  * @example
  * ```tsx
- * // Custom tag rendering
- * <MultiSelect
- *   options={['apple', 'banana', 'cherry']}
- *   renderTag={({ item, removeItem }) => (
- *     <span className="custom-tag">
- *       {item.label} <button onClick={removeItem}>x</button>
- *     </span>
- *   )}
- * />
- * ```
- *
- * @example
- * ```tsx
- * // Custom item rendering
- * <MultiSelect
- *   options={['apple', 'banana', 'cherry']}
- *   renderItem={({ option, isHighlighted }) => (
- *     <div style={{ fontWeight: isHighlighted ? 'bold' : 'normal' }}>
- *       {option.label}
- *     </div>
- *   )}
- * />
- * ```
- *
- * @example
- * ```tsx
- * // Object values with isEqual
+ * // Object values
  * <MultiSelect<User>
  *   options={users.map(u => ({ value: u, label: u.name }))}
- *   isEqual={(a, b) => a?.id === b?.id}
+ *   getOptionValue={(u) => u.id}
  *   onValueChange={setSelectedUsers}
  * />
  * ```
@@ -196,16 +161,6 @@ import {
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
-
-/**
- * Context provided to custom tag/chip renderer.
- */
-interface TagRenderContext<T = string> {
-  index: number;
-  isActive: boolean;
-  item: NormalizedItem<T>;
-  removeItem: () => void;
-}
 
 // -----------------------------------------------------------------------------
 // MultiSelect Props
@@ -230,10 +185,14 @@ interface MultiSelectProps<T = string> extends Omit<
    */
   filterFn?: (option: NormalizedItem<T>, inputValue: string) => boolean;
   /**
-   * Function to compare two values for equality.
+   * Function to extract a unique primitive key from option values.
    * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
    */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
+  getOptionValue?: (option: T) => number | string;
   /**
    * Maximum number of items that can be selected.
    */
@@ -251,14 +210,6 @@ interface MultiSelectProps<T = string> extends Omit<
    * @default "Search..."
    */
   placeholder?: string;
-  /**
-   * Custom item renderer for dropdown items.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
-   * Custom tag/chip renderer.
-   */
-  renderTag?: (context: TagRenderContext<T>) => ReactNode;
   /**
    * Controlled selected values.
    */
@@ -279,13 +230,11 @@ function MultiSelectInner<T = string>(
     defaultValue,
     disabled = false,
     filterFn,
-    isEqual = defaultIsEqual,
+    getOptionValue,
     maxSelected,
     onValueChange,
     options,
     placeholder = "Search...",
-    renderItem: customRenderItem,
-    renderTag: customRenderTag,
     value,
     variantName,
     ...rest
@@ -313,18 +262,42 @@ function MultiSelectInner<T = string>(
   // Resolve initial selected items from defaultValue
   const initialSelectedItems = useMemo(() => {
     if (!defaultValue) return [];
+
+    if (getOptionValue) {
+      return defaultValue
+        .map((val) => {
+          const valueKey = getOptionValue(val);
+          return allSelectableItems.find(
+            (item) => getOptionValue(item.value) === valueKey,
+          );
+        })
+        .filter((item): item is NormalizedItem<T> => item !== undefined);
+    }
+
     return defaultValue
-      .map((val) => allSelectableItems.find((item) => isEqual(item.value, val)))
+      .map((val) => allSelectableItems.find((item) => item.value === val))
       .filter((item): item is NormalizedItem<T> => item !== undefined);
-  }, [allSelectableItems, defaultValue, isEqual]);
+  }, [allSelectableItems, defaultValue, getOptionValue]);
 
   // Resolve controlled selected items from value
   const controlledSelectedItems = useMemo(() => {
     if (value === undefined) return undefined;
+
+    if (getOptionValue) {
+      return value
+        .map((val) => {
+          const valueKey = getOptionValue(val);
+          return allSelectableItems.find(
+            (item) => getOptionValue(item.value) === valueKey,
+          );
+        })
+        .filter((item): item is NormalizedItem<T> => item !== undefined);
+    }
+
     return value
-      .map((val) => allSelectableItems.find((item) => isEqual(item.value, val)))
+      .map((val) => allSelectableItems.find((item) => item.value === val))
       .filter((item): item is NormalizedItem<T> => item !== undefined);
-  }, [allSelectableItems, value, isEqual]);
+  }, [allSelectableItems, value, getOptionValue]);
 
   // useMultipleSelection for tag management
   const {
@@ -352,8 +325,15 @@ function MultiSelectInner<T = string>(
 
   // Filter: exclude already-selected items, then apply text filter
   const { filteredRenderItems, filteredSelectableItems } = useMemo(() => {
-    const isItemSelected = (item: NormalizedItem<T>) =>
-      selectedItems.some((sel) => isEqual(sel.value, item.value));
+    const isItemSelected = (item: NormalizedItem<T>) => {
+      if (getOptionValue) {
+        const itemKey = getOptionValue(item.value);
+        return selectedItems.some(
+          (sel) => getOptionValue(sel.value) === itemKey,
+        );
+      }
+      return selectedItems.some((sel) => sel.value === item.value);
+    };
 
     return filterRenderItems(
       allRenderItems,
@@ -364,9 +344,9 @@ function MultiSelectInner<T = string>(
     allRenderItems,
     allSelectableItems,
     effectiveFilter,
+    getOptionValue,
     inputValue,
     selectedItems,
-    isEqual,
   ]);
 
   // useCombobox for input + dropdown
@@ -441,28 +421,17 @@ function MultiSelectInner<T = string>(
             data-active={activeIndex === index || undefined}
             data-ck="multi-select-tag"
           >
-            {customRenderTag ? (
-              customRenderTag({
-                index,
-                isActive: activeIndex === index,
-                item: selectedItem,
-                removeItem: () => removeSelectedItem(selectedItem),
-              })
-            ) : (
-              <>
-                <span>{selectedItem.label}</span>
-                <button
-                  aria-label={`Remove ${selectedItem.label}`}
-                  data-ck="multi-select-tag-remove"
-                  disabled={disabled}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeSelectedItem(selectedItem);
-                  }}
-                />
-              </>
-            )}
+            <span>{selectedItem.label}</span>
+            <button
+              aria-label={`Remove ${selectedItem.label}`}
+              data-ck="multi-select-tag-remove"
+              disabled={disabled}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                removeSelectedItem(selectedItem);
+              }}
+            />
           </span>
         ))}
         <input
@@ -529,37 +498,11 @@ function MultiSelectInner<T = string>(
             const isHighlighted = highlightedIndex === selectableIndex;
             const isDisabled = item.disabled ?? false;
 
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected: false, // Items in dropdown are always unselected (selected ones are removed)
-              option: item,
-            };
-
             const itemProps = getItemProps({
               disabled: isDisabled,
               index: selectableIndex,
               item,
             });
-
-            if (customRenderItem) {
-              return (
-                <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={false}
-                  data-ck="multi-select-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state="unchecked"
-                  role="option"
-                >
-                  {customRenderItem(itemContext)}
-                </div>
-              );
-            }
 
             return (
               <div
@@ -590,4 +533,4 @@ const MultiSelect = forwardRef(MultiSelectInner) as unknown as (<T = string>(
 
 MultiSelect.displayName = "MultiSelect";
 
-export { MultiSelect, type MultiSelectProps, type TagRenderContext };
+export { MultiSelect, type MultiSelectProps };
