@@ -22,12 +22,15 @@ Each component has its own detailed README in `src/components/<name>/README.md`:
 | Component | README |
 |-----------|--------|
 | Alert | [README](src/components/alert/README.md) |
+| AsyncSelect | [README](src/components/async-select/README.md) |
 | Badge | [README](src/components/badge/README.md) |
 | Button | [README](src/components/button/README.md) |
 | Checkbox | [README](src/components/checkbox/README.md) |
+| Combobox | [README](src/components/combobox/README.md) |
 | Heading | [README](src/components/heading/README.md) |
 | Icon | [README](src/components/icon/README.md) |
 | Input | [README](src/components/input/README.md) |
+| MultiSelect | [README](src/components/multi-select/README.md) |
 | Pagination | [README](src/components/pagination/README.md) |
 | Progress | [README](src/components/progress/README.md) |
 | RadioGroup | [README](src/components/radio-group/README.md) |

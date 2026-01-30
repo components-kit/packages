@@ -9,12 +9,11 @@ import {
 /**
  * Type for the render function passed to polymorphicForwardRef.
  */
-type PolymorphicRenderFn<
-  DefaultElement extends ElementType,
-  OwnProps
-> = <C extends ElementType = DefaultElement>(
+type PolymorphicRenderFn<DefaultElement extends ElementType, OwnProps> = <
+  C extends ElementType = DefaultElement,
+>(
   props: PolymorphicComponentProps<C, OwnProps>,
-  ref?: PolymorphicRef<C>
+  ref?: PolymorphicRef<C>,
 ) => ReactElement | null;
 
 /**
@@ -22,9 +21,9 @@ type PolymorphicRenderFn<
  */
 type PolymorphicForwardRefComponent<
   DefaultElement extends ElementType,
-  OwnProps
+  OwnProps,
 > = <C extends ElementType = DefaultElement>(
-  props: PolymorphicComponentPropsWithRef<C, OwnProps>
+  props: PolymorphicComponentPropsWithRef<C, OwnProps>,
 ) => ReactElement | null;
 
 /**
@@ -32,7 +31,7 @@ type PolymorphicForwardRefComponent<
  */
 type ForwardRefRenderFn = (
   props: Record<string, unknown>,
-  ref: Ref<unknown>
+  ref: Ref<unknown>,
 ) => ReactElement | null;
 
 /**
@@ -66,9 +65,9 @@ type ForwardRefRenderFn = (
  */
 export const polymorphicForwardRef = <
   DefaultElement extends ElementType,
-  OwnProps = Record<string, never>
+  OwnProps = Record<string, never>,
 >(
-  render: PolymorphicRenderFn<DefaultElement, OwnProps>
+  render: PolymorphicRenderFn<DefaultElement, OwnProps>,
 ): PolymorphicForwardRefComponent<DefaultElement, OwnProps> & {
   displayName?: string;
 } => {

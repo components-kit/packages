@@ -1,12 +1,15 @@
 import {
   Alert,
+  AsyncSelect,
   Badge,
   Button,
   Checkbox,
   type ColumnDef,
+  Combobox,
   Heading,
   Icon,
   Input,
+  MultiSelect,
   Pagination,
   Progress,
   RadioGroup,
@@ -23,7 +26,7 @@ import {
   toast,
 } from "@components-kit/react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 // Sample data for Table
 interface User {
@@ -76,11 +79,35 @@ function HomePage() {
   const [sliderValue, setSliderValue] = useState(50);
   const [paginationPage, setPaginationPage] = useState(1);
   const [cursorPage, setCursorPage] = useState(1);
+  const [comboboxValue, setComboboxValue] = useState<string>();
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>([]);
+  const [asyncSelectValue, setAsyncSelectValue] = useState<string>();
+
+  // Mock async search for AsyncSelect demo
+  const mockSearch = useCallback(
+    async (query: string): Promise<{ label: string; value: string }[]> => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const allFruits = [
+        { label: "Apple", value: "apple" },
+        { label: "Banana", value: "banana" },
+        { label: "Cherry", value: "cherry" },
+        { label: "Date", value: "date" },
+        { label: "Elderberry", value: "elderberry" },
+        { label: "Fig", value: "fig" },
+        { label: "Grape", value: "grape" },
+        { label: "Honeydew", value: "honeydew" },
+      ];
+      return allFruits.filter((f) =>
+        f.label.toLowerCase().includes(query.toLowerCase()),
+      );
+    },
+    [],
+  );
 
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 20 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 23 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -337,9 +364,153 @@ function HomePage() {
         <p>Selected: {selectValue ?? "none"}</p>
       </section>
 
-      {/* 11. Separator */}
+      {/* 11. Combobox */}
       <section>
-        <h2>11. Separator</h2>
+        <h2>11. Combobox</h2>
+        <h3>Basic</h3>
+        <Combobox
+          options={["Apple", "Banana", "Cherry", "Date", "Elderberry"]}
+          placeholder="Search fruits..."
+          value={comboboxValue}
+          variantName="default"
+          onValueChange={setComboboxValue}
+        />
+        <p>Selected: {comboboxValue ?? "none"}</p>
+        <h3>With Labeled Options</h3>
+        <Combobox
+          options={[
+            { label: "United States", value: "us" },
+            { label: "United Kingdom", value: "uk" },
+            { label: "Canada", value: "ca" },
+            { label: "Australia", value: "au" },
+            { label: "Germany", value: "de" },
+          ]}
+          placeholder="Search countries..."
+          variantName="default"
+        />
+        <h3>Grouped</h3>
+        <Combobox
+          options={[
+            {
+              label: "Fruits",
+              options: ["Apple", "Banana", "Cherry"],
+              type: "group",
+            },
+            {
+              label: "Vegetables",
+              options: ["Carrot", "Broccoli", "Spinach"],
+              type: "group",
+            },
+          ]}
+          placeholder="Search food..."
+          variantName="default"
+        />
+        <h3>Disabled</h3>
+        <Combobox
+          disabled
+          options={["Apple", "Banana"]}
+          placeholder="Disabled"
+          variantName="default"
+        />
+      </section>
+
+      {/* 12. MultiSelect */}
+      <section>
+        <h2>12. MultiSelect</h2>
+        <h3>Basic</h3>
+        <MultiSelect
+          options={["React", "Vue", "Angular", "Svelte", "Solid"]}
+          placeholder="Select frameworks..."
+          value={multiSelectValue}
+          variantName="default"
+          onValueChange={setMultiSelectValue}
+        />
+        <p>
+          Selected:{" "}
+          {multiSelectValue.length > 0 ? multiSelectValue.join(", ") : "none"}
+        </p>
+        <h3>With Max Selection</h3>
+        <MultiSelect
+          maxSelected={3}
+          options={["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]}
+          placeholder="Pick up to 3 colors..."
+          variantName="default"
+        />
+        <h3>Grouped</h3>
+        <MultiSelect
+          options={[
+            {
+              label: "Frontend",
+              options: ["React", "Vue", "Angular"],
+              type: "group",
+            },
+            {
+              label: "Backend",
+              options: ["Node.js", "Python", "Go"],
+              type: "group",
+            },
+          ]}
+          placeholder="Select technologies..."
+          variantName="default"
+        />
+        <h3>Disabled</h3>
+        <MultiSelect
+          disabled
+          options={["React", "Vue"]}
+          placeholder="Disabled"
+          variantName="default"
+        />
+      </section>
+
+      {/* 13. AsyncSelect */}
+      <section>
+        <h2>13. AsyncSelect</h2>
+        <h3>Basic Search</h3>
+        <AsyncSelect
+          placeholder="Search fruits..."
+          value={asyncSelectValue}
+          variantName="default"
+          onSearch={mockSearch}
+          onValueChange={setAsyncSelectValue}
+        />
+        <p>Selected: {asyncSelectValue ?? "none"}</p>
+        <h3>With Initial Options</h3>
+        <AsyncSelect
+          initialOptions={[
+            { label: "Apple", value: "apple" },
+            { label: "Banana", value: "banana" },
+          ]}
+          placeholder="Search or pick..."
+          variantName="default"
+          onSearch={mockSearch}
+        />
+        <h3>Custom Debounce</h3>
+        <AsyncSelect
+          debounceMs={500}
+          minSearchLength={2}
+          placeholder="Type 2+ chars..."
+          variantName="default"
+          onSearch={mockSearch}
+        />
+        <h3>With Caching</h3>
+        <AsyncSelect
+          cacheResults
+          placeholder="Cached search..."
+          variantName="default"
+          onSearch={mockSearch}
+        />
+        <h3>Disabled</h3>
+        <AsyncSelect
+          disabled
+          placeholder="Disabled"
+          variantName="default"
+          onSearch={mockSearch}
+        />
+      </section>
+
+      {/* 14. Separator */}
+      <section>
+        <h2>14. Separator</h2>
         <p>Content above</p>
         <Separator />
         <p>Content below</p>
@@ -359,9 +530,9 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 12. Skeleton */}
+      {/* 15. Skeleton */}
       <section>
-        <h2>12. Skeleton</h2>
+        <h2>15. Skeleton</h2>
         <Skeleton height="20px" variantName="skeleton" width="200px" />
         <br />
         <Skeleton height="16px" variantName="skeleton" width="150px" />
@@ -369,9 +540,9 @@ function HomePage() {
         <Skeleton height="100px" variantName="skeleton" width="100px" />
       </section>
 
-      {/* 13. Switch */}
+      {/* 16. Switch */}
       <section>
-        <h2>13. Switch</h2>
+        <h2>16. Switch</h2>
         <div>
           <Switch
             id="sw1"
@@ -394,9 +565,9 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 14. Table */}
+      {/* 17. Table */}
       <section>
-        <h2>14. Table</h2>
+        <h2>17. Table</h2>
         <Table
           aria-label="Users table"
           columns={columns}
@@ -408,9 +579,9 @@ function HomePage() {
         />
       </section>
 
-      {/* 15. Text */}
+      {/* 18. Text */}
       <section>
-        <h2>15. Text</h2>
+        <h2>18. Text</h2>
         <Text as="p" variantName="body">
           This is body text (p).
         </Text>
@@ -427,9 +598,9 @@ function HomePage() {
         </Text>
       </section>
 
-      {/* 16. Textarea */}
+      {/* 19. Textarea */}
       <section>
-        <h2>16. Textarea</h2>
+        <h2>19. Textarea</h2>
         <div>
           <label htmlFor="ta1">Message: </label>
           <br />
@@ -456,9 +627,9 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 17. Toast */}
+      {/* 20. Toast */}
       <section>
-        <h2>17. Toast</h2>
+        <h2>20. Toast</h2>
         <p>
           <strong>Note:</strong> Toast uses Sonner. The{" "}
           <code>&lt;Toaster /&gt;</code> component is imported from{" "}
@@ -651,9 +822,9 @@ function HomePage() {
         </div>
       </section>
 
-      {/* 18. Tabs */}
+      {/* 21. Tabs */}
       <section>
-        <h2>18. Tabs</h2>
+        <h2>21. Tabs</h2>
         <h3>Basic</h3>
         <Tabs
           defaultValue="tab1"
@@ -712,9 +883,9 @@ function HomePage() {
         </Tabs>
       </section>
 
-      {/* 19. Slider */}
+      {/* 22. Slider */}
       <section>
-        <h2>19. Slider</h2>
+        <h2>22. Slider</h2>
         <h3>Controlled</h3>
         <label id="slider-controlled">Volume: {sliderValue}</label>
         <Slider
@@ -757,9 +928,9 @@ function HomePage() {
         />
       </section>
 
-      {/* 20. Pagination */}
+      {/* 23. Pagination */}
       <section>
-        <h2>20. Pagination</h2>
+        <h2>23. Pagination</h2>
         <h3>Offset Mode (Uncontrolled)</h3>
         <Pagination defaultPage={1} totalPages={10} />
         <h3>Offset Mode (Controlled)</h3>

@@ -3,6 +3,18 @@
 import { useSelect } from "downshift";
 import { forwardRef, HTMLAttributes, ReactNode, useId, useMemo } from "react";
 
+import type {
+  ItemRenderContext,
+  NormalizedItem,
+  SelectOption,
+} from "../../types/select";
+
+import {
+  defaultIsEqual,
+  itemToString,
+  processOptions,
+} from "../../utils/select";
+
 /**
  * A Select component with a simple props-based API.
  *
@@ -83,62 +95,6 @@ import { forwardRef, HTMLAttributes, ReactNode, useId, useMemo } from "react";
 // -----------------------------------------------------------------------------
 
 /**
- * Simple string option - value and label are the same.
- */
-type StringOption = string;
-
-/**
- * Option with explicit value and label.
- */
-interface LabeledOption<T = string> {
-  disabled?: boolean;
-  label?: string;
-  value: T;
-}
-
-/**
- * Separator in the options list.
- */
-interface SeparatorOption {
-  type: "separator";
-}
-
-/**
- * Grouped options with a label.
- */
-interface GroupOption<T = string> {
-  label: string;
-  options: Array<LabeledOption<T> | StringOption>;
-  type: "group";
-}
-
-/**
- * Union type for all option formats.
- */
-type SelectOption<T = string> =
-  | GroupOption<T>
-  | LabeledOption<T>
-  | SeparatorOption
-  | StringOption;
-
-/**
- * Internal normalized item representation.
- */
-interface NormalizedItem<T = string> {
-  disabled?: boolean;
-  label: string;
-  value: T;
-}
-
-/**
- * Render item for display (includes separators and group labels).
- */
-type RenderItem<T = string> =
-  | { groupIndex: number; groupLabel: string; type: "group-label" }
-  | { item: NormalizedItem<T>; selectableIndex: number; type: "item" }
-  | { type: "separator" };
-
-/**
  * Context provided to custom trigger renderer.
  */
 interface TriggerRenderContext<T = string> {
@@ -146,17 +102,6 @@ interface TriggerRenderContext<T = string> {
   isOpen: boolean;
   placeholder: string;
   selectedItem: NormalizedItem<T> | null;
-}
-
-/**
- * Context provided to custom item renderer.
- */
-interface ItemRenderContext<T = string> {
-  index: number;
-  isDisabled: boolean;
-  isHighlighted: boolean;
-  isSelected: boolean;
-  option: NormalizedItem<T>;
 }
 
 // -----------------------------------------------------------------------------
@@ -209,121 +154,6 @@ interface SelectProps<T = string> extends Omit<
    * Variant name for styling via `data-variant` attribute.
    */
   variantName?: string;
-}
-
-// -----------------------------------------------------------------------------
-// Helper Functions
-// -----------------------------------------------------------------------------
-
-/**
- * Normalizes a string option to NormalizedItem<string> format.
- */
-function normalizeStringOption(option: string): NormalizedItem<string> {
-  return {
-    disabled: false,
-    label: option,
-    value: option,
-  };
-}
-
-/**
- * Normalizes a labeled option to NormalizedItem format.
- */
-function normalizeLabeledOption<T>(option: LabeledOption<T>): NormalizedItem<T> {
-  return {
-    disabled: option.disabled ?? false,
-    label: option.label ?? String(option.value),
-    value: option.value,
-  };
-}
-
-/**
- * Normalizes a single option to NormalizedItem format.
- * When T is string and option is a string, returns the string as both value and label.
- * When T is not string, option must be a LabeledOption<T>.
- */
-function normalizeOption<T>(
-  option: LabeledOption<T> | StringOption,
-): NormalizedItem<T> {
-  if (typeof option === "string") {
-    // When option is a string, T must be compatible with string
-    // This is a safe cast because StringOption can only be used when T extends string
-    return normalizeStringOption(option) as NormalizedItem<T>;
-  }
-  return normalizeLabeledOption(option);
-}
-
-/**
- * Flattens options array into selectable items and render items.
- */
-function processOptions<T>(options: SelectOption<T>[]): {
-  renderItems: RenderItem<T>[];
-  selectableItems: NormalizedItem<T>[];
-} {
-  const selectableItems: NormalizedItem<T>[] = [];
-  const renderItems: RenderItem<T>[] = [];
-  let groupIndex = 0;
-
-  for (const option of options) {
-    if (typeof option === "string") {
-      const item = normalizeOption<T>(option);
-      renderItems.push({
-        item,
-        selectableIndex: selectableItems.length,
-        type: "item",
-      });
-      selectableItems.push(item);
-    } else if ("type" in option) {
-      if (option.type === "separator") {
-        renderItems.push({ type: "separator" });
-      } else if (option.type === "group") {
-        renderItems.push({
-          groupIndex: groupIndex++,
-          groupLabel: option.label,
-          type: "group-label",
-        });
-        for (const groupItem of option.options) {
-          const item = normalizeOption<T>(groupItem);
-          renderItems.push({
-            item,
-            selectableIndex: selectableItems.length,
-            type: "item",
-          });
-          selectableItems.push(item);
-        }
-      }
-    } else {
-      // LabeledOption
-      const item = normalizeOption<T>(option);
-      renderItems.push({
-        item,
-        selectableIndex: selectableItems.length,
-        type: "item",
-      });
-      selectableItems.push(item);
-    }
-  }
-
-  return { renderItems, selectableItems };
-}
-
-/**
- * Default equality check for values.
- */
-function defaultIsEqual<T>(a: T | undefined, b: T | undefined): boolean {
-  if (a === b) return true;
-  if (a === undefined || b === undefined) return false;
-  if (typeof a === "string" || typeof b === "string") return a === b;
-  // For objects, use JSON comparison
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
-/**
- * Gets a string representation of the item for Downshift's itemToString.
- */
-function itemToString<T>(item: NormalizedItem<T> | null): string {
-  if (!item) return "";
-  return item.label;
 }
 
 // -----------------------------------------------------------------------------
@@ -528,24 +358,12 @@ function SelectInner<T = string>(
   );
 }
 
-// Use forwardRef with generic support
-const Select = forwardRef(SelectInner) as <T = string>(
+// forwardRef erases the generic <T> parameter (TypeScript #30650).
+// This cast restores it while keeping the external API fully type-safe.
+const Select = forwardRef(SelectInner) as unknown as (<T = string>(
   props: SelectProps<T> & { ref?: React.ForwardedRef<HTMLDivElement> },
-) => React.ReactElement;
+) => React.ReactElement) & { displayName?: string };
 
-(Select as { displayName?: string }).displayName = "Select";
+Select.displayName = "Select";
 
-// -----------------------------------------------------------------------------
-// Exports
-// -----------------------------------------------------------------------------
-
-export {
-  type GroupOption,
-  type ItemRenderContext,
-  type LabeledOption,
-  Select,
-  type SelectOption,
-  type SelectProps,
-  type SeparatorOption,
-  type TriggerRenderContext,
-};
+export { Select, type SelectProps, type TriggerRenderContext };
