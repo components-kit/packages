@@ -19,7 +19,10 @@ describe("Select Component", () => {
 
     it("renders placeholder when no value selected", () => {
       render(
-        <Select options={["apple", "banana"]} placeholder="Select a fruit..." />,
+        <Select
+          options={["apple", "banana"]}
+          placeholder="Select a fruit..."
+        />,
       );
 
       expect(screen.getByText("Select a fruit...")).toBeInTheDocument();
@@ -83,14 +86,7 @@ describe("Select Component", () => {
 
     it("uses value as label when label not provided", async () => {
       const user = userEvent.setup();
-      render(
-        <Select
-          options={[
-            { value: "apple" },
-            { value: "banana" },
-          ]}
-        />,
-      );
+      render(<Select options={[{ value: "apple" }, { value: "banana" }]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -131,7 +127,7 @@ describe("Select Component", () => {
 
     it("renders separators", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -143,9 +139,7 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const separator = container.querySelector(
-        '[data-ck="select-separator"]',
-      );
+      const separator = document.querySelector('[data-ck="select-separator"]');
       expect(separator).toBeInTheDocument();
       expect(separator).toHaveAttribute("role", "separator");
     });
@@ -154,7 +148,7 @@ describe("Select Component", () => {
   describe("Disabled Items", () => {
     it("renders disabled items with aria-disabled", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -165,7 +159,7 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       expect(items[0]).not.toHaveAttribute("aria-disabled");
       expect(items[1]).toHaveAttribute("aria-disabled", "true");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
@@ -174,7 +168,7 @@ describe("Select Component", () => {
     it("skips disabled items during keyboard navigation", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -189,7 +183,7 @@ describe("Select Component", () => {
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const disabledItem = items[1];
       expect(disabledItem).not.toHaveAttribute("data-highlighted", "true");
     });
@@ -303,13 +297,13 @@ describe("Select Component", () => {
       { id: 2, name: "Bob" },
     ];
 
-    it("supports object values with isEqual", async () => {
+    it("supports object values with getOptionValue", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
 
       render(
         <Select<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           onValueChange={onValueChange}
         />,
@@ -324,7 +318,7 @@ describe("Select Component", () => {
     it("displays controlled object value", () => {
       render(
         <Select<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           value={users[1]}
         />,
@@ -334,71 +328,58 @@ describe("Select Component", () => {
     });
   });
 
-  describe("Custom Rendering", () => {
-    it("supports custom trigger rendering", () => {
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
+      const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const handleChange = vi.fn();
+
       render(
         <Select
-          options={["apple", "banana"]}
-          placeholder="Pick one"
-          renderTrigger={({ placeholder, selectedItem }) => (
-            <span data-testid="custom-trigger">
-              {selectedItem?.label || placeholder} ▼
-            </span>
-          )}
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          onValueChange={handleChange}
         />,
       );
 
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("Pick one ▼");
+      const trigger = screen.getByRole("combobox");
+      await user.click(trigger);
+
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
+
+      expect(handleChange).toHaveBeenCalledWith(users[1]);
     });
 
-    it("passes correct context to renderTrigger", async () => {
-      const user = userEvent.setup();
+    it("correctly identifies selected item with getOptionValue", () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const selectedUser = { id: 1, name: "Alice" }; // Different reference!
+
       render(
         <Select
-          options={[{ label: "Apple", value: "apple" }]}
-          placeholder="Select..."
-          renderTrigger={({ isOpen, selectedItem }) => (
-            <span data-testid="custom-trigger">
-              {selectedItem?.label || "None"} - {isOpen ? "Open" : "Closed"}
-            </span>
-          )}
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          value={selectedUser}
         />,
       );
 
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("None - Closed");
-
-      await user.click(screen.getByRole("combobox"));
-      expect(trigger).toHaveTextContent("None - Open");
-
-      await user.click(screen.getByRole("option", { name: "Apple" }));
-      expect(trigger).toHaveTextContent("Apple - Closed");
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveTextContent("Alice");
     });
 
-    it("supports custom item rendering", async () => {
-      const user = userEvent.setup();
-      render(
-        <Select
-          options={[
-            { label: "Apple", value: "apple" },
-            { label: "Banana", value: "banana" },
-          ]}
-          renderItem={({ isHighlighted, isSelected, option }) => (
-            <span data-testid={`item-${option.value}`}>
-              {option.label}
-              {isSelected && " ✓"}
-              {isHighlighted && " ←"}
-            </span>
-          )}
-          value="apple"
-        />,
-      );
+    it("works without getOptionValue for primitives", () => {
+      render(<Select options={["apple", "banana"]} value="apple" />);
 
-      await user.click(screen.getByRole("combobox"));
-
-      const appleItem = screen.getByTestId("item-apple");
-      expect(appleItem).toHaveTextContent("Apple ✓");
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveTextContent("apple");
     });
   });
 
@@ -432,27 +413,27 @@ describe("Select Component", () => {
       const { container } = render(<Select options={["apple", "banana"]} />);
 
       await user.click(screen.getByRole("combobox"));
-      expect(
-        container.querySelector('[data-ck="select"]'),
-      ).toHaveAttribute("data-state", "open");
+      expect(container.querySelector('[data-ck="select"]')).toHaveAttribute(
+        "data-state",
+        "open",
+      );
 
       await user.keyboard("{Escape}");
-      expect(
-        container.querySelector('[data-ck="select"]'),
-      ).toHaveAttribute("data-state", "closed");
+      expect(container.querySelector('[data-ck="select"]')).toHaveAttribute(
+        "data-state",
+        "closed",
+      );
     });
 
     it("navigates items with Arrow keys", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Select options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Select options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const highlightedItems = Array.from(items).filter(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -464,10 +445,7 @@ describe("Select Component", () => {
       const user = userEvent.setup();
 
       render(
-        <Select
-          options={["apple", "banana"]}
-          onValueChange={onValueChange}
-        />,
+        <Select options={["apple", "banana"]} onValueChange={onValueChange} />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -563,25 +541,21 @@ describe("Select Component", () => {
       const user = userEvent.setup();
       const { container } = render(<Select options={["apple"]} />);
 
-      const trigger = container.querySelector(
-        '[data-ck="select-trigger"]',
-      );
-      const content = container.querySelector(
-        '[data-ck="select-content"]',
-      );
+      const trigger = container.querySelector('[data-ck="select-trigger"]');
 
       expect(trigger).toHaveAttribute("data-state", "closed");
-      expect(content).toHaveAttribute("data-state", "closed");
+      expect(document.querySelector('[data-ck="select-content"]')).toBeNull();
 
       await user.click(screen.getByRole("combobox"));
 
       expect(trigger).toHaveAttribute("data-state", "open");
+      const content = document.querySelector('[data-ck="select-content"]');
       expect(content).toHaveAttribute("data-state", "open");
     });
 
     it("has data-state on items for selection state", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -593,25 +567,58 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       expect(items[0]).toHaveAttribute("data-state", "checked");
       expect(items[1]).toHaveAttribute("data-state", "unchecked");
     });
 
     it("has data-highlighted on highlighted item", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Select options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Select options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const hasHighlighted = Array.from(items).some(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
       expect(hasHighlighted).toBe(true);
+    });
+  });
+
+  describe("Empty State", () => {
+    it("renders emptyContent when options array is empty", async () => {
+      const user = userEvent.setup();
+      render(<Select options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toBeInTheDocument();
+      expect(emptyEl).toHaveTextContent("No options");
+    });
+
+    it("renders custom emptyContent", async () => {
+      const user = userEvent.setup();
+      render(<Select emptyContent="Nothing to show" options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toBeInTheDocument();
+      expect(emptyEl).toHaveTextContent("Nothing to show");
+    });
+
+    it("empty state has role status and aria-live polite", async () => {
+      const user = userEvent.setup();
+      render(<Select options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toHaveAttribute("role", "status");
+      expect(emptyEl).toHaveAttribute("aria-live", "polite");
     });
   });
 

@@ -146,7 +146,7 @@ describe("Combobox Component", () => {
 
     it("renders separators between groups", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             { label: "Apple", value: "apple" },
@@ -158,7 +158,7 @@ describe("Combobox Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const separator = container.querySelector(
+      const separator = document.querySelector(
         '[data-ck="combobox-separator"]',
       );
       expect(separator).toBeInTheDocument();
@@ -169,7 +169,7 @@ describe("Combobox Component", () => {
   describe("Disabled Items", () => {
     it("renders disabled items with aria-disabled", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             { label: "Apple", value: "apple" },
@@ -180,7 +180,7 @@ describe("Combobox Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items[0]).not.toHaveAttribute("aria-disabled");
       expect(items[1]).toHaveAttribute("aria-disabled", "true");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
@@ -188,7 +188,7 @@ describe("Combobox Component", () => {
 
     it("skips disabled items during keyboard navigation", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             { label: "Apple", value: "apple" },
@@ -202,7 +202,7 @@ describe("Combobox Component", () => {
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       const disabledItem = items[1];
       expect(disabledItem).not.toHaveAttribute("data-highlighted", "true");
     });
@@ -211,48 +211,42 @@ describe("Combobox Component", () => {
   describe("Filtering", () => {
     it("filters options based on input text", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       const input = screen.getByRole("combobox");
       await user.type(input, "ban");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent("banana");
     });
 
     it("shows all options when input is empty", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items).toHaveLength(3);
     });
 
     it("shows empty state when no options match", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       const input = screen.getByRole("combobox");
       await user.type(input, "xyz");
 
-      const emptyState = container.querySelector('[data-ck="combobox-empty"]');
+      const emptyState = document.querySelector('[data-ck="combobox-empty"]');
       expect(emptyState).toBeInTheDocument();
       expect(emptyState).toHaveTextContent("No results found");
     });
 
     it("uses custom filterFn when provided", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           filterFn={(option, inputValue) =>
             option.label.toLowerCase().startsWith(inputValue.toLowerCase())
@@ -264,7 +258,7 @@ describe("Combobox Component", () => {
       const input = screen.getByRole("combobox");
       await user.type(input, "ap");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items).toHaveLength(2);
       expect(items[0]).toHaveTextContent("apple");
       expect(items[1]).toHaveTextContent("apricot");
@@ -272,7 +266,7 @@ describe("Combobox Component", () => {
 
     it("preserves group labels when group has visible children", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             {
@@ -294,7 +288,7 @@ describe("Combobox Component", () => {
       await user.type(input, "ap");
 
       expect(screen.getByText("Fruits")).toBeInTheDocument();
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent("apple");
     });
@@ -497,13 +491,13 @@ describe("Combobox Component", () => {
       { id: 2, name: "Bob" },
     ];
 
-    it("supports object values with isEqual", async () => {
+    it("supports object values with getOptionValue", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
 
       render(
         <Combobox<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           onValueChange={onValueChange}
         />,
@@ -519,7 +513,7 @@ describe("Combobox Component", () => {
       const user = userEvent.setup();
       render(
         <Combobox<User>
-          isEqual={(a, b) => a?.id === b?.id}
+          getOptionValue={(u) => u.id}
           options={users.map((u) => ({ label: u.name, value: u }))}
           value={users[1]}
         />,
@@ -533,63 +527,58 @@ describe("Combobox Component", () => {
     });
   });
 
-  describe("Custom Rendering", () => {
-    it("supports custom trigger rendering via renderTrigger", () => {
-      render(
-        <Combobox
-          options={["apple", "banana"]}
-          placeholder="Search here"
-          renderTrigger={({ inputValue, placeholder }) => (
-            <span data-testid="custom-trigger">
-              {inputValue || placeholder}
-            </span>
-          )}
-        />,
-      );
-
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("Search here");
-    });
-
-    it("passes correct context to renderTrigger", async () => {
-      render(
-        <Combobox
-          options={[{ label: "Apple", value: "apple" }]}
-          placeholder="Search..."
-          renderTrigger={({ isOpen, selectedItem }) => (
-            <span data-testid="custom-trigger">
-              {selectedItem?.label || "None"} - {isOpen ? "Open" : "Closed"}
-            </span>
-          )}
-        />,
-      );
-
-      const trigger = screen.getByTestId("custom-trigger");
-      expect(trigger).toHaveTextContent("None - Closed");
-    });
-
-    it("supports custom item rendering via renderItem", async () => {
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
       const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const handleChange = vi.fn();
+
       render(
         <Combobox
-          options={[
-            { label: "Apple", value: "apple" },
-            { label: "Banana", value: "banana" },
-          ]}
-          renderItem={({ isSelected, option }) => (
-            <span data-testid={`item-${option.value}`}>
-              {option.label}
-              {isSelected && " ✓"}
-            </span>
-          )}
-          value="apple"
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          onValueChange={handleChange}
         />,
       );
 
-      await user.click(screen.getByRole("combobox"));
+      const input = screen.getByRole("combobox");
+      await user.type(input, "Bob");
 
-      const appleItem = screen.getByTestId("item-apple");
-      expect(appleItem).toHaveTextContent("Apple ✓");
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
+
+      expect(handleChange).toHaveBeenCalledWith(users[1]);
+    });
+
+    it("correctly identifies selected item with getOptionValue", () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const selectedUser = { id: 1, name: "Alice" };
+
+      render(
+        <Combobox
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          value={selectedUser}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("Alice");
+    });
+
+    it("works without getOptionValue for primitives", () => {
+      render(<Combobox options={["apple", "banana"]} value="apple" />);
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("apple");
     });
   });
 
@@ -608,15 +597,13 @@ describe("Combobox Component", () => {
 
     it("navigates items with ArrowDown/ArrowUp", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       const highlightedItems = Array.from(items).filter(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -626,7 +613,7 @@ describe("Combobox Component", () => {
       await user.keyboard("{ArrowUp}");
 
       const highlightedAfterUp = Array.from(
-        container.querySelectorAll('[data-ck="combobox-item"]'),
+        document.querySelectorAll('[data-ck="combobox-item"]'),
       ).filter((item) => item.getAttribute("data-highlighted") === "true");
       expect(highlightedAfterUp.length).toBe(1);
     });
@@ -670,16 +657,43 @@ describe("Combobox Component", () => {
 
     it("filters options as user types characters", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       const input = screen.getByRole("combobox");
       await user.type(input, "ch");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent("cherry");
+    });
+
+    it("navigates to first item with Home key", async () => {
+      const user = userEvent.setup();
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{Home}");
+
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
+      expect(items[0]).toHaveAttribute("data-highlighted", "true");
+    });
+
+    it("navigates to last item with End key", async () => {
+      const user = userEvent.setup();
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{End}");
+
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
+      expect(items[items.length - 1]).toHaveAttribute(
+        "data-highlighted",
+        "true",
+      );
     });
   });
 
@@ -719,8 +733,11 @@ describe("Combobox Component", () => {
       expect(input.tagName).toBe("INPUT");
     });
 
-    it("menu has role listbox", () => {
+    it("menu has role listbox", async () => {
+      const user = userEvent.setup();
       render(<Combobox options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
 
       const listbox = screen.getByRole("listbox");
       expect(listbox).toBeInTheDocument();
@@ -737,8 +754,11 @@ describe("Combobox Component", () => {
       expect(input).toHaveAttribute("aria-expanded", "true");
     });
 
-    it("links combobox and listbox with aria-controls", () => {
+    it("links combobox and listbox with aria-controls", async () => {
+      const user = userEvent.setup();
       render(<Combobox options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
 
       const input = screen.getByRole("combobox");
       const listbox = screen.getByRole("listbox");
@@ -814,14 +834,13 @@ describe("Combobox Component", () => {
 
       const root = container.querySelector('[data-ck="combobox"]');
       const trigger = container.querySelector('[data-ck="combobox-trigger"]');
-      const content = container.querySelector('[data-ck="combobox-content"]');
 
       expect(root).toHaveAttribute("data-state", "closed");
       expect(trigger).toHaveAttribute("data-state", "closed");
-      expect(content).toHaveAttribute("data-state", "closed");
 
       await user.click(screen.getByRole("combobox"));
 
+      const content = document.querySelector('[data-ck="combobox-content"]');
       expect(root).toHaveAttribute("data-state", "open");
       expect(trigger).toHaveAttribute("data-state", "open");
       expect(content).toHaveAttribute("data-state", "open");
@@ -829,7 +848,7 @@ describe("Combobox Component", () => {
 
     it("has data-state checked/unchecked on items", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             { label: "Apple", value: "apple" },
@@ -841,21 +860,19 @@ describe("Combobox Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items[0]).toHaveAttribute("data-state", "checked");
       expect(items[1]).toHaveAttribute("data-state", "unchecked");
     });
 
     it("has data-highlighted on highlighted item", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Combobox options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Combobox options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       const hasHighlighted = Array.from(items).some(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -864,7 +881,7 @@ describe("Combobox Component", () => {
 
     it("has data-disabled on disabled items", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Combobox
           options={[
             { label: "Apple", value: "apple" },
@@ -875,7 +892,7 @@ describe("Combobox Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="combobox-item"]');
+      const items = document.querySelectorAll('[data-ck="combobox-item"]');
       expect(items[0]).not.toHaveAttribute("data-disabled");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
     });

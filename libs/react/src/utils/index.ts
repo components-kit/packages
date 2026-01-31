@@ -1,2 +1,3 @@
 export * from "./forward-ref";
+export * from "./merge-refs";
 export * from "./select";

@@ -1,26 +1,25 @@
 "use client";
 
+import { FloatingPortal } from "@floating-ui/react";
 import { useCombobox } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
   ReactNode,
   useCallback,
-  useEffect,
   useId,
   useMemo,
   useRef,
   useState,
 } from "react";
 
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
+import type { NormalizedItem, SelectOption } from "../../types/select";
 
+import { useDebouncedCallback, useFloatingSelect } from "../../hooks";
+import { mergeRefs } from "../../utils/merge-refs";
 import {
-  defaultIsEqual,
+  areValuesEqual,
+  findItemByValue,
   itemToString,
   processOptions,
 } from "../../utils/select";
@@ -42,9 +41,9 @@ import {
  * - Pre-loaded options via `initialOptions`
  * - Controlled (`value` + `onValueChange`) and uncontrolled (`defaultValue`) modes
  * - Support for string and object values via generic `<T>`
- * - Custom item rendering via render props
  * - Option groups, separators, and disabled items
  * - Full accessibility (WAI-ARIA Combobox pattern with live regions)
+ * - CSS-based styling via data attributes
  *
  * @remarks
  * This component features:
@@ -55,6 +54,8 @@ import {
  * - Errors are caught and surfaced via `role="alert"` + `aria-live="assertive"`
  * - Loading state uses `role="status"` + `aria-live="polite"`
  * - Root element carries `aria-busy` during loading
+ * - Dropdown is rendered inside a `FloatingPortal` and positioned via
+ *   `useFloatingSelect` (Floating UI) with flip, shift, and size middleware
  * - Uses `data-ck` attributes for CSS-based styling
  * - Forwards refs correctly for DOM access
  *
@@ -86,7 +87,7 @@ import {
  * - Enable `cacheResults` for repeated searches (e.g., user backspacing)
  * - Provide meaningful `loadingContent`, `emptyContent`, and `errorContent`
  * - Use `initialOptions` for common/suggested items before first search
- * - Use `isEqual` when working with object values
+ * - Use `getOptionValue` when working with object values
  *
  * @param {(query: string) => Promise<SelectOption<T>[]>} onSearch - Async search function. Required. Called with the current query string after debounce.
  * @param {T} [value] - Controlled selected value.
@@ -95,8 +96,7 @@ import {
  * @param {string} [placeholder="Search..."] - Placeholder text in the input.
  * @param {boolean} [disabled=false] - Whether the async select is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
- * @param {(a: T, b: T) => boolean} [isEqual] - Custom equality function for object values.
- * @param {(context: ItemRenderContext<T>) => ReactNode} [renderItem] - Custom item renderer.
+ * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {number} [debounceMs=300] - Debounce delay in milliseconds before triggering search.
  * @param {number} [minSearchLength=1] - Minimum characters required before triggering search.
  * @param {SelectOption<T>[]} [initialOptions] - Pre-loaded options shown before the first search.
@@ -163,24 +163,13 @@ import {
  * />
  *
  * @example
- * // Custom item rendering
- * <AsyncSelect
- *   onSearch={searchUsers}
- *   renderItem={({ option, isSelected, isHighlighted }) => (
- *     <div style={{ fontWeight: isSelected ? 'bold' : 'normal' }}>
- *       {option.label} {isSelected && <Check />}
- *     </div>
- *   )}
- * />
- *
- * @example
- * // Object values with isEqual
+ * // Object values
  * <AsyncSelect<User>
  *   onSearch={async (query) => {
  *     const users = await fetchUsers(query);
  *     return users.map(u => ({ value: u, label: u.name }));
  *   }}
- *   isEqual={(a, b) => a?.id === b?.id}
+ *   getOptionValue={(u) => u.id}
  *   onValueChange={setSelectedUser}
  * />
  */
@@ -222,14 +211,18 @@ interface AsyncSelectProps<T = string> extends Omit<
    */
   errorContent?: ReactNode;
   /**
+   * Function to extract a unique primitive key from option values.
+   * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
+   */
+  getOptionValue?: (option: T) => number | string;
+  /**
    * Pre-loaded options shown before the first search.
    */
   initialOptions?: SelectOption<T>[];
-  /**
-   * Function to compare two values for equality.
-   * Required for object values where reference equality won't work.
-   */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
   /**
    * Custom content to display while loading.
    * @default "Loading..."
@@ -255,10 +248,6 @@ interface AsyncSelectProps<T = string> extends Omit<
    */
   placeholder?: string;
   /**
-   * Custom item renderer.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
    * Controlled selected value.
    */
   value?: T;
@@ -281,14 +270,13 @@ function AsyncSelectInner<T = string>(
     disabled = false,
     emptyContent = "No results found",
     errorContent = "An error occurred",
+    getOptionValue,
     initialOptions,
-    isEqual = defaultIsEqual,
     loadingContent = "Loading...",
     minSearchLength = 1,
     onSearch,
     onValueChange,
     placeholder = "Search...",
-    renderItem: customRenderItem,
     value,
     variantName,
     ...rest
@@ -297,6 +285,9 @@ function AsyncSelectInner<T = string>(
 ) {
   const inputId = useId();
   const menuId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
+  const menuNodeRef = useRef<HTMLDivElement | null>(null);
 
   // Async state
   const [asyncOptions, setAsyncOptions] = useState<SelectOption<T>[]>(
@@ -305,17 +296,11 @@ function AsyncSelectInner<T = string>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Cache and debounce refs
+  // Cache and request tracking refs
   const cacheRef = useRef<Map<string, SelectOption<T>[]>>(new Map());
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestIdRef = useRef(0);
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
+  const MAX_CACHE_SIZE = 50;
 
   // Process current options
   const { renderItems, selectableItems } = useMemo(
@@ -323,13 +308,35 @@ function AsyncSelectInner<T = string>(
     [asyncOptions],
   );
 
-  // Debounced search handler
+  // Debounced async search (fires after debounceMs delay)
+  const debouncedSearch = useDebouncedCallback(async (query: string) => {
+    const currentRequestId = ++requestIdRef.current;
+    setLoading(true);
+    try {
+      const results = await onSearch(query);
+      // Guard against stale responses
+      if (currentRequestId !== requestIdRef.current) return;
+      if (cacheResults) {
+        if (cacheRef.current.size >= MAX_CACHE_SIZE) {
+          const firstKey = cacheRef.current.keys().next().value;
+          if (firstKey !== undefined) cacheRef.current.delete(firstKey);
+        }
+        cacheRef.current.set(query, results);
+      }
+      setAsyncOptions(results);
+      setLoading(false);
+      setError(null);
+    } catch (err) {
+      if (currentRequestId !== requestIdRef.current) return;
+      setAsyncOptions([]);
+      setLoading(false);
+      setError(err instanceof Error ? err : new Error(String(err)));
+    }
+  }, debounceMs);
+
+  // Search handler with min-length and cache checks
   const handleSearch = useCallback(
     (query: string) => {
-      // Clear existing timer
-      if (timerRef.current) clearTimeout(timerRef.current);
-
-      // Check minimum length
       if (query.length < minSearchLength) {
         setAsyncOptions(initialOptions ?? []);
         setLoading(false);
@@ -337,7 +344,6 @@ function AsyncSelectInner<T = string>(
         return;
       }
 
-      // Check cache
       if (cacheResults && cacheRef.current.has(query)) {
         setAsyncOptions(cacheRef.current.get(query)!);
         setLoading(false);
@@ -345,46 +351,23 @@ function AsyncSelectInner<T = string>(
         return;
       }
 
-      // Set loading
-      setLoading(true);
       setError(null);
-
-      // Debounce the search
-      timerRef.current = setTimeout(async () => {
-        const currentRequestId = ++requestIdRef.current;
-        try {
-          const results = await onSearch(query);
-          // Guard against stale responses
-          if (currentRequestId !== requestIdRef.current) return;
-          if (cacheResults) {
-            cacheRef.current.set(query, results);
-          }
-          setAsyncOptions(results);
-          setLoading(false);
-          setError(null);
-        } catch (err) {
-          if (currentRequestId !== requestIdRef.current) return;
-          setAsyncOptions([]);
-          setLoading(false);
-          setError(err instanceof Error ? err : new Error(String(err)));
-        }
-      }, debounceMs);
+      debouncedSearch(query);
     },
-    [onSearch, debounceMs, minSearchLength, cacheResults, initialOptions],
+    [debouncedSearch, minSearchLength, cacheResults, initialOptions],
   );
 
   // Find controlled/initial selected item
-  const controlledItem = useMemo(() => {
-    if (value === undefined) return undefined;
-    return selectableItems.find((item) => isEqual(item.value, value)) ?? null;
-  }, [selectableItems, value, isEqual]);
+  const controlledItem = useMemo(
+    () => findItemByValue(selectableItems, value, getOptionValue),
+    [selectableItems, value, getOptionValue],
+  );
 
-  const initialItem = useMemo(() => {
-    if (defaultValue === undefined) return null;
-    return (
-      selectableItems.find((item) => isEqual(item.value, defaultValue)) ?? null
-    );
-  }, [selectableItems, defaultValue, isEqual]);
+  const initialItem = useMemo(
+    () =>
+      findItemByValue(selectableItems, defaultValue, getOptionValue) ?? null,
+    [selectableItems, defaultValue, getOptionValue],
+  );
 
   // Use Downshift useCombobox
   const {
@@ -413,6 +396,23 @@ function AsyncSelectInner<T = string>(
 
   const hasResults = selectableItems.length > 0;
 
+  // Use Floating UI for positioning
+  const { floatingProps, referenceProps } = useFloatingSelect({ isOpen });
+
+  // Merge refs (memoized to avoid new callbacks on every render)
+  const containerRef_ = useMemo(
+    () => mergeRefs<HTMLDivElement>(containerRef, ref),
+    [ref],
+  );
+  const inputWrapperRef_ = useMemo(
+    () => mergeRefs<HTMLDivElement>(inputWrapperRef, referenceProps.ref),
+    [referenceProps.ref],
+  );
+  const menuRef = useMemo(
+    () => mergeRefs<HTMLDivElement>(menuNodeRef, floatingProps.ref),
+    [floatingProps.ref],
+  );
+
   return (
     <div
       {...rest}
@@ -425,10 +425,10 @@ function AsyncSelectInner<T = string>(
       data-loading={loading || undefined}
       data-state={isOpen ? "open" : "closed"}
       data-variant={variantName}
-      ref={ref}
+      ref={containerRef_}
     >
       {/* Input area */}
-      <div data-ck="async-select-input-wrapper">
+      <div data-ck="async-select-input-wrapper" ref={inputWrapperRef_}>
         <input
           {...getInputProps({ disabled, id: inputId })}
           aria-disabled={disabled || undefined}
@@ -445,123 +445,113 @@ function AsyncSelectInner<T = string>(
         />
       </div>
 
-      {/* Dropdown content */}
-      <div
-        {...getMenuProps({ id: menuId })}
-        data-ck="async-select-content"
-        data-state={isOpen ? "open" : "closed"}
-      >
-        {/* Loading state */}
-        {isOpen && loading && (
+      {/* Dropdown content - Rendered in portal */}
+      <FloatingPortal>
+        {isOpen && (
           <div
-            aria-label="Loading results"
-            aria-live="polite"
-            data-ck="async-select-loading"
-            role="status"
+            {...getMenuProps({ id: menuId, ref: menuRef })}
+            style={floatingProps.style}
+            data-ck="async-select-content"
+            data-state="open"
           >
-            {loadingContent}
-          </div>
-        )}
-
-        {/* Error state */}
-        {isOpen && !loading && error && (
-          <div aria-live="assertive" data-ck="async-select-error" role="alert">
-            {errorContent}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {isOpen && !loading && !error && !hasResults && (
-          <div aria-live="polite" data-ck="async-select-empty" role="status">
-            {emptyContent}
-          </div>
-        )}
-
-        {/* Results */}
-        {isOpen &&
-          !loading &&
-          !error &&
-          renderItems.map((renderItem, idx) => {
-            if (renderItem.type === "separator") {
-              return (
-                <div
-                  key={`separator-${idx}`}
-                  aria-orientation="horizontal"
-                  data-ck="async-select-separator"
-                  role="separator"
-                />
-              );
-            }
-
-            if (renderItem.type === "group-label") {
-              return (
-                <div
-                  key={`group-${renderItem.groupIndex}`}
-                  data-ck="async-select-group-label"
-                  role="presentation"
-                >
-                  {renderItem.groupLabel}
-                </div>
-              );
-            }
-
-            // Item
-            const { item, selectableIndex } = renderItem;
-            const isSelected = selectedItem
-              ? isEqual(selectedItem.value, item.value)
-              : false;
-            const isHighlighted = highlightedIndex === selectableIndex;
-            const isDisabled = item.disabled ?? false;
-
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected,
-              option: item,
-            };
-
-            const itemProps = getItemProps({
-              disabled: isDisabled,
-              index: selectableIndex,
-              item,
-            });
-
-            if (customRenderItem) {
-              return (
-                <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={isSelected}
-                  data-ck="async-select-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state={isSelected ? "checked" : "unchecked"}
-                  role="option"
-                >
-                  {customRenderItem(itemContext)}
-                </div>
-              );
-            }
-
-            return (
+            {/* Loading state */}
+            {loading && (
               <div
-                key={`item-${selectableIndex}`}
-                {...itemProps}
-                aria-disabled={isDisabled || undefined}
-                aria-selected={isSelected}
-                data-ck="async-select-item"
-                data-disabled={isDisabled || undefined}
-                data-highlighted={isHighlighted || undefined}
-                data-state={isSelected ? "checked" : "unchecked"}
-                role="option"
+                aria-label="Loading results"
+                aria-live="polite"
+                data-ck="async-select-loading"
+                role="status"
               >
-                {item.label}
+                {loadingContent}
               </div>
-            );
-          })}
-      </div>
+            )}
+
+            {/* Error state */}
+            {!loading && error && (
+              <div
+                aria-live="assertive"
+                data-ck="async-select-error"
+                role="alert"
+              >
+                {errorContent}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!loading && !error && !hasResults && (
+              <div
+                aria-live="polite"
+                data-ck="async-select-empty"
+                role="status"
+              >
+                {emptyContent}
+              </div>
+            )}
+
+            {/* Results */}
+            {!loading &&
+              !error &&
+              renderItems.map((renderItem, idx) => {
+                if (renderItem.type === "separator") {
+                  return (
+                    <div
+                      key={`separator-${idx}`}
+                      aria-orientation="horizontal"
+                      data-ck="async-select-separator"
+                      role="separator"
+                    />
+                  );
+                }
+
+                if (renderItem.type === "group-label") {
+                  return (
+                    <div
+                      key={`group-${renderItem.groupIndex}`}
+                      data-ck="async-select-group-label"
+                      role="presentation"
+                    >
+                      {renderItem.groupLabel}
+                    </div>
+                  );
+                }
+
+                // Item
+                const { item, selectableIndex } = renderItem;
+                const isSelected = selectedItem
+                  ? areValuesEqual(
+                      selectedItem.value,
+                      item.value,
+                      getOptionValue,
+                    )
+                  : false;
+                const isHighlighted = highlightedIndex === selectableIndex;
+                const isDisabled = item.disabled ?? false;
+
+                const itemProps = getItemProps({
+                  disabled: isDisabled,
+                  index: selectableIndex,
+                  item,
+                });
+
+                return (
+                  <div
+                    key={`item-${selectableIndex}`}
+                    {...itemProps}
+                    aria-disabled={isDisabled || undefined}
+                    aria-selected={isSelected}
+                    data-ck="async-select-item"
+                    data-disabled={isDisabled || undefined}
+                    data-highlighted={isHighlighted || undefined}
+                    data-state={isSelected ? "checked" : "unchecked"}
+                    role="option"
+                  >
+                    {item.label}
+                  </div>
+                );
+              })}
+          </div>
+        )}
+      </FloatingPortal>
     </div>
   );
 }

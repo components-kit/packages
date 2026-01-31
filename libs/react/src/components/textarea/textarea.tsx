@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  FormEvent,
   forwardRef,
+  InputEvent,
   TextareaHTMLAttributes,
   useCallback,
   useEffect,
@@ -155,7 +155,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 
     // Composed input handler: auto-resize + user's onInput
     const composedOnInput = useCallback(
-      (e: FormEvent<HTMLTextAreaElement>) => {
+      (e: InputEvent<HTMLTextAreaElement>) => {
         // Always run internal auto-resize logic first
         const target = e.target as HTMLTextAreaElement;
         adjustHeight(target);
@@ -163,7 +163,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         // Then call user's onInput handler if provided
         onInput?.(e);
       },
-      [adjustHeight, onInput]
+      [adjustHeight, onInput],
     );
 
     // Handle initial resize and value changes
@@ -189,7 +189,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           adjustHeight(element);
         }
       },
-      [ref, adjustHeight]
+      [ref, adjustHeight],
     );
 
     return (
@@ -202,7 +202,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         ref={mergedRef}
       />
     );
-  }
+  },
 );
 
 Textarea.displayName = "Textarea";

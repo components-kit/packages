@@ -107,7 +107,7 @@ function HomePage() {
   return (
     <main>
       <h1>Components Kit - TanStack Router CSR Example</h1>
-      <p>All 23 components from @components-kit/react (raw/unstyled)</p>
+      <p>All 24 components from @components-kit/react (raw/unstyled)</p>
       <hr />
 
       {/* 1. Alert */}
@@ -354,6 +354,7 @@ function HomePage() {
       {/* 10. Select */}
       <section>
         <h2>10. Select</h2>
+        <h3>Basic</h3>
         <Select
           options={["Apple", "Banana", "Cherry", "Date"]}
           placeholder="Select a fruit..."
@@ -362,6 +363,56 @@ function HomePage() {
           onValueChange={setSelectValue}
         />
         <p>Selected: {selectValue ?? "none"}</p>
+        <h3>Labeled Options</h3>
+        <Select
+          options={[
+            { label: "United States", value: "us" },
+            { label: "United Kingdom", value: "uk" },
+            { label: "Canada", value: "ca" },
+            { label: "Australia", value: "au" },
+          ]}
+          placeholder="Select a country..."
+          variantName="default"
+        />
+        <h3>Grouped Options</h3>
+        <Select
+          options={[
+            {
+              label: "Fruits",
+              options: ["Apple", "Banana", "Cherry"],
+              type: "group",
+            },
+            { type: "separator" },
+            {
+              label: "Vegetables",
+              options: ["Carrot", "Broccoli", "Spinach"],
+              type: "group",
+            },
+          ]}
+          placeholder="Select food..."
+          variantName="default"
+        />
+        <h3>Object Values</h3>
+        <Select<User>
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          placeholder="Select a user..."
+          variantName="default"
+        />
+        <h3>Disabled</h3>
+        <Select
+          disabled
+          options={["Apple", "Banana"]}
+          placeholder="Disabled"
+          variantName="default"
+        />
+        <h3>Empty Options</h3>
+        <Select
+          emptyContent="No items available"
+          options={[]}
+          placeholder="No options..."
+          variantName="default"
+        />
       </section>
 
       {/* 11. Combobox */}
@@ -403,6 +454,13 @@ function HomePage() {
             },
           ]}
           placeholder="Search food..."
+          variantName="default"
+        />
+        <h3>Object Values</h3>
+        <Combobox<User>
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          placeholder="Search users..."
           variantName="default"
         />
         <h3>Disabled</h3>
@@ -453,6 +511,13 @@ function HomePage() {
           placeholder="Select technologies..."
           variantName="default"
         />
+        <h3>Object Values</h3>
+        <MultiSelect<User>
+          getOptionValue={(u) => u.id}
+          options={users.map((u) => ({ label: u.name, value: u }))}
+          placeholder="Select users..."
+          variantName="default"
+        />
         <h3>Disabled</h3>
         <MultiSelect
           disabled
@@ -498,6 +563,19 @@ function HomePage() {
           placeholder="Cached search..."
           variantName="default"
           onSearch={mockSearch}
+        />
+        <h3>Object Values</h3>
+        <AsyncSelect<User>
+          getOptionValue={(u) => u.id}
+          initialOptions={users.map((u) => ({ label: u.name, value: u }))}
+          placeholder="Search users..."
+          variantName="default"
+          onSearch={async (query) => {
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            return users
+              .filter((u) => u.name.toLowerCase().includes(query.toLowerCase()))
+              .map((u) => ({ label: u.name, value: u }));
+          }}
         />
         <h3>Disabled</h3>
         <AsyncSelect

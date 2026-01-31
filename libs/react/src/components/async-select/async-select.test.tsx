@@ -324,14 +324,12 @@ describe("AsyncSelect Component", () => {
       await user.click(input);
       await user.type(input, "a");
 
-      // Loading should be set immediately (before debounce fires)
-      // because handleSearch calls setLoading(true) synchronously
+      // Loading appears after debounce fires (not immediately)
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
         expect(screen.getByText("Loading...")).toBeInTheDocument();
       });
-
-      // Advance timer so onSearch is called
-      await vi.advanceTimersByTimeAsync(300);
 
       // Resolve the promise
       resolveSearch([{ label: "Apple", value: "apple" }]);
@@ -355,21 +353,23 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
       await user.type(input, "x");
 
+      // Advance past debounce so loading state appears
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
-        const loadingEl = container.querySelector(
+        const loadingEl = document.querySelector(
           '[data-ck="async-select-loading"]',
         );
         expect(loadingEl).toBeInTheDocument();
       });
 
       // Cleanup
-      await vi.advanceTimersByTimeAsync(300);
       resolveSearch([]);
     });
 
@@ -395,12 +395,14 @@ describe("AsyncSelect Component", () => {
       await user.click(input);
       await user.type(input, "q");
 
+      // Advance past debounce so loading state appears
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
         expect(root).toHaveAttribute("data-loading", "true");
       });
 
       // Resolve
-      await vi.advanceTimersByTimeAsync(300);
       resolveSearch([]);
 
       await waitFor(() => {
@@ -429,11 +431,13 @@ describe("AsyncSelect Component", () => {
       await user.click(input);
       await user.type(input, "z");
 
+      // Advance past debounce so loading state appears
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
         expect(root).toHaveAttribute("aria-busy", "true");
       });
 
-      await vi.advanceTimersByTimeAsync(300);
       resolveSearch([]);
 
       await waitFor(() => {
@@ -465,13 +469,15 @@ describe("AsyncSelect Component", () => {
       await user.click(input);
       await user.type(input, "t");
 
+      // Advance past debounce so loading state appears
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
         expect(screen.getByTestId("spinner")).toBeInTheDocument();
         expect(screen.getByText("Fetching...")).toBeInTheDocument();
       });
 
       // Cleanup
-      await vi.advanceTimersByTimeAsync(300);
       resolveSearch([]);
     });
   });
@@ -510,7 +516,7 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -519,7 +525,7 @@ describe("AsyncSelect Component", () => {
       await vi.advanceTimersByTimeAsync(300);
 
       await waitFor(() => {
-        const errorEl = container.querySelector(
+        const errorEl = document.querySelector(
           '[data-ck="async-select-error"]',
         );
         expect(errorEl).toBeInTheDocument();
@@ -644,7 +650,7 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -653,7 +659,7 @@ describe("AsyncSelect Component", () => {
       await vi.advanceTimersByTimeAsync(300);
 
       await waitFor(() => {
-        const emptyEl = container.querySelector(
+        const emptyEl = document.querySelector(
           '[data-ck="async-select-empty"]',
         );
         expect(emptyEl).toBeInTheDocument();
@@ -1023,7 +1029,7 @@ describe("AsyncSelect Component", () => {
       const mockSearch = vi.fn().mockResolvedValue([]);
       const user = userEvent.setup();
 
-      const { container } = render(
+      render(
         <AsyncSelect initialOptions={fruitOptions} onSearch={mockSearch} />,
       );
 
@@ -1032,7 +1038,7 @@ describe("AsyncSelect Component", () => {
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="async-select-item"]');
+      const items = document.querySelectorAll('[data-ck="async-select-item"]');
       const highlightedItems = Array.from(items).filter(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -1042,7 +1048,7 @@ describe("AsyncSelect Component", () => {
       await user.keyboard("{ArrowUp}");
 
       const highlightedAfterUp = Array.from(
-        container.querySelectorAll('[data-ck="async-select-item"]'),
+        document.querySelectorAll('[data-ck="async-select-item"]'),
       ).filter((item) => item.getAttribute("data-highlighted") === "true");
       expect(highlightedAfterUp.length).toBe(1);
     });
@@ -1164,10 +1170,17 @@ describe("AsyncSelect Component", () => {
       expect(combobox.tagName).toBe("INPUT");
     });
 
-    it("menu has listbox role", () => {
-      render(<AsyncSelect onSearch={emptySearch} />);
+    it("menu has listbox role", async () => {
+      const user = userEvent.setup();
 
-      const listbox = screen.getByRole("listbox", { hidden: true });
+      render(
+        <AsyncSelect initialOptions={fruitOptions} onSearch={emptySearch} />,
+      );
+
+      const combobox = screen.getByRole("combobox");
+      await user.click(combobox);
+
+      const listbox = screen.getByRole("listbox");
       expect(listbox).toBeInTheDocument();
     });
 
@@ -1198,14 +1211,17 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
       await user.type(input, "t");
 
+      // Advance past debounce so loading state appears
+      await vi.advanceTimersByTimeAsync(300);
+
       await waitFor(() => {
-        const loadingEl = container.querySelector(
+        const loadingEl = document.querySelector(
           '[data-ck="async-select-loading"]',
         );
         expect(loadingEl).toBeInTheDocument();
@@ -1215,7 +1231,6 @@ describe("AsyncSelect Component", () => {
       });
 
       // Cleanup
-      await vi.advanceTimersByTimeAsync(300);
       resolveSearch([]);
     });
 
@@ -1226,7 +1241,7 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -1235,7 +1250,7 @@ describe("AsyncSelect Component", () => {
       await vi.advanceTimersByTimeAsync(300);
 
       await waitFor(() => {
-        const errorEl = container.querySelector(
+        const errorEl = document.querySelector(
           '[data-ck="async-select-error"]',
         );
         expect(errorEl).toBeInTheDocument();
@@ -1251,7 +1266,7 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -1260,7 +1275,7 @@ describe("AsyncSelect Component", () => {
       await vi.advanceTimersByTimeAsync(300);
 
       await waitFor(() => {
-        const emptyEl = container.querySelector(
+        const emptyEl = document.querySelector(
           '[data-ck="async-select-empty"]',
         );
         expect(emptyEl).toBeInTheDocument();
@@ -1309,6 +1324,130 @@ describe("AsyncSelect Component", () => {
   });
 
   // =========================================================================
+  // Data Attributes
+  // =========================================================================
+
+  describe("Data Attributes", () => {
+    it("has data-state on root and trigger", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <AsyncSelect initialOptions={fruitOptions} onSearch={emptySearch} />,
+      );
+
+      const root = container.querySelector('[data-ck="async-select"]');
+      const trigger = container.querySelector(
+        '[data-ck="async-select-trigger"]',
+      );
+
+      expect(root).toHaveAttribute("data-state", "closed");
+      expect(trigger).toHaveAttribute("data-state", "closed");
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(root).toHaveAttribute("data-state", "open");
+      expect(trigger).toHaveAttribute("data-state", "open");
+
+      const content = document.querySelector(
+        '[data-ck="async-select-content"]',
+      );
+      expect(content).toHaveAttribute("data-state", "open");
+    });
+
+    it("has data-disabled on root when disabled", () => {
+      const { container } = render(
+        <AsyncSelect disabled onSearch={emptySearch} />,
+      );
+
+      const root = container.querySelector('[data-ck="async-select"]');
+      expect(root).toHaveAttribute("data-disabled", "true");
+    });
+
+    it("has data-variant on root when variantName is provided", () => {
+      const { container } = render(
+        <AsyncSelect variantName="outlined" onSearch={emptySearch} />,
+      );
+
+      const root = container.querySelector('[data-ck="async-select"]');
+      expect(root).toHaveAttribute("data-variant", "outlined");
+    });
+
+    it("has data-loading on root during search", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      let resolveSearch!: (value: SelectOption<string>[]) => void;
+      const mockSearch = vi.fn().mockImplementation(
+        () =>
+          new Promise<SelectOption<string>[]>((resolve) => {
+            resolveSearch = resolve;
+          }),
+      );
+      const user = userEvent.setup({
+        advanceTimers: vi.advanceTimersByTime,
+      });
+
+      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+
+      const root = container.querySelector('[data-ck="async-select"]');
+      expect(root).not.toHaveAttribute("data-loading");
+
+      const input = screen.getByRole("combobox");
+      await user.click(input);
+      await user.type(input, "a");
+
+      await vi.advanceTimersByTimeAsync(300);
+
+      await waitFor(() => {
+        expect(root).toHaveAttribute("data-loading", "true");
+      });
+
+      resolveSearch([]);
+
+      await waitFor(() => {
+        expect(root).not.toHaveAttribute("data-loading");
+      });
+    });
+
+    it("has data-has-error on root when search fails", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const mockSearch = vi.fn().mockRejectedValue(new Error("fail"));
+      const user = userEvent.setup({
+        advanceTimers: vi.advanceTimersByTime,
+      });
+
+      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+
+      const root = container.querySelector('[data-ck="async-select"]');
+      expect(root).not.toHaveAttribute("data-has-error");
+
+      const input = screen.getByRole("combobox");
+      await user.click(input);
+      await user.type(input, "x");
+
+      await vi.advanceTimersByTimeAsync(300);
+
+      await waitFor(() => {
+        expect(root).toHaveAttribute("data-has-error", "true");
+      });
+    });
+
+    it("has data-highlighted on highlighted item", async () => {
+      const user = userEvent.setup();
+
+      render(
+        <AsyncSelect initialOptions={fruitOptions} onSearch={emptySearch} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{ArrowDown}");
+
+      const items = document.querySelectorAll('[data-ck="async-select-item"]');
+      const hasHighlighted = Array.from(items).some(
+        (item) => item.getAttribute("data-highlighted") === "true",
+      );
+      expect(hasHighlighted).toBe(true);
+    });
+  });
+
+  // =========================================================================
   // Edge Cases
   // =========================================================================
 
@@ -1327,7 +1466,7 @@ describe("AsyncSelect Component", () => {
       await user.click(screen.getByRole("combobox"));
 
       // No items rendered, but component is intact
-      const items = container.querySelectorAll('[data-ck="async-select-item"]');
+      const items = document.querySelectorAll('[data-ck="async-select-item"]');
       expect(items).toHaveLength(0);
     });
 
@@ -1353,7 +1492,7 @@ describe("AsyncSelect Component", () => {
         advanceTimers: vi.advanceTimersByTime,
       });
 
-      const { container } = render(<AsyncSelect onSearch={mockSearch} />);
+      render(<AsyncSelect onSearch={mockSearch} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -1370,12 +1509,12 @@ describe("AsyncSelect Component", () => {
       });
 
       // Verify structural elements
-      const groupLabels = container.querySelectorAll(
+      const groupLabels = document.querySelectorAll(
         '[data-ck="async-select-group-label"]',
       );
       expect(groupLabels).toHaveLength(2);
 
-      const separator = container.querySelector(
+      const separator = document.querySelector(
         '[data-ck="async-select-separator"]',
       );
       expect(separator).toBeInTheDocument();
@@ -1434,6 +1573,92 @@ describe("AsyncSelect Component", () => {
       // The timer callback may fire, but React state updates on unmounted
       // components are safely ignored.
       expect(true).toBe(true);
+    });
+  });
+
+  // =========================================================================
+  // getOptionValue
+  // =========================================================================
+
+  describe("getOptionValue", () => {
+    it("works with object values using getOptionValue", async () => {
+      const user = userEvent.setup();
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const handleChange = vi.fn();
+      const handleSearch = vi
+        .fn()
+        .mockResolvedValue(users.map((u) => ({ label: u.name, value: u })));
+
+      render(
+        <AsyncSelect
+          getOptionValue={(u) => u.id}
+          onSearch={handleSearch}
+          onValueChange={handleChange}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      await user.type(input, "Bob");
+
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "Bob" })).toBeInTheDocument();
+      });
+
+      const bobOption = screen.getByRole("option", { name: "Bob" });
+      await user.click(bobOption);
+
+      expect(handleChange).toHaveBeenCalledWith(users[1]);
+    });
+
+    it("correctly identifies selected item with getOptionValue", async () => {
+      const users = [
+        { id: 1, name: "Alice" },
+        { id: 2, name: "Bob" },
+      ];
+
+      const selectedUser = { id: 1, name: "Alice" };
+      const handleSearch = vi
+        .fn()
+        .mockResolvedValue(users.map((u) => ({ label: u.name, value: u })));
+
+      render(
+        <AsyncSelect
+          getOptionValue={(u) => u.id}
+          value={selectedUser}
+          onSearch={handleSearch}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      expect(input).toHaveValue("");
+    });
+
+    it("works without getOptionValue for primitives", async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+      const handleSearch = vi.fn().mockResolvedValue(["apple", "banana"]);
+
+      render(
+        <AsyncSelect onSearch={handleSearch} onValueChange={handleChange} />,
+      );
+
+      const input = screen.getByRole("combobox");
+      await user.type(input, "apple");
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("option", { name: "apple" }),
+        ).toBeInTheDocument();
+      });
+
+      const appleOption = screen.getByRole("option", { name: "apple" });
+      await user.click(appleOption);
+
+      expect(handleChange).toHaveBeenCalledWith("apple");
     });
   });
 });

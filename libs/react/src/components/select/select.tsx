@@ -1,16 +1,23 @@
 "use client";
 
+import { FloatingPortal } from "@floating-ui/react";
 import { useSelect } from "downshift";
-import { forwardRef, HTMLAttributes, ReactNode, useId, useMemo } from "react";
-
-import type {
-  ItemRenderContext,
-  NormalizedItem,
-  SelectOption,
-} from "../../types/select";
-
 import {
-  defaultIsEqual,
+  forwardRef,
+  HTMLAttributes,
+  ReactNode,
+  useId,
+  useMemo,
+  useRef,
+} from "react";
+
+import type { NormalizedItem, SelectOption } from "../../types/select";
+
+import { useFloatingSelect } from "../../hooks";
+import { mergeRefs } from "../../utils/merge-refs";
+import {
+  areValuesEqual,
+  findItemByValue,
   itemToString,
   processOptions,
 } from "../../utils/select";
@@ -28,9 +35,61 @@ import {
  * - Keyboard navigation: Arrow keys, Enter, Space, Escape, Home, End
  * - Type-ahead character search
  * - Controlled and uncontrolled modes
- * - Support for string and object values
- * - Custom trigger and item rendering via render props
+ * - Support for string and object values via generic `<T>`
+ * - Empty state with customizable content
  * - Full accessibility (WAI-ARIA Listbox pattern)
+ * - CSS-based styling via data attributes
+ *
+ * @remarks
+ * - Built on Downshift's `useSelect` hook for state management
+ * - `processOptions` normalizes mixed option formats (strings, labeled, groups, separators)
+ *   into flat selectable items and render items
+ * - Dropdown is rendered inside a `FloatingPortal` and positioned via `useFloatingSelect`
+ *   (Floating UI) with flip, shift, and size middleware
+ * - `forwardRef` generic `<T>` is preserved via a type cast (TypeScript #30650 workaround)
+ * - Uses `data-ck` attributes on root, trigger, value, content, items, separators, and
+ *   group labels for CSS targeting
+ * - Forwards refs correctly for DOM access
+ *
+ * ## Keyboard Support
+ *
+ * | Key | Action |
+ * | --- | --- |
+ * | `ArrowDown` | Open menu / move to next item |
+ * | `ArrowUp` | Move to previous item |
+ * | `Enter` | Select highlighted item and close |
+ * | `Space` | Open menu / select highlighted item |
+ * | `Escape` | Close menu |
+ * | `Home` | Move to first item |
+ * | `End` | Move to last item |
+ * | Characters | Type-ahead search by character |
+ *
+ * ## Accessibility
+ *
+ * This component follows the WAI-ARIA Listbox pattern:
+ * - Trigger has `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls`
+ * - Menu has `role="listbox"` with `aria-labelledby` linking to the trigger
+ * - Items have `role="option"` with `aria-selected` and `aria-disabled`
+ * - Empty state uses `role="status"` with `aria-live="polite"` for screen reader announcement
+ * - Separators use `role="separator"` with `aria-orientation="horizontal"`
+ *
+ * ## Best Practices
+ *
+ * - Provide a descriptive `aria-label` if no visible label is present
+ * - Use groups and separators to organize large option sets
+ * - Use `getOptionValue` when working with object values
+ * - Disable options rather than hiding them when possible
+ * - Provide custom `emptyContent` for a better user experience when no options match
+ *
+ * @param {SelectOption<T>[]} options - Array of options to display. Required.
+ * @param {T} [value] - Controlled selected value.
+ * @param {T} [defaultValue] - Default value for uncontrolled mode.
+ * @param {(value: T | undefined) => void} [onValueChange] - Callback when selection changes.
+ * @param {string} [placeholder="Select..."] - Placeholder text shown when no value is selected.
+ * @param {boolean} [disabled=false] - Whether the select is disabled.
+ * @param {string} [variantName] - Variant name for styling via `data-variant`.
+ * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
+ * @param {ReactNode} [emptyContent="No options"] - Custom content to display when there are no options.
  *
  * @example
  * ```tsx
@@ -67,42 +126,36 @@ import {
  *
  * @example
  * ```tsx
- * // Custom rendering
- * <Select
- *   options={options}
- *   renderTrigger={({ selectedItem, placeholder }) => (
- *     <span>{selectedItem?.label || placeholder} <ChevronDown /></span>
- *   )}
- *   renderItem={({ option, isSelected }) => (
- *     <div>{option.label} {isSelected && <Check />}</div>
- *   )}
+ * // Object values
+ * <Select<User>
+ *   options={users.map(u => ({ value: u, label: u.name }))}
+ *   getOptionValue={(u) => u.id}
+ *   onValueChange={setSelectedUser}
  * />
  * ```
  *
  * @example
  * ```tsx
- * // Object values
- * <Select<User>
- *   options={users.map(u => ({ value: u, label: u.name }))}
- *   isEqual={(a, b) => a?.id === b?.id}
- *   onValueChange={setSelectedUser}
+ * // Controlled mode
+ * const [fruit, setFruit] = useState('apple');
+ * <Select
+ *   options={['apple', 'banana', 'cherry']}
+ *   value={fruit}
+ *   onValueChange={setFruit}
  * />
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // With ref for DOM access
+ * const selectRef = useRef<HTMLDivElement>(null);
+ * <Select ref={selectRef} options={['apple', 'banana']} />
  * ```
  */
 
 // -----------------------------------------------------------------------------
 // Types
 // -----------------------------------------------------------------------------
-
-/**
- * Context provided to custom trigger renderer.
- */
-interface TriggerRenderContext<T = string> {
-  disabled: boolean;
-  isOpen: boolean;
-  placeholder: string;
-  selectedItem: NormalizedItem<T> | null;
-}
 
 // -----------------------------------------------------------------------------
 // Select Props
@@ -121,10 +174,19 @@ interface SelectProps<T = string> extends Omit<
    */
   disabled?: boolean;
   /**
-   * Function to compare two values for equality.
-   * Required for object values where reference equality won't work.
+   * Custom content to display when there are no options.
+   * @default "No options"
    */
-  isEqual?: (a: T | undefined, b: T | undefined) => boolean;
+  emptyContent?: ReactNode;
+  /**
+   * Function to extract a unique primitive key from option values.
+   * Required for object values where reference equality won't work.
+   * For primitive values (string, number), this is not needed.
+   *
+   * @example
+   * getOptionValue={(user) => user.id}
+   */
+  getOptionValue?: (option: T) => number | string;
   /**
    * Callback when selection changes.
    */
@@ -138,14 +200,6 @@ interface SelectProps<T = string> extends Omit<
    * @default "Select..."
    */
   placeholder?: string;
-  /**
-   * Custom item renderer.
-   */
-  renderItem?: (context: ItemRenderContext<T>) => ReactNode;
-  /**
-   * Custom trigger content renderer.
-   */
-  renderTrigger?: (context: TriggerRenderContext<T>) => ReactNode;
   /**
    * Controlled value.
    */
@@ -168,12 +222,11 @@ function SelectInner<T = string>(
     className,
     defaultValue,
     disabled = false,
-    isEqual = defaultIsEqual,
+    emptyContent = "No options",
+    getOptionValue,
     onValueChange,
     options,
     placeholder = "Select...",
-    renderItem: customRenderItem,
-    renderTrigger: customRenderTrigger,
     value,
     variantName,
     ...rest
@@ -182,6 +235,8 @@ function SelectInner<T = string>(
 ) {
   const triggerId = useId();
   const menuId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const menuNodeRef = useRef<HTMLDivElement | null>(null);
 
   // Process options into selectable items and render items
   const { renderItems, selectableItems } = useMemo(
@@ -190,17 +245,16 @@ function SelectInner<T = string>(
   );
 
   // Find controlled/initial selected item
-  const controlledItem = useMemo(() => {
-    if (value === undefined) return undefined;
-    return selectableItems.find((item) => isEqual(item.value, value)) ?? null;
-  }, [selectableItems, value, isEqual]);
+  const controlledItem = useMemo(
+    () => findItemByValue(selectableItems, value, getOptionValue),
+    [selectableItems, value, getOptionValue],
+  );
 
-  const initialItem = useMemo(() => {
-    if (defaultValue === undefined) return null;
-    return (
-      selectableItems.find((item) => isEqual(item.value, defaultValue)) ?? null
-    );
-  }, [selectableItems, defaultValue, isEqual]);
+  const initialItem = useMemo(
+    () =>
+      findItemByValue(selectableItems, defaultValue, getOptionValue) ?? null,
+    [selectableItems, defaultValue, getOptionValue],
+  );
 
   // Use Downshift for state management
   const {
@@ -223,22 +277,21 @@ function SelectInner<T = string>(
     selectedItem: controlledItem,
   });
 
-  // Trigger render context
-  const triggerContext: TriggerRenderContext<T> = {
-    disabled,
-    isOpen,
-    placeholder,
-    selectedItem,
-  };
+  // Use Floating UI for positioning
+  const { floatingProps, referenceProps } = useFloatingSelect({ isOpen });
 
-  // Default trigger content
-  const defaultTriggerContent = (
-    <span
-      data-ck="select-value"
-      data-placeholder={!selectedItem ? "" : undefined}
-    >
-      {selectedItem?.label ?? placeholder}
-    </span>
+  // Merge refs (memoized to avoid new callbacks on every render)
+  const containerRef_ = useMemo(
+    () => mergeRefs<HTMLDivElement>(containerRef, ref),
+    [ref],
+  );
+  const triggerRef = useMemo(
+    () => mergeRefs<HTMLButtonElement>(referenceProps.ref),
+    [referenceProps.ref],
+  );
+  const menuRef = useMemo(
+    () => mergeRefs<HTMLDivElement>(menuNodeRef, floatingProps.ref),
+    [floatingProps.ref],
   );
 
   return (
@@ -249,7 +302,7 @@ function SelectInner<T = string>(
       data-disabled={disabled || undefined}
       data-state={isOpen ? "open" : "closed"}
       data-variant={variantName}
-      ref={ref}
+      ref={containerRef_}
     >
       {/* Trigger */}
       <button
@@ -260,66 +313,69 @@ function SelectInner<T = string>(
         data-ck="select-trigger"
         data-state={isOpen ? "open" : "closed"}
         type="button"
+        ref={triggerRef}
       >
-        {customRenderTrigger
-          ? customRenderTrigger(triggerContext)
-          : defaultTriggerContent}
+        <span
+          data-ck="select-value"
+          data-placeholder={!selectedItem ? "" : undefined}
+        >
+          {selectedItem?.label ?? placeholder}
+        </span>
       </button>
 
-      {/* Content */}
-      <div
-        {...getMenuProps({ id: menuId })}
-        aria-labelledby={triggerId}
-        data-ck="select-content"
-        data-state={isOpen ? "open" : "closed"}
-      >
-        {isOpen &&
-          renderItems.map((renderItem, idx) => {
-            if (renderItem.type === "separator") {
-              return (
-                <div
-                  key={`separator-${idx}`}
-                  aria-orientation="horizontal"
-                  data-ck="select-separator"
-                  role="separator"
-                />
-              );
-            }
+      {/* Content - Rendered in portal */}
+      <FloatingPortal>
+        {isOpen && (
+          <div
+            {...getMenuProps({ id: menuId, ref: menuRef })}
+            style={floatingProps.style}
+            aria-labelledby={triggerId}
+            data-ck="select-content"
+            data-state="open"
+          >
+            {renderItems.length === 0 && (
+              <div aria-live="polite" data-ck="select-empty" role="status">
+                {emptyContent}
+              </div>
+            )}
 
-            if (renderItem.type === "group-label") {
-              return (
-                <div
-                  key={`group-${renderItem.groupIndex}`}
-                  data-ck="select-group-label"
-                >
-                  {renderItem.groupLabel}
-                </div>
-              );
-            }
+            {renderItems.map((renderItem, idx) => {
+              if (renderItem.type === "separator") {
+                return (
+                  <div
+                    key={`separator-${idx}`}
+                    aria-orientation="horizontal"
+                    data-ck="select-separator"
+                    role="separator"
+                  />
+                );
+              }
 
-            // Item
-            const { item, selectableIndex } = renderItem;
-            const isSelected = selectedItem
-              ? isEqual(selectedItem.value, item.value)
-              : false;
-            const isHighlighted = highlightedIndex === selectableIndex;
-            const isDisabled = item.disabled ?? false;
+              if (renderItem.type === "group-label") {
+                return (
+                  <div
+                    key={`group-${renderItem.groupIndex}`}
+                    data-ck="select-group-label"
+                  >
+                    {renderItem.groupLabel}
+                  </div>
+                );
+              }
 
-            const itemContext: ItemRenderContext<T> = {
-              index: selectableIndex,
-              isDisabled,
-              isHighlighted,
-              isSelected,
-              option: item,
-            };
+              // Item
+              const { item, selectableIndex } = renderItem;
+              const isSelected = selectedItem
+                ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
+                : false;
+              const isHighlighted = highlightedIndex === selectableIndex;
+              const isDisabled = item.disabled ?? false;
 
-            const itemProps = getItemProps({
-              disabled: isDisabled,
-              index: selectableIndex,
-              item,
-            });
+              const itemProps = getItemProps({
+                disabled: isDisabled,
+                index: selectableIndex,
+                item,
+              });
 
-            if (customRenderItem) {
               return (
                 <div
                   key={`item-${selectableIndex}`}
@@ -332,28 +388,13 @@ function SelectInner<T = string>(
                   data-state={isSelected ? "checked" : "unchecked"}
                   role="option"
                 >
-                  {customRenderItem(itemContext)}
+                  {item.label}
                 </div>
               );
-            }
-
-            return (
-              <div
-                key={`item-${selectableIndex}`}
-                {...itemProps}
-                aria-disabled={isDisabled || undefined}
-                aria-selected={isSelected}
-                data-ck="select-item"
-                data-disabled={isDisabled || undefined}
-                data-highlighted={isHighlighted || undefined}
-                data-state={isSelected ? "checked" : "unchecked"}
-                role="option"
-              >
-                {item.label}
-              </div>
-            );
-          })}
-      </div>
+            })}
+          </div>
+        )}
+      </FloatingPortal>
     </div>
   );
 }
@@ -366,4 +407,4 @@ const Select = forwardRef(SelectInner) as unknown as (<T = string>(
 
 Select.displayName = "Select";
 
-export { Select, type SelectProps, type TriggerRenderContext };
+export { Select, type SelectProps };

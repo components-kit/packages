@@ -58,41 +58,24 @@ import { Combobox } from '@components-kit/react';
   }
 />
 
-// Custom rendering
-<Combobox
-  options={options}
-  renderTrigger={({ inputValue, isOpen, placeholder }) => (
-    <div>
-      <input value={inputValue} placeholder={placeholder} />
-      <ChevronDown />
-    </div>
-  )}
-  renderItem={({ option, isSelected, isHighlighted }) => (
-    <div style={{ fontWeight: isHighlighted ? 'bold' : 'normal' }}>
-      {option.label} {isSelected && <Check />}
-    </div>
-  )}
-/>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `SelectOption<T>[]` | **required** | Array of options to display |
-| `value` | `T` | - | Controlled selected value |
-| `defaultValue` | `T` | - | Default value (uncontrolled) |
-| `onValueChange` | `(value: T \| undefined) => void` | - | Callback when selection changes |
-| `inputValue` | `string` | - | Controlled input text value |
-| `defaultInputValue` | `string` | - | Default input value (uncontrolled) |
-| `onInputValueChange` | `(value: string) => void` | - | Callback when input text changes |
-| `placeholder` | `string` | `"Search..."` | Placeholder text for the input |
-| `disabled` | `boolean` | `false` | Disables the combobox |
-| `variantName` | `string` | - | Variant name for styling |
-| `isEqual` | `(a: T, b: T) => boolean` | - | Custom equality function for object values |
-| `filterFn` | `(option, inputValue) => boolean` | - | Custom filter function (default: case-insensitive includes) |
-| `renderTrigger` | `(context) => ReactNode` | - | Custom trigger renderer |
-| `renderItem` | `(context) => ReactNode` | - | Custom item renderer |
+| Prop                 | Type                              | Default       | Description                                                                                                                                                              |
+| -------------------- | --------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `options`            | `SelectOption<T>[]`               | **required**  | Array of options to display                                                                                                                                              |
+| `value`              | `T`                               | -             | Controlled selected value                                                                                                                                                |
+| `defaultValue`       | `T`                               | -             | Default value (uncontrolled)                                                                                                                                             |
+| `onValueChange`      | `(value: T \| undefined) => void` | -             | Callback when selection changes                                                                                                                                          |
+| `inputValue`         | `string`                          | -             | Controlled input text value                                                                                                                                              |
+| `defaultInputValue`  | `string`                          | -             | Default input value (uncontrolled)                                                                                                                                       |
+| `onInputValueChange` | `(value: string) => void`         | -             | Callback when input text changes                                                                                                                                         |
+| `placeholder`        | `string`                          | `"Search..."` | Placeholder text for the input                                                                                                                                           |
+| `disabled`           | `boolean`                         | `false`       | Disables the combobox                                                                                                                                                    |
+| `variantName`        | `string`                          | -             | Variant name for styling                                                                                                                                                 |
+| `getOptionValue`     | `(option: T) => string \| number` | -             | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| `filterFn`           | `(option, inputValue) => boolean` | -             | Custom filter function (default: case-insensitive includes)                                                                                                              |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -114,32 +97,38 @@ Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-ck="combobox"` | - | Root combobox container |
-| `data-ck="combobox-input-wrapper"` | - | Wrapper around input and toggle button |
-| `data-ck="combobox-input"` | - | Text input element |
-| `data-ck="combobox-trigger"` | - | Toggle button to open/close menu |
-| `data-ck="combobox-content"` | - | Dropdown menu container |
-| `data-ck="combobox-item"` | - | Individual option item |
-| `data-ck="combobox-separator"` | - | Visual separator between groups |
-| `data-ck="combobox-group-label"` | - | Group heading label |
-| `data-ck="combobox-empty"` | - | Empty state ("No results found") |
-| `data-state` | `"open"`, `"closed"` | Dropdown state (on root, trigger, and content) |
-| `data-disabled` | `true` | Present when disabled (on root and items) |
-| `data-highlighted` | `true` | Present on the currently highlighted item |
-| `data-variant` | string | Variant name for styling |
+| Attribute                          | Element                | Values               | Description                                    |
+| ---------------------------------- | ---------------------- | -------------------- | ---------------------------------------------- |
+| `data-ck="combobox"`               | Root                   | -                    | Root combobox container                        |
+| `data-ck="combobox-input-wrapper"` | Wrapper                | -                    | Wrapper around input and toggle button         |
+| `data-ck="combobox-input"`         | Input                  | -                    | Text input element                             |
+| `data-ck="combobox-trigger"`       | Button                 | -                    | Toggle button to open/close menu               |
+| `data-ck="combobox-content"`       | Menu                   | -                    | Dropdown menu container                        |
+| `data-ck="combobox-item"`          | Item                   | -                    | Individual option item                         |
+| `data-ck="combobox-separator"`     | Div                    | -                    | Visual separator between groups                |
+| `data-ck="combobox-group-label"`   | Div                    | -                    | Group heading label                            |
+| `data-ck="combobox-empty"`         | Div                    | -                    | Empty state ("No results found")               |
+| `data-state`                       | Root, Trigger, Content | `"open"`, `"closed"` | Dropdown state (on root, trigger, and content) |
+| `data-disabled`                    | Root, Item             | `true`               | Present when disabled (on root and items)      |
+| `data-highlighted`                 | Item                   | `true`               | Present on the currently highlighted item      |
+| `data-variant`                     | Root                   | string               | Variant name for styling                       |
 
 ## Accessibility
 
-- Follows WAI-ARIA Combobox Pattern with Listbox Popup
-- Full keyboard navigation:
-  - **Arrow Down**: Open menu / move to next item
-  - **Arrow Up**: Move to previous item
-  - **Enter**: Select highlighted item and close
-  - **Escape**: Close menu
-  - **Home/End**: Jump to first/last item
-  - **Characters**: Filter options by typing
+Follows WAI-ARIA Combobox Pattern with Listbox Popup.
+
+### Keyboard Support
+
+| Key         | Action                            |
+| ----------- | --------------------------------- |
+| `ArrowDown` | Open menu / move to next item     |
+| `ArrowUp`   | Move to previous item             |
+| `Enter`     | Select highlighted item and close |
+| `Escape`    | Close menu                        |
+| `Home`      | Jump to first item                |
+| `End`       | Jump to last item                 |
+| Characters  | Filter options by typing          |
+
 - ARIA attributes:
   - `role="combobox"` on the input element
   - `role="listbox"` on the dropdown menu
@@ -154,7 +143,99 @@ Also accepts all standard `div` HTML attributes.
 
 - Provide a descriptive `aria-label` if no visible label
 - Use `filterFn` for custom matching (e.g., fuzzy search)
-- Use `isEqual` when working with object values
+- Use `getOptionValue` when working with object values
 - Use groups and separators to organize large option sets
-- Consider custom `renderItem` for rich option display
 - Disable options rather than hiding them when possible
+
+## Object Values
+
+When working with object values, use `getOptionValue` to extract a unique primitive key for proper selection comparison:
+
+```tsx
+import { Combobox } from "@components-kit/react";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const users: User[] = [
+  { id: 1, name: "Alice Johnson", email: "alice@example.com" },
+  { id: 2, name: "Bob Smith", email: "bob@example.com" },
+  { id: 3, name: "Carol Williams", email: "carol@example.com" },
+];
+
+function UserPicker() {
+  const [selectedUser, setSelectedUser] = useState<User | undefined>();
+
+  return (
+    <Combobox
+      options={users.map((user) => ({
+        value: user,
+        label: `${user.name} (${user.email})`,
+      }))}
+      value={selectedUser}
+      onValueChange={setSelectedUser}
+      getOptionValue={(user) => user.id}
+      placeholder="Search users..."
+      filterFn={(option, inputValue) => {
+        const user = option.value;
+        return (
+          user.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+          user.email.toLowerCase().includes(inputValue.toLowerCase())
+        );
+      }}
+    />
+  );
+}
+```
+
+The `getOptionValue` function is essential for object values because:
+
+- It enables proper selection comparison without relying on reference equality
+- It provides a stable, unique identifier for each option
+- It works correctly with controlled and uncontrolled modes
+
+## CSS Customization
+
+Use data attributes to style the combobox component:
+
+```css
+/* Style the input wrapper */
+[data-ck="combobox-input-wrapper"] {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+/* Style the input */
+[data-ck="combobox-input"] {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+/* Style the toggle button */
+[data-ck="combobox-trigger"]::after {
+  content: "▼";
+  transition: transform 0.2s;
+}
+
+[data-ck="combobox-trigger"][data-state="open"]::after {
+  transform: rotate(180deg);
+}
+
+/* Style highlighted items */
+[data-ck="combobox-item"][data-highlighted] {
+  background: var(--color-highlight);
+}
+
+/* Style selected items */
+[data-ck="combobox-item"][data-state="checked"]::before {
+  content: "✓";
+  margin-right: 8px;
+}
+```
