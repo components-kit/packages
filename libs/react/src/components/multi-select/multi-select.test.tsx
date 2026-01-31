@@ -243,7 +243,7 @@ describe("MultiSelect Component", () => {
 
     it("renders separators between groups", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           options={[
             { label: "Apple", value: "apple" },
@@ -255,7 +255,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const separator = container.querySelector(
+      const separator = document.querySelector(
         '[data-ck="multi-select-separator"]',
       );
       expect(separator).toBeInTheDocument();
@@ -266,7 +266,7 @@ describe("MultiSelect Component", () => {
   describe("Disabled Items", () => {
     it("renders disabled items with aria-disabled", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           options={[
             { label: "Apple", value: "apple" },
@@ -281,7 +281,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items[0]).not.toHaveAttribute("aria-disabled");
       expect(items[1]).toHaveAttribute("aria-disabled", "true");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
@@ -289,7 +289,7 @@ describe("MultiSelect Component", () => {
 
     it("skips disabled items during keyboard navigation", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           options={[
             { label: "Apple", value: "apple" },
@@ -303,7 +303,7 @@ describe("MultiSelect Component", () => {
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       const disabledItem = items[1];
       expect(disabledItem).not.toHaveAttribute("data-highlighted", "true");
     });
@@ -312,21 +312,19 @@ describe("MultiSelect Component", () => {
   describe("Filtering", () => {
     it("filters options based on input text", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana", "cherry"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.type(screen.getByRole("combobox"), "ban");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent("banana");
     });
 
     it("excludes already-selected items from dropdown", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           defaultValue={["apple"]}
           options={["apple", "banana", "cherry"]}
@@ -335,7 +333,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items).toHaveLength(2);
       const itemTexts = Array.from(items).map((item) => item.textContent);
       expect(itemTexts).toContain("banana");
@@ -345,21 +343,19 @@ describe("MultiSelect Component", () => {
 
     it("shows empty state when no options match", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana", "cherry"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.type(screen.getByRole("combobox"), "xyz");
 
-      const empty = container.querySelector('[data-ck="multi-select-empty"]');
+      const empty = document.querySelector('[data-ck="multi-select-empty"]');
       expect(empty).toBeInTheDocument();
       expect(empty).toHaveTextContent("No results found");
     });
 
     it("uses custom filterFn when provided", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           filterFn={(option, inputValue) => option.label.startsWith(inputValue)}
           options={["apple", "apricot", "banana"]}
@@ -369,7 +365,7 @@ describe("MultiSelect Component", () => {
       await user.click(screen.getByRole("combobox"));
       await user.type(screen.getByRole("combobox"), "ap");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items).toHaveLength(2);
       expect(items[0]).toHaveTextContent("apple");
       expect(items[1]).toHaveTextContent("apricot");
@@ -461,7 +457,7 @@ describe("MultiSelect Component", () => {
 
     it("shows 'Maximum selections reached' when at limit", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           defaultValue={["apple", "banana"]}
           maxSelected={2}
@@ -471,7 +467,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const empty = container.querySelector('[data-ck="multi-select-empty"]');
+      const empty = document.querySelector('[data-ck="multi-select-empty"]');
       expect(empty).toBeInTheDocument();
       expect(empty).toHaveTextContent("Maximum selections reached");
     });
@@ -700,15 +696,13 @@ describe("MultiSelect Component", () => {
 
     it("navigates items with ArrowDown/ArrowUp", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana", "cherry"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       const highlightedItems = Array.from(items).filter(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -796,16 +790,63 @@ describe("MultiSelect Component", () => {
 
     it("filters options as user types characters", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana", "cherry"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.type(screen.getByRole("combobox"), "ch");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent("cherry");
+    });
+
+    it("navigates between tags with ArrowLeft and ArrowRight", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <MultiSelect
+          defaultValue={["apple", "banana", "cherry"]}
+          options={["apple", "banana", "cherry", "date"]}
+        />,
+      );
+
+      const input = screen.getByRole("combobox");
+      input.focus();
+
+      // ArrowLeft from input should activate last tag
+      await user.keyboard("{ArrowLeft}");
+
+      let tags = container.querySelectorAll('[data-ck="multi-select-tag"]');
+      expect(tags[2]).toHaveAttribute("data-active", "true");
+
+      // ArrowLeft again should move to previous tag
+      await user.keyboard("{ArrowLeft}");
+
+      tags = container.querySelectorAll('[data-ck="multi-select-tag"]');
+      expect(tags[1]).toHaveAttribute("data-active", "true");
+
+      // ArrowRight should move back to next tag
+      await user.keyboard("{ArrowRight}");
+
+      tags = container.querySelectorAll('[data-ck="multi-select-tag"]');
+      expect(tags[2]).toHaveAttribute("data-active", "true");
+    });
+
+    it("returns focus to input with ArrowRight from last tag", async () => {
+      const user = userEvent.setup();
+      render(
+        <MultiSelect defaultValue={["apple"]} options={["apple", "banana"]} />,
+      );
+
+      const input = screen.getByRole("combobox");
+      input.focus();
+
+      // Navigate to tag
+      await user.keyboard("{ArrowLeft}");
+
+      // ArrowRight from last (only) tag should return focus to input
+      await user.keyboard("{ArrowRight}");
+
+      expect(document.activeElement).toBe(input);
     });
   });
 
@@ -855,12 +896,13 @@ describe("MultiSelect Component", () => {
   });
 
   describe("Accessibility", () => {
-    it("menu has aria-multiselectable='true'", () => {
-      const { container } = render(
-        <MultiSelect options={["apple", "banana"]} />,
-      );
+    it("menu has aria-multiselectable='true'", async () => {
+      const user = userEvent.setup();
+      render(<MultiSelect options={["apple", "banana"]} />);
 
-      const content = container.querySelector(
+      await user.click(screen.getByRole("combobox"));
+
+      const content = document.querySelector(
         '[data-ck="multi-select-content"]',
       );
       expect(content).toHaveAttribute("aria-multiselectable", "true");
@@ -919,21 +961,19 @@ describe("MultiSelect Component", () => {
 
     it("empty state has role status and aria-live polite", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.type(screen.getByRole("combobox"), "xyz");
 
-      const empty = container.querySelector('[data-ck="multi-select-empty"]');
+      const empty = document.querySelector('[data-ck="multi-select-empty"]');
       expect(empty).toHaveAttribute("role", "status");
       expect(empty).toHaveAttribute("aria-live", "polite");
     });
 
     it("separators have role separator", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           options={[
             { label: "Apple", value: "apple" },
@@ -945,7 +985,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const separator = container.querySelector(
+      const separator = document.querySelector(
         '[data-ck="multi-select-separator"]',
       );
       expect(separator).toHaveAttribute("role", "separator");
@@ -961,16 +1001,19 @@ describe("MultiSelect Component", () => {
       const trigger = container.querySelector(
         '[data-ck="multi-select-trigger"]',
       );
-      const content = container.querySelector(
-        '[data-ck="multi-select-content"]',
-      );
 
       expect(root).toHaveAttribute("data-state", "closed");
       expect(trigger).toHaveAttribute("data-state", "closed");
-      expect(content).toHaveAttribute("data-state", "closed");
+      // content is not rendered in the DOM when closed (portal only renders when open)
+      expect(
+        document.querySelector('[data-ck="multi-select-content"]'),
+      ).toBeNull();
 
       await user.click(screen.getByRole("combobox"));
 
+      const content = document.querySelector(
+        '[data-ck="multi-select-content"]',
+      );
       expect(root).toHaveAttribute("data-state", "open");
       expect(trigger).toHaveAttribute("data-state", "open");
       expect(content).toHaveAttribute("data-state", "open");
@@ -1022,14 +1065,12 @@ describe("MultiSelect Component", () => {
 
     it("has data-highlighted on highlighted item", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <MultiSelect options={["apple", "banana", "cherry"]} />,
-      );
+      render(<MultiSelect options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       const hasHighlighted = Array.from(items).some(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -1038,7 +1079,7 @@ describe("MultiSelect Component", () => {
 
     it("has data-disabled on disabled items", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <MultiSelect
           options={[
             { label: "Apple", value: "apple" },
@@ -1049,7 +1090,7 @@ describe("MultiSelect Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items[0]).not.toHaveAttribute("data-disabled");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
     });
@@ -1117,7 +1158,7 @@ describe("MultiSelect Component", () => {
       await user.click(screen.getByRole("option", { name: "banana" }));
 
       // All items selected means no options in the dropdown
-      const items = container.querySelectorAll('[data-ck="multi-select-item"]');
+      const items = document.querySelectorAll('[data-ck="multi-select-item"]');
       expect(items).toHaveLength(0);
 
       // Both should appear as tags

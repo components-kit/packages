@@ -201,16 +201,22 @@ Use data attributes to style the multi-select component:
 ## Accessibility
 
 - Follows WAI-ARIA Combobox pattern with `aria-multiselectable="true"` on the listbox
-- Full keyboard navigation:
-  - **Arrow Down/Up**: Navigate dropdown items
-  - **Enter**: Select highlighted item (menu stays open)
-  - **Escape**: Close dropdown
-  - **Home/End**: Jump to first/last item
-  - **Backspace** (input empty): Remove last selected tag
-  - **Arrow Left** (input, caret at 0): Focus last tag
-  - **Arrow Right** (tag focused): Focus next tag or return to input
-  - **Arrow Left** (tag focused): Focus previous tag
-  - **Characters**: Filter options by typing
+
+### Keyboard Support
+
+| Key            | Context           | Action                                   |
+| -------------- | ----------------- | ---------------------------------------- |
+| `ArrowDown`    | Input             | Open menu / move to next item            |
+| `ArrowUp`      | Input             | Move to previous item                    |
+| `Enter`        | Item highlighted  | Select item, keep menu open, clear input |
+| `Escape`       | Menu open         | Close menu                               |
+| `Home` / `End` | Menu open         | Jump to first / last item                |
+| `Backspace`    | Input empty       | Remove last selected tag                 |
+| `ArrowLeft`    | Input, caret at 0 | Focus last tag                           |
+| `ArrowRight`   | Tag focused       | Focus next tag or return to input        |
+| `ArrowLeft`    | Tag focused       | Focus previous tag                       |
+| Characters     | Input             | Filter options by typing                 |
+
 - Tags have `aria-label="{label}, selected"` for screen readers
 - Tag remove buttons have `aria-label="Remove {label}"`
 - `aria-live="polite"` on empty and max-reached state messages

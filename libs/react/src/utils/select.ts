@@ -213,8 +213,89 @@ function filterRenderItems<T>(
   return { filteredRenderItems, filteredSelectableItems };
 }
 
+/**
+ * Compares whether two item values are equal.
+ * Uses getOptionValue for key-based comparison when provided,
+ * falls back to strict equality for primitives.
+ */
+function areValuesEqual<T>(
+  a: T,
+  b: T,
+  getOptionValue?: (option: T) => number | string,
+): boolean {
+  if (getOptionValue) {
+    return getOptionValue(a) === getOptionValue(b);
+  }
+  return a === b;
+}
+
+/**
+ * Default filter function for combobox-style components.
+ * Case-insensitive substring match on the item's label.
+ */
+function defaultFilterFn<T>(item: NormalizedItem<T>, input: string): boolean {
+  if (!input) return true;
+  return item.label.toLowerCase().includes(input.toLowerCase());
+}
+
+/**
+ * Finds a NormalizedItem in a list by matching against a raw value.
+ * Uses getOptionValue for key-based comparison when provided,
+ * falls back to strict equality for primitives.
+ *
+ * Returns the matching item, or null if not found.
+ * Returns undefined only when the input value is itself undefined
+ * (to distinguish "no controlled value" from "controlled but not found").
+ */
+function findItemByValue<T>(
+  items: NormalizedItem<T>[],
+  value: T | undefined,
+  getOptionValue?: (option: T) => number | string,
+): NormalizedItem<T> | null | undefined {
+  if (value === undefined) return undefined;
+
+  if (getOptionValue) {
+    const valueKey = getOptionValue(value);
+    return (
+      items.find((item) => getOptionValue(item.value) === valueKey) ?? null
+    );
+  }
+
+  return items.find((item) => item.value === value) ?? null;
+}
+
+/**
+ * Finds multiple NormalizedItems by matching each value in the array.
+ * Returns only the items that were found (filters out unmatched values).
+ * Returns undefined when the input array is itself undefined.
+ */
+function findItemsByValue<T>(
+  items: NormalizedItem<T>[],
+  values: T[] | undefined,
+  getOptionValue?: (option: T) => number | string,
+): NormalizedItem<T>[] | undefined {
+  if (values === undefined) return undefined;
+
+  if (getOptionValue) {
+    return values
+      .map((val) => {
+        const valueKey = getOptionValue(val);
+        return items.find((item) => getOptionValue(item.value) === valueKey);
+      })
+      .filter((item): item is NormalizedItem<T> => item !== undefined);
+  }
+
+  return values
+    .map((val) => items.find((item) => item.value === val))
+    .filter((item): item is NormalizedItem<T> => item !== undefined);
+}
+
 export {
+  areValuesEqual,
+  defaultFilterFn,
   filterRenderItems,
+  findItemByValue,
+  findItemsByValue,
   itemToString,
   normalizeLabeledOption,
   normalizeOption,

@@ -13,6 +13,8 @@ import {
   Ref,
 } from "react";
 
+import { mergeRefs } from "../../utils/merge-refs";
+
 /**
  * A utility component for composition patterns, enabling the "asChild" pattern.
  *
@@ -112,25 +114,10 @@ interface SlottableChildProps {
 }
 
 /**
- * Merges multiple refs into a single ref callback
- */
-function mergeRefs<T>(...refs: Array<Ref<T> | undefined>): Ref<T> {
-  return (node: T) => {
-    refs.forEach((refItem) => {
-      if (typeof refItem === "function") {
-        refItem(node);
-      } else if (refItem !== null && refItem !== undefined) {
-        Object.assign(refItem, { current: node });
-      }
-    });
-  };
-}
-
-/**
  * Checks if children is a single valid React element that can receive props
  */
 function isSlottable(
-  children: ReactNode
+  children: ReactNode,
 ): children is ReactElement<SlottableChildProps> {
   return (
     isValidElement(children) &&
@@ -154,7 +141,7 @@ function mergeClassNames(
  */
 function mergeEventHandlers(
   parentHandler: EventHandler,
-  childHandler: EventHandler
+  childHandler: EventHandler,
 ): EventHandler {
   if (!parentHandler && !childHandler) return undefined;
   if (!parentHandler) return childHandler;
@@ -174,7 +161,7 @@ function warnAboutInvalidChild() {
     console.warn(
       "[Slot] Expected a single valid React element as a child when asChild is true. " +
         "Received multiple children, a Fragment, or a non-element. " +
-        "Falling back to default rendering."
+        "Falling back to default rendering.",
     );
   }
 }
@@ -183,7 +170,7 @@ function warnAboutInvalidChild() {
  * Gets props from a child element with proper typing
  */
 function getChildProps(
-  child: ReactElement<SlottableChildProps>
+  child: ReactElement<SlottableChildProps>,
 ): SlottableChildProps {
   return child.props || {};
 }
@@ -193,7 +180,7 @@ function getChildProps(
  * In React 19, ref is a regular prop, so we check props.ref first
  */
 function getChildRef(
-  child: ReactElement<SlottableChildProps>
+  child: ReactElement<SlottableChildProps>,
 ): Ref<HTMLElement> | undefined {
   // React 19: ref is a regular prop
   if (child.props && "ref" in child.props) {
@@ -249,11 +236,11 @@ const Slot = forwardRef<HTMLElement, SlotProps>((props, ref) => {
     onKeyDown: mergeEventHandlers(restProps.onKeyDown, childProps.onKeyDown),
     onMouseEnter: mergeEventHandlers(
       restProps.onMouseEnter,
-      childProps.onMouseEnter
+      childProps.onMouseEnter,
     ),
     onMouseLeave: mergeEventHandlers(
       restProps.onMouseLeave,
-      childProps.onMouseLeave
+      childProps.onMouseLeave,
     ),
     ref: childRef ? mergeRefs(ref, childRef) : ref,
   };

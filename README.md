@@ -32,8 +32,8 @@ npm install react react-dom
 # Optional - only if using Table component
 npm install @tanstack/react-table
 
-# Optional - only if using Select component
-npm install downshift
+# Optional - only if using Select, Combobox, MultiSelect, or AsyncSelect
+npm install downshift @floating-ui/react
 
 # Optional - only if using Toast component
 npm install sonner
@@ -141,8 +141,14 @@ export default defineConfig(({ mode }) => {
         name: "inject-components-kit-assets",
         transformIndexHtml(html) {
           return html
-            .replace(/__BUNDLE_URL__/g, `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`)
-            .replace(/__FONTS_URL__/g, `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`);
+            .replace(
+              /__BUNDLE_URL__/g,
+              `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`,
+            )
+            .replace(
+              /__FONTS_URL__/g,
+              `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`,
+            );
         },
       },
     ],
@@ -228,29 +234,32 @@ import Link from "next/link";
 
 ## Components
 
-| Component                                                     | Description                                                              | Optional Deps           |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------- |
-| [Alert](libs/react/src/components/alert/README.md)            | Contextual feedback messages with icon, heading, description, and action | -                       |
-| [Badge](libs/react/src/components/badge/README.md)            | Small status indicator for labels and counts                             | -                       |
-| [Button](libs/react/src/components/button/README.md)          | Polymorphic button with loading, icons, and composition support          | -                       |
-| [Checkbox](libs/react/src/components/checkbox/README.md)      | Boolean selection with indeterminate state support                       | -                       |
-| [Heading](libs/react/src/components/heading/README.md)        | Polymorphic heading (h1-h6) with semantic hierarchy                      | -                       |
-| [Icon](libs/react/src/components/icon/README.md)              | Flexible icon wrapper with consistent sizing                             | -                       |
-| [Input](libs/react/src/components/input/README.md)            | Text input with type variants                                            | -                       |
-| [Pagination](libs/react/src/components/pagination/README.md)  | Accessible pagination with offset (numeric) and cursor-based modes       | -                       |
-| [Progress](libs/react/src/components/progress/README.md)      | Linear progress bar with label, determinate/indeterminate modes          | -                       |
-| [RadioGroup](libs/react/src/components/radio-group/README.md) | Radio button group with RadioGroupItem                                   | -                       |
-| [Select](libs/react/src/components/select/README.md)          | Dropdown with keyboard navigation and custom rendering                   | `downshift`             |
-| [Separator](libs/react/src/components/separator/README.md)    | Visual divider (horizontal/vertical)                                     | -                       |
-| [Skeleton](libs/react/src/components/skeleton/README.md)      | Loading placeholder with customizable dimensions                         | -                       |
-| [Slider](libs/react/src/components/slider/README.md)          | Range input with keyboard navigation and pointer drag support            | -                       |
-| [Slot](libs/react/src/components/slot/README.md)              | Utility for prop merging and asChild pattern                             | -                       |
-| [Switch](libs/react/src/components/switch/README.md)          | Binary toggle control                                                    | -                       |
-| [Table](libs/react/src/components/table/README.md)            | Data table with sorting, pagination, selection, and expansion            | `@tanstack/react-table` |
-| [Text](libs/react/src/components/text/README.md)              | Polymorphic text element (p, span, strong, em, etc.)                     | -                       |
-| [Textarea](libs/react/src/components/textarea/README.md)      | Multi-line text input with auto-resize                                   | -                       |
-| [Toast](libs/react/src/components/toast/README.md)            | Toast notification function with semantic markup                          | `sonner`                |
-| [Tabs](libs/react/src/components/tabs/README.md)              | Accessible tabs for organizing content into panels                       | -                       |
+| Component                                                       | Description                                                              | Optional Deps                     |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------- |
+| [Alert](libs/react/src/components/alert/README.md)              | Contextual feedback messages with icon, heading, description, and action | -                                 |
+| [Badge](libs/react/src/components/badge/README.md)              | Small status indicator for labels and counts                             | -                                 |
+| [Button](libs/react/src/components/button/README.md)            | Polymorphic button with loading, icons, and composition support          | -                                 |
+| [Checkbox](libs/react/src/components/checkbox/README.md)        | Boolean selection with indeterminate state support                       | -                                 |
+| [Heading](libs/react/src/components/heading/README.md)          | Polymorphic heading (h1-h6) with semantic hierarchy                      | -                                 |
+| [Icon](libs/react/src/components/icon/README.md)                | Flexible icon wrapper with consistent sizing                             | -                                 |
+| [Input](libs/react/src/components/input/README.md)              | Text input with type variants                                            | -                                 |
+| [Pagination](libs/react/src/components/pagination/README.md)    | Accessible pagination with offset (numeric) and cursor-based modes       | -                                 |
+| [Progress](libs/react/src/components/progress/README.md)        | Linear progress bar with label, determinate/indeterminate modes          | -                                 |
+| [RadioGroup](libs/react/src/components/radio-group/README.md)   | Radio button group with RadioGroupItem                                   | -                                 |
+| [Select](libs/react/src/components/select/README.md)            | Dropdown select with keyboard navigation and type-ahead                  | `downshift`, `@floating-ui/react` |
+| [Combobox](libs/react/src/components/combobox/README.md)        | Searchable select with text input filtering                              | `downshift`, `@floating-ui/react` |
+| [MultiSelect](libs/react/src/components/multi-select/README.md) | Multi-value select with tags, filtering, and keyboard tag navigation     | `downshift`, `@floating-ui/react` |
+| [AsyncSelect](libs/react/src/components/async-select/README.md) | Async searchable select with debounce, caching, and loading/error states | `downshift`, `@floating-ui/react` |
+| [Separator](libs/react/src/components/separator/README.md)      | Visual divider (horizontal/vertical)                                     | -                                 |
+| [Skeleton](libs/react/src/components/skeleton/README.md)        | Loading placeholder with customizable dimensions                         | -                                 |
+| [Slider](libs/react/src/components/slider/README.md)            | Range input with keyboard navigation and pointer drag support            | -                                 |
+| [Slot](libs/react/src/components/slot/README.md)                | Utility for prop merging and asChild pattern                             | -                                 |
+| [Switch](libs/react/src/components/switch/README.md)            | Binary toggle control                                                    | -                                 |
+| [Table](libs/react/src/components/table/README.md)              | Data table with sorting, pagination, selection, and expansion            | `@tanstack/react-table`           |
+| [Text](libs/react/src/components/text/README.md)                | Polymorphic text element (p, span, strong, em, etc.)                     | -                                 |
+| [Textarea](libs/react/src/components/textarea/README.md)        | Multi-line text input with auto-resize                                   | -                                 |
+| [Toast](libs/react/src/components/toast/README.md)              | Toast notification function with semantic markup                         | `sonner`                          |
+| [Tabs](libs/react/src/components/tabs/README.md)                | Accessible tabs for organizing content into panels                       | -                                 |
 
 ## Toast Component Setup
 
@@ -270,7 +279,11 @@ Import `<Toaster />` from `sonner` (not from `@components-kit/react`) and add it
 // Next.js App Router - app/layout.tsx
 import { Toaster } from "sonner";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
@@ -345,18 +358,21 @@ All components follow WAI-ARIA guidelines:
 
 Example accessibility features:
 
-| Component | Accessibility Features                            |
-| --------- | ------------------------------------------------- |
-| Alert     | `role="alert"`, `aria-live="polite"`              |
-| Button    | `aria-disabled`, `aria-busy` for loading          |
-| Checkbox  | Label association, `aria-invalid`                 |
-| Progress  | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label |
-| Select    | ARIA listbox pattern, type-ahead search           |
-| Slider    | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation |
-| Table     | `aria-sort`, `aria-selected`, keyboard navigation |
-| Pagination | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation |
-| Toast     | `role="status"`, `aria-live="polite"`, native button with keyboard support |
-| Tabs      | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation` |
+| Component   | Accessibility Features                                                                |
+| ----------- | ------------------------------------------------------------------------------------- |
+| Alert       | `role="alert"`, `aria-live="polite"`                                                  |
+| Button      | `aria-disabled`, `aria-busy` for loading                                              |
+| Checkbox    | Label association, `aria-invalid`                                                     |
+| Progress    | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label            |
+| Select      | WAI-ARIA Listbox pattern, type-ahead search, `aria-haspopup="listbox"`                |
+| Combobox    | WAI-ARIA Combobox pattern, `aria-expanded`, `aria-controls`, `role="status"` on empty |
+| MultiSelect | WAI-ARIA Combobox pattern, `aria-multiselectable`, tag keyboard navigation            |
+| AsyncSelect | WAI-ARIA Combobox pattern, `aria-busy` during loading, `role="alert"` on error        |
+| Slider      | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation                         |
+| Table       | `aria-sort`, `aria-selected`, keyboard navigation                                     |
+| Pagination  | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation         |
+| Toast       | `role="status"`, `aria-live="polite"`, native button with keyboard support            |
+| Tabs        | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation`                            |
 
 ## TypeScript
 

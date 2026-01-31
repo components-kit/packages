@@ -127,7 +127,7 @@ describe("Select Component", () => {
 
     it("renders separators", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -139,7 +139,7 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const separator = container.querySelector('[data-ck="select-separator"]');
+      const separator = document.querySelector('[data-ck="select-separator"]');
       expect(separator).toBeInTheDocument();
       expect(separator).toHaveAttribute("role", "separator");
     });
@@ -148,7 +148,7 @@ describe("Select Component", () => {
   describe("Disabled Items", () => {
     it("renders disabled items with aria-disabled", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -159,7 +159,7 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       expect(items[0]).not.toHaveAttribute("aria-disabled");
       expect(items[1]).toHaveAttribute("aria-disabled", "true");
       expect(items[1]).toHaveAttribute("data-disabled", "true");
@@ -168,7 +168,7 @@ describe("Select Component", () => {
     it("skips disabled items during keyboard navigation", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -183,7 +183,7 @@ describe("Select Component", () => {
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const disabledItem = items[1];
       expect(disabledItem).not.toHaveAttribute("data-highlighted", "true");
     });
@@ -427,15 +427,13 @@ describe("Select Component", () => {
 
     it("navigates items with Arrow keys", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Select options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Select options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const highlightedItems = Array.from(items).filter(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
@@ -544,20 +542,20 @@ describe("Select Component", () => {
       const { container } = render(<Select options={["apple"]} />);
 
       const trigger = container.querySelector('[data-ck="select-trigger"]');
-      const content = container.querySelector('[data-ck="select-content"]');
 
       expect(trigger).toHaveAttribute("data-state", "closed");
-      expect(content).toHaveAttribute("data-state", "closed");
+      expect(document.querySelector('[data-ck="select-content"]')).toBeNull();
 
       await user.click(screen.getByRole("combobox"));
 
       expect(trigger).toHaveAttribute("data-state", "open");
+      const content = document.querySelector('[data-ck="select-content"]');
       expect(content).toHaveAttribute("data-state", "open");
     });
 
     it("has data-state on items for selection state", async () => {
       const user = userEvent.setup();
-      const { container } = render(
+      render(
         <Select
           options={[
             { label: "Apple", value: "apple" },
@@ -569,25 +567,58 @@ describe("Select Component", () => {
 
       await user.click(screen.getByRole("combobox"));
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       expect(items[0]).toHaveAttribute("data-state", "checked");
       expect(items[1]).toHaveAttribute("data-state", "unchecked");
     });
 
     it("has data-highlighted on highlighted item", async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <Select options={["apple", "banana", "cherry"]} />,
-      );
+      render(<Select options={["apple", "banana", "cherry"]} />);
 
       await user.click(screen.getByRole("combobox"));
       await user.keyboard("{ArrowDown}");
 
-      const items = container.querySelectorAll('[data-ck="select-item"]');
+      const items = document.querySelectorAll('[data-ck="select-item"]');
       const hasHighlighted = Array.from(items).some(
         (item) => item.getAttribute("data-highlighted") === "true",
       );
       expect(hasHighlighted).toBe(true);
+    });
+  });
+
+  describe("Empty State", () => {
+    it("renders emptyContent when options array is empty", async () => {
+      const user = userEvent.setup();
+      render(<Select options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toBeInTheDocument();
+      expect(emptyEl).toHaveTextContent("No options");
+    });
+
+    it("renders custom emptyContent", async () => {
+      const user = userEvent.setup();
+      render(<Select emptyContent="Nothing to show" options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toBeInTheDocument();
+      expect(emptyEl).toHaveTextContent("Nothing to show");
+    });
+
+    it("empty state has role status and aria-live polite", async () => {
+      const user = userEvent.setup();
+      render(<Select options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toHaveAttribute("role", "status");
+      expect(emptyEl).toHaveAttribute("aria-live", "polite");
     });
   });
 

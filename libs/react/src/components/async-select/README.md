@@ -140,13 +140,17 @@ Also accepts all standard `div` HTML attributes.
 - Error message with `role="alert"` and `aria-live="assertive"` for immediate announcement
 - Empty state with `role="status"` and `aria-live="polite"`
 - Standard combobox ARIA attributes (`role="combobox"`, `aria-expanded`, `aria-controls`, `aria-selected`)
-- Full keyboard navigation:
-  - **Arrow Down**: Open menu / move to next item
-  - **Arrow Up**: Move to previous item
-  - **Enter**: Select highlighted item and close
-  - **Escape**: Close menu
-  - **Home/End**: Jump to first/last option
-  - **Characters**: Trigger debounced search
+
+### Keyboard Support
+
+| Key            | Action                            |
+| -------------- | --------------------------------- |
+| `ArrowDown`    | Open menu / move to next item     |
+| `ArrowUp`      | Move to previous item             |
+| `Enter`        | Select highlighted item and close |
+| `Escape`       | Close menu                        |
+| `Home` / `End` | Jump to first / last option       |
+| Characters     | Trigger debounced search          |
 
 ## Best Practices
 

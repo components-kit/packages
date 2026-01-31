@@ -38,16 +38,17 @@ import { Select } from '@components-kit/react';
 
 ## Props
 
-| Prop             | Type                              | Default       | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `options`        | `SelectOption<T>[]`               | **required**  | Array of options to display                                                                                                                                              |
-| `value`          | `T`                               | -             | Controlled value                                                                                                                                                         |
-| `defaultValue`   | `T`                               | -             | Default value (uncontrolled)                                                                                                                                             |
-| `onValueChange`  | `(value: T \| undefined) => void` | -             | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Select..."` | Placeholder text                                                                                                                                                         |
-| `disabled`       | `boolean`                         | `false`       | Disables the select                                                                                                                                                      |
-| `variantName`    | `string`                          | -             | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -             | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| Prop             | Type                              | Default        | Description                                                                                                                                                              |
+| ---------------- | --------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `options`        | `SelectOption<T>[]`               | **required**   | Array of options to display                                                                                                                                              |
+| `value`          | `T`                               | -              | Controlled value                                                                                                                                                         |
+| `defaultValue`   | `T`                               | -              | Default value (uncontrolled)                                                                                                                                             |
+| `onValueChange`  | `(value: T \| undefined) => void` | -              | Callback when selection changes                                                                                                                                          |
+| `placeholder`    | `string`                          | `"Select..."`  | Placeholder text                                                                                                                                                         |
+| `disabled`       | `boolean`                         | `false`        | Disables the select                                                                                                                                                      |
+| `emptyContent`   | `ReactNode`                       | `"No options"` | Custom content displayed when there are no options                                                                                                                       |
+| `variantName`    | `string`                          | -              | Variant name for styling                                                                                                                                                 |
+| `getOptionValue` | `(option: T) => string \| number` | -              | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
 ## Option Types
 
@@ -94,13 +95,21 @@ The `getOptionValue` function is required for object values because React uses r
 
 ## Data Attributes
 
-| Attribute          | Values               | Description                 |
-| ------------------ | -------------------- | --------------------------- |
-| `data-variant`     | string               | Variant name for styling    |
-| `data-state`       | `"open"`, `"closed"` | Dropdown state              |
-| `data-disabled`    | `true`               | Present when disabled       |
-| `data-component`   | string               | Identifies sub-components   |
-| `data-highlighted` | `true`               | Present on highlighted item |
+| Attribute                      | Element                      | Values                                           | Description                                                          |
+| ------------------------------ | ---------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
+| `data-ck="select"`             | Root                         | -                                                | Component identifier                                                 |
+| `data-ck="select-trigger"`     | Button                       | -                                                | Trigger button                                                       |
+| `data-ck="select-value"`       | Span                         | -                                                | Value display area                                                   |
+| `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
+| `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
+| `data-ck="select-separator"`   | Div                          | -                                                | Visual separator between groups                                      |
+| `data-ck="select-group-label"` | Div                          | -                                                | Group heading label                                                  |
+| `data-ck="select-empty"`       | Div                          | -                                                | Empty state message                                                  |
+| `data-state`                   | Root, Trigger, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/content; checked/unchecked on items |
+| `data-disabled`                | Root, Item                   | `true`                                           | Present when disabled                                                |
+| `data-highlighted`             | Item                         | `true`                                           | Present on the currently highlighted item                            |
+| `data-variant`                 | Root                         | string                                           | Variant name for styling                                             |
+| `data-placeholder`             | Value                        | `""`                                             | Present when showing placeholder text                                |
 
 ## CSS Customization
 
@@ -140,13 +149,24 @@ Use data attributes to style the select component:
 ## Accessibility
 
 - Follows WAI-ARIA Listbox pattern
-- Full keyboard navigation:
-  - **Arrow Up/Down**: Navigate options
-  - **Enter/Space**: Select option
-  - **Escape**: Close dropdown
-  - **Home/End**: Jump to first/last option
-- Type-ahead character search
-- Proper ARIA attributes for screen readers
+- Trigger has `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls`
+- Menu has `role="listbox"` with `aria-labelledby` linking to the trigger
+- Items have `role="option"` with `aria-selected` and `aria-disabled`
+- Empty state uses `role="status"` with `aria-live="polite"`
+- Separators use `role="separator"` with `aria-orientation="horizontal"`
+
+### Keyboard Support
+
+| Key         | Action                              |
+| ----------- | ----------------------------------- |
+| `ArrowDown` | Open menu / move to next item       |
+| `ArrowUp`   | Move to previous item               |
+| `Enter`     | Select highlighted item and close   |
+| `Space`     | Open menu / select highlighted item |
+| `Escape`    | Close menu                          |
+| `Home`      | Jump to first item                  |
+| `End`       | Jump to last item                   |
+| Characters  | Type-ahead search by character      |
 
 ### Best Practices
 
@@ -154,3 +174,5 @@ Use data attributes to style the select component:
 - Use groups to organize related options
 - Consider using separators for visual grouping
 - Disable options rather than hiding them when possible
+- Provide custom `emptyContent` for a better user experience
+- Use `getOptionValue` when working with object values

@@ -1,19 +1,26 @@
 "use client";
 
+import { FloatingPortal } from "@floating-ui/react";
 import { useCombobox, useMultipleSelection } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
-  useCallback,
+  ReactNode,
   useId,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
+import { useFloatingSelect } from "../../hooks";
+import { mergeRefs } from "../../utils/merge-refs";
 import {
+  areValuesEqual,
+  defaultFilterFn,
   filterRenderItems,
+  findItemsByValue,
   itemToString,
   processOptions,
 } from "../../utils/select";
@@ -45,6 +52,8 @@ import {
  * - `selectedItem` is always `null` in useCombobox to prevent single-selection tracking
  * - Input is cleared after each selection
  * - Backspace navigates/removes tags via `useMultipleSelection`
+ * - Dropdown is rendered inside a `FloatingPortal` and positioned via
+ *   `useFloatingSelect` (Floating UI) with flip, shift, and size middleware
  * - Uses `data-ck` attributes for CSS-based styling
  * - Forwards refs correctly for DOM access
  *
@@ -171,6 +180,10 @@ interface MultiSelectProps<T = string> extends Omit<
   "defaultValue" | "onChange"
 > {
   /**
+   * Default input value for uncontrolled input mode.
+   */
+  defaultInputValue?: string;
+  /**
    * Default selected values for uncontrolled mode.
    */
   defaultValue?: T[];
@@ -178,6 +191,11 @@ interface MultiSelectProps<T = string> extends Omit<
    * Whether the multi-select is disabled.
    */
   disabled?: boolean;
+  /**
+   * Custom content to display when no options match the filter.
+   * @default "No results found"
+   */
+  emptyContent?: ReactNode;
   /**
    * Custom filter function. Receives the normalized item and the current input value.
    * Return true to keep the item visible.
@@ -194,9 +212,22 @@ interface MultiSelectProps<T = string> extends Omit<
    */
   getOptionValue?: (option: T) => number | string;
   /**
+   * Controlled input value.
+   */
+  inputValue?: string;
+  /**
+   * Custom content to display when the maximum number of selections is reached.
+   * @default "Maximum selections reached"
+   */
+  maxReachedContent?: ReactNode;
+  /**
    * Maximum number of items that can be selected.
    */
   maxSelected?: number;
+  /**
+   * Callback when input text changes.
+   */
+  onInputValueChange?: (value: string) => void;
   /**
    * Callback when selection changes.
    */
@@ -227,11 +258,16 @@ interface MultiSelectProps<T = string> extends Omit<
 function MultiSelectInner<T = string>(
   {
     className,
+    defaultInputValue,
     defaultValue,
     disabled = false,
+    emptyContent = "No results found",
     filterFn,
     getOptionValue,
+    inputValue: controlledInputValue,
+    maxReachedContent = "Maximum selections reached",
     maxSelected,
+    onInputValueChange,
     onValueChange,
     options,
     placeholder = "Search...",
@@ -243,61 +279,28 @@ function MultiSelectInner<T = string>(
 ) {
   const inputId = useId();
   const menuId = useId();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputWrapperRef = useRef<HTMLDivElement>(null);
+  const menuNodeRef = useRef<HTMLDivElement | null>(null);
 
   // Process all options into flat selectable items and structured render items
   const { renderItems: allRenderItems, selectableItems: allSelectableItems } =
     useMemo(() => processOptions(options), [options]);
 
-  // Default filter: case-insensitive includes on label
-  const defaultFilterFn = useCallback(
-    (item: NormalizedItem<T>, input: string) => {
-      if (!input) return true;
-      return item.label.toLowerCase().includes(input.toLowerCase());
-    },
-    [],
-  );
-
   const effectiveFilter = filterFn ?? defaultFilterFn;
 
   // Resolve initial selected items from defaultValue
-  const initialSelectedItems = useMemo(() => {
-    if (!defaultValue) return [];
-
-    if (getOptionValue) {
-      return defaultValue
-        .map((val) => {
-          const valueKey = getOptionValue(val);
-          return allSelectableItems.find(
-            (item) => getOptionValue(item.value) === valueKey,
-          );
-        })
-        .filter((item): item is NormalizedItem<T> => item !== undefined);
-    }
-
-    return defaultValue
-      .map((val) => allSelectableItems.find((item) => item.value === val))
-      .filter((item): item is NormalizedItem<T> => item !== undefined);
-  }, [allSelectableItems, defaultValue, getOptionValue]);
+  const initialSelectedItems = useMemo(
+    () =>
+      findItemsByValue(allSelectableItems, defaultValue, getOptionValue) ?? [],
+    [allSelectableItems, defaultValue, getOptionValue],
+  );
 
   // Resolve controlled selected items from value
-  const controlledSelectedItems = useMemo(() => {
-    if (value === undefined) return undefined;
-
-    if (getOptionValue) {
-      return value
-        .map((val) => {
-          const valueKey = getOptionValue(val);
-          return allSelectableItems.find(
-            (item) => getOptionValue(item.value) === valueKey,
-          );
-        })
-        .filter((item): item is NormalizedItem<T> => item !== undefined);
-    }
-
-    return value
-      .map((val) => allSelectableItems.find((item) => item.value === val))
-      .filter((item): item is NormalizedItem<T> => item !== undefined);
-  }, [allSelectableItems, value, getOptionValue]);
+  const controlledSelectedItems = useMemo(
+    () => findItemsByValue(allSelectableItems, value, getOptionValue),
+    [allSelectableItems, value, getOptionValue],
+  );
 
   // useMultipleSelection for tag management
   const {
@@ -321,19 +324,18 @@ function MultiSelectInner<T = string>(
     maxSelected !== undefined && selectedItems.length >= maxSelected;
 
   // Track input value locally for filtering
-  const [inputValue, setInputValue] = useState("");
+  const [localInputValue, setLocalInputValue] = useState(
+    defaultInputValue ?? "",
+  );
+  const inputValue =
+    controlledInputValue !== undefined ? controlledInputValue : localInputValue;
 
   // Filter: exclude already-selected items, then apply text filter
   const { filteredRenderItems, filteredSelectableItems } = useMemo(() => {
-    const isItemSelected = (item: NormalizedItem<T>) => {
-      if (getOptionValue) {
-        const itemKey = getOptionValue(item.value);
-        return selectedItems.some(
-          (sel) => getOptionValue(sel.value) === itemKey,
-        );
-      }
-      return selectedItems.some((sel) => sel.value === item.value);
-    };
+    const isItemSelected = (item: NormalizedItem<T>) =>
+      selectedItems.some((sel) =>
+        areValuesEqual(sel.value, item.value, getOptionValue),
+      );
 
     return filterRenderItems(
       allRenderItems,
@@ -359,24 +361,30 @@ function MultiSelectInner<T = string>(
     isOpen,
   } = useCombobox<NormalizedItem<T>>({
     id: inputId,
-    inputValue,
+    ...(controlledInputValue !== undefined && {
+      inputValue: controlledInputValue,
+    }),
+    ...(defaultInputValue !== undefined && {
+      initialInputValue: defaultInputValue,
+    }),
     isItemDisabled: (item) => item?.disabled ?? false,
     items: filteredSelectableItems,
     itemToString,
     menuId,
     onInputValueChange: ({ inputValue: newVal }) => {
-      setInputValue(newVal ?? "");
+      const val = newVal ?? "";
+      setLocalInputValue(val);
+      onInputValueChange?.(val);
     },
     onStateChange: ({ selectedItem: newItem, type }) => {
       switch (type) {
         case useCombobox.stateChangeTypes.InputChange:
-          // inputValue is tracked via onInputValueChange below
           break;
         case useCombobox.stateChangeTypes.InputKeyDownEnter:
         case useCombobox.stateChangeTypes.ItemClick:
           if (newItem && !isAtMaxSelected) {
             addSelectedItem(newItem);
-            setInputValue("");
+            setLocalInputValue("");
           }
           break;
       }
@@ -399,6 +407,23 @@ function MultiSelectInner<T = string>(
     },
   });
 
+  // Use Floating UI for positioning
+  const { floatingProps, referenceProps } = useFloatingSelect({ isOpen });
+
+  // Merge refs (memoized to avoid new callbacks on every render)
+  const containerRef_ = useMemo(
+    () => mergeRefs<HTMLDivElement>(containerRef, ref),
+    [ref],
+  );
+  const inputWrapperRef_ = useMemo(
+    () => mergeRefs<HTMLDivElement>(inputWrapperRef, referenceProps.ref),
+    [referenceProps.ref],
+  );
+  const menuRef = useMemo(
+    () => mergeRefs<HTMLDivElement>(menuNodeRef, floatingProps.ref),
+    [floatingProps.ref],
+  );
+
   return (
     <div
       {...rest}
@@ -409,10 +434,10 @@ function MultiSelectInner<T = string>(
       data-max-reached={isAtMaxSelected || undefined}
       data-state={isOpen ? "open" : "closed"}
       data-variant={variantName}
-      ref={ref}
+      ref={containerRef_}
     >
       {/* Tags + Input area */}
-      <div data-ck="multi-select-input-wrapper">
+      <div data-ck="multi-select-input-wrapper" ref={inputWrapperRef_}>
         {selectedItems.map((selectedItem, index) => (
           <span
             key={`tag-${index}`}
@@ -453,74 +478,80 @@ function MultiSelectInner<T = string>(
         type="button"
       />
 
-      {/* Dropdown content */}
-      <div
-        {...getMenuProps({ id: menuId })}
-        aria-multiselectable="true"
-        data-ck="multi-select-content"
-        data-state={isOpen ? "open" : "closed"}
-      >
-        {isOpen && filteredRenderItems.length === 0 && (
-          <div aria-live="polite" data-ck="multi-select-empty" role="status">
-            {isAtMaxSelected
-              ? "Maximum selections reached"
-              : "No results found"}
-          </div>
-        )}
+      {/* Dropdown content - Rendered in portal */}
+      <FloatingPortal>
+        {isOpen && (
+          <div
+            {...getMenuProps({ id: menuId, ref: menuRef })}
+            style={floatingProps.style}
+            aria-multiselectable="true"
+            data-ck="multi-select-content"
+            data-state="open"
+          >
+            {filteredRenderItems.length === 0 && (
+              <div
+                aria-live="polite"
+                data-ck="multi-select-empty"
+                role="status"
+              >
+                {isAtMaxSelected ? maxReachedContent : emptyContent}
+              </div>
+            )}
 
-        {isOpen &&
-          filteredRenderItems.map((renderItem, idx) => {
-            if (renderItem.type === "separator") {
+            {filteredRenderItems.map((renderItem, idx) => {
+              if (renderItem.type === "separator") {
+                return (
+                  <div
+                    key={`separator-${idx}`}
+                    aria-orientation="horizontal"
+                    data-ck="multi-select-separator"
+                    role="separator"
+                  />
+                );
+              }
+
+              if (renderItem.type === "group-label") {
+                return (
+                  <div
+                    key={`group-${renderItem.groupIndex}`}
+                    data-ck="multi-select-group-label"
+                    role="presentation"
+                  >
+                    {renderItem.groupLabel}
+                  </div>
+                );
+              }
+
+              // Item
+              const { item, selectableIndex } = renderItem;
+              const isHighlighted = highlightedIndex === selectableIndex;
+              const isDisabled = item.disabled ?? false;
+
+              const itemProps = getItemProps({
+                disabled: isDisabled,
+                index: selectableIndex,
+                item,
+              });
+
               return (
                 <div
-                  key={`separator-${idx}`}
-                  aria-orientation="horizontal"
-                  data-ck="multi-select-separator"
-                  role="separator"
-                />
-              );
-            }
-
-            if (renderItem.type === "group-label") {
-              return (
-                <div
-                  key={`group-${renderItem.groupIndex}`}
-                  data-ck="multi-select-group-label"
-                  role="presentation"
+                  key={`item-${selectableIndex}`}
+                  {...itemProps}
+                  aria-disabled={isDisabled || undefined}
+                  aria-selected={false}
+                  data-ck="multi-select-item"
+                  data-disabled={isDisabled || undefined}
+                  data-highlighted={isHighlighted || undefined}
+                  data-state="unchecked"
+                  role="option"
                 >
-                  {renderItem.groupLabel}
+                  {item.label}
                 </div>
               );
-            }
-
-            // Item
-            const { item, selectableIndex } = renderItem;
-            const isHighlighted = highlightedIndex === selectableIndex;
-            const isDisabled = item.disabled ?? false;
-
-            const itemProps = getItemProps({
-              disabled: isDisabled,
-              index: selectableIndex,
-              item,
-            });
-
-            return (
-              <div
-                key={`item-${selectableIndex}`}
-                {...itemProps}
-                aria-disabled={isDisabled || undefined}
-                aria-selected={false}
-                data-ck="multi-select-item"
-                data-disabled={isDisabled || undefined}
-                data-highlighted={isHighlighted || undefined}
-                data-state="unchecked"
-                role="option"
-              >
-                {item.label}
-              </div>
-            );
-          })}
-      </div>
+            })}
+          </div>
+        )}
+      </FloatingPortal>
     </div>
   );
 }
