@@ -2,22 +2,21 @@
 
 import {
   ButtonHTMLAttributes,
-  ElementType,
+  cloneElement,
+  forwardRef,
+  isValidElement,
   KeyboardEvent,
   MouseEvent,
   ReactNode,
 } from "react";
 
-import { PolymorphicComponentProps, PolymorphicRef } from "../../types";
-import { polymorphicForwardRef } from "../../utils";
 import { Slot } from "../slot/slot";
 
 /**
- * A polymorphic button component with support for loading states, icons, and composition.
+ * A button component with support for loading states, icons, and composition.
  *
  * @description
  * The Button component is a flexible, accessible button that supports:
- * - Polymorphism via the `as` prop to render as any element type
  * - Composition via `asChild` to merge props with a child element (Radix-style)
  * - Loading states that automatically disable the button
  * - Leading and trailing icons as ReactNode for maximum flexibility
@@ -71,14 +70,8 @@ import { Slot } from "../slot/slot";
  * <Button aria-label="Search" leadingIcon={<SearchIcon />} variantName="ghost" />
  *
  * @example
- * // As a link (polymorphic)
- * <Button as="a" href="/home" variantName="outline">
- *   Go Home
- * </Button>
- *
- * @example
- * // Composition with asChild (renders as the child element)
- * <Button asChild variantName="primary">
+ * // Composition with asChild (renders as the child element with icons)
+ * <Button asChild leadingIcon={<HomeIcon />} variantName="primary">
  *   <a href="/dashboard">Dashboard</a>
  * </Button>
  */
@@ -93,8 +86,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variantName?: string;
 }
 
-const Button = polymorphicForwardRef<"button", ButtonProps>(
-  <C extends ElementType = "button">(
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
     {
       asChild = false,
       children,
@@ -107,8 +100,8 @@ const Button = polymorphicForwardRef<"button", ButtonProps>(
       type = "button",
       variantName,
       ...rest
-    }: PolymorphicComponentProps<C, ButtonProps>,
-    ref?: PolymorphicRef<C>
+    },
+    ref,
   ) => {
     const isDisabled = isLoading || disabled;
 
@@ -152,14 +145,22 @@ const Button = polymorphicForwardRef<"button", ButtonProps>(
       </>
     );
 
-    return asChild ? (
-      <Slot asChild {...sharedProps}>
-        {children}
-      </Slot>
-    ) : (
-      <button {...sharedProps}>{renderChildren}</button>
-    );
-  }
+    if (asChild && isValidElement<{ children?: ReactNode }>(children)) {
+      return (
+        <Slot asChild {...sharedProps}>
+          {cloneElement(
+            children,
+            {},
+            leadingIcon,
+            children.props.children,
+            trailingIcon,
+          )}
+        </Slot>
+      );
+    }
+
+    return <button {...sharedProps}>{renderChildren}</button>;
+  },
 );
 
 Button.displayName = "Button";

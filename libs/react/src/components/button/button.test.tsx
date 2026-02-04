@@ -296,6 +296,48 @@ describe("Button Component", () => {
       expect(link).toHaveAttribute("data-variant", "secondary");
       expect(link).toHaveAttribute("href", "/test");
     });
+
+    it("renders leading icon when asChild is true", () => {
+      render(
+        <Button asChild leadingIcon={<span data-testid="leading-icon">←</span>}>
+          <a href="/test">Link Button</a>
+        </Button>
+      );
+
+      const link = screen.getByRole("link");
+      expect(screen.getByTestId("leading-icon")).toBeInTheDocument();
+      expect(link).toContainElement(screen.getByTestId("leading-icon"));
+    });
+
+    it("renders trailing icon when asChild is true", () => {
+      render(
+        <Button
+          asChild
+          trailingIcon={<span data-testid="trailing-icon">→</span>}
+        >
+          <a href="/test">Link Button</a>
+        </Button>
+      );
+
+      const link = screen.getByRole("link");
+      expect(screen.getByTestId("trailing-icon")).toBeInTheDocument();
+      expect(link).toContainElement(screen.getByTestId("trailing-icon"));
+    });
+
+    it("renders both icons in correct order when asChild is true", () => {
+      render(
+        <Button
+          asChild
+          leadingIcon={<span>LEAD</span>}
+          trailingIcon={<span>TRAIL</span>}
+        >
+          <a href="/test">TEXT</a>
+        </Button>
+      );
+
+      const link = screen.getByRole("link");
+      expect(link.textContent).toBe("LEADTEXTTRAIL");
+    });
   });
 
   describe("Ref Forwarding", () => {
