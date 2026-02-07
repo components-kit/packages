@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@components-kit/example-shared": "link:../shared",
     "@components-kit/react": "link:../../libs/react",
     "@tanstack/react-router": "^1.93.1",
     "@tanstack/react-table": "^8.21.2",
