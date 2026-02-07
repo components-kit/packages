@@ -1,0 +1,58 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid #e5e7eb;
+  padding: 16px 0;
+  background: #fafafa;
+  z-index: 10;
+}
+
+.header {
+  padding: 8px 20px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: block;
+  width: 100%;
+  padding: 8px 20px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #64748b;
+  font-family: inherit;
+  transition: color 0.15s, background 0.15s;
+}
+
+.item:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.active {
+  color: #0f172a;
+  font-weight: 500;
+  background: #f1f5f9;
+  border-left: 2px solid #3b82f6;
+}
