@@ -30,7 +30,6 @@ import { Alert } from '@components-kit/react';
   action={{
     children: "Extend Session",
     onClick: handleExtend,
-    variantName: "outline"
   }}
   variantName="warning"
 />
@@ -43,7 +42,7 @@ import { Alert } from '@components-kit/react';
 | `icon` | `ReactNode` | - | Icon element (decorative, hidden from screen readers) |
 | `heading` | `ReactNode` | - | Main heading/title of the alert |
 | `description` | `ReactNode` | - | Body content of the alert |
-| `action` | `Omit<ButtonProps, "as" \| "size">` | - | Action button props (size fixed to "sm") |
+| `action` | `Omit<ButtonProps, "as" \| "size" \| "variantName">` | - | Action button props (size fixed to "sm"). Button variant is controlled by the parent alert's `variantName` via CSS. |
 | `variantName` | `string` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.

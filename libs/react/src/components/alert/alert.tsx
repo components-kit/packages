@@ -56,7 +56,7 @@ import { Button, ButtonProps } from "../button/button";
  * @param {ReactNode} [icon] - Icon element to display (decorative, hidden from screen readers).
  * @param {ReactNode} [heading] - The main heading/title of the alert.
  * @param {ReactNode} [description] - The body content of the alert.
- * @param {Omit<ButtonProps, "as" | "size">} [action] - Action button props (size is fixed to "sm", polymorphic "as" not supported).
+ * @param {Omit<ButtonProps, "as" | "size" | "variantName">} [action] - Action button props (size is fixed to "sm", polymorphic "as" not supported). Button variant is controlled by the parent alert's `variantName` via CSS.
  * @param {string} [variantName] - The variant name for styling.
  *
  * @example
@@ -85,7 +85,6 @@ import { Button, ButtonProps } from "../button/button";
  *   action={{
  *     children: "Extend Session",
  *     onClick: handleExtendSession,
- *     variantName: "outline"
  *   }}
  *   variantName="warning"
  * />
@@ -99,7 +98,6 @@ import { Button, ButtonProps } from "../button/button";
  *   action={{
  *     children: "Retry",
  *     onClick: handleRetry,
- *     variantName: "destructive"
  *   }}
  *   variantName="destructive"
  * />
@@ -148,7 +146,7 @@ import { Button, ButtonProps } from "../button/button";
  */
 
 interface AlertProps extends HTMLAttributes<HTMLDivElement> {
-  action?: Omit<ButtonProps, "as" | "size">;
+  action?: Omit<ButtonProps, "as" | "size" | "variantName">;
   description?: ReactNode;
   heading?: ReactNode;
   icon?: ReactNode;

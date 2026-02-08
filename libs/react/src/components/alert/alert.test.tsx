@@ -267,22 +267,6 @@ describe("Alert Component", () => {
       expect(button).toHaveAttribute("aria-label", "Custom action");
     });
 
-    it("applies variantName to action button", () => {
-      render(
-        <Alert
-          action={{
-            children: "Styled Button",
-            onClick: vi.fn(),
-            variantName: "outline",
-          }}
-          description="Test message"
-        />
-      );
-
-      const button = screen.getByRole("button");
-      expect(button).toHaveAttribute("data-variant", "outline");
-    });
-
     it("always applies size sm to action button", () => {
       render(
         <Alert
@@ -504,7 +488,6 @@ describe("Alert Component", () => {
           action={{
             children: "Action",
             onClick: handleClick,
-            variantName: "outline",
           }}
           description="Full description"
           heading="Full Heading"
