@@ -25,7 +25,8 @@ export function mergeRefs<T>(...refs: Array<AssignableRef<T>>): Ref<T> {
       if (typeof ref === "function") {
         ref(node);
       } else if (ref !== null && ref !== undefined) {
-        Object.assign(ref, { current: node });
+        // eslint-disable-next-line no-param-reassign
+        ref.current = node as T | null;
       }
     });
   };

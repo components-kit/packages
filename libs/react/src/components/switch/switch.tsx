@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, InputHTMLAttributes } from "react";
+import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
 
 /**
  * A toggle switch component for binary on/off choices.
@@ -135,19 +135,35 @@ interface SwitchProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const Switch = forwardRef<HTMLInputElement, SwitchProps>(
-  ({ className, variantName, ...rest }, ref) => {
+  ({ className, onChange, variantName, ...rest }, ref) => {
+    const isControlled = rest.checked !== undefined;
+    const [internalChecked, setInternalChecked] = useState(
+      rest.defaultChecked ?? false,
+    );
+    const checked = isControlled ? rest.checked : internalChecked;
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      if (!isControlled) {
+        setInternalChecked(e.target.checked);
+      }
+      onChange?.(e);
+    };
+
     return (
       <input
         {...rest}
         className={className}
         data-ck="switch"
+        data-disabled={rest.disabled || undefined}
+        data-state={checked ? "checked" : "unchecked"}
         data-variant={variantName}
         role="switch"
         type="checkbox"
+        onChange={handleChange}
         ref={ref}
       />
     );
-  }
+  },
 );
 
 Switch.displayName = "Switch";

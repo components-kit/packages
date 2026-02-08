@@ -9,6 +9,8 @@ import {
   useRef,
 } from "react";
 
+import { mergeRefs } from "../../utils/merge-refs";
+
 /**
  * A multi-line text input component with automatic height adjustment.
  *
@@ -174,23 +176,10 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       }
     }, [rest.value, rest.defaultValue, adjustHeight]);
 
-    // Merge refs
-    const mergedRef = useCallback(
-      (element: HTMLTextAreaElement | null) => {
-        internalRef.current = element;
-
-        if (typeof ref === "function") {
-          ref(element);
-        } else if (ref && typeof ref === "object" && "current" in ref) {
-          Object.assign(ref, { current: element });
-        }
-
-        if (element) {
-          adjustHeight(element);
-        }
-      },
-      [ref, adjustHeight],
-    );
+    // Merge refs: forward ref + internal ref + initial resize on mount
+    const mergedRef = mergeRefs<HTMLTextAreaElement>(ref, internalRef, (el) => {
+      if (el) adjustHeight(el);
+    });
 
     return (
       <textarea

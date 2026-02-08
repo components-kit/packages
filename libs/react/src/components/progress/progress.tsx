@@ -104,9 +104,11 @@ const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   ({ label, max = 100, min = 0, value, variantName, ...rest }, ref) => {
     const labelId = useId();
     const isIndeterminate = value === undefined || value === null;
-    const percentage = isIndeterminate
-      ? undefined
-      : Math.min(Math.max(((value - min) / (max - min)) * 100, 0), 100);
+    const range = max - min;
+    const percentage =
+      isIndeterminate || range <= 0
+        ? undefined
+        : Math.min(Math.max(((value - min) / range) * 100, 0), 100);
 
     const indicatorStyle: CSSProperties = isIndeterminate
       ? {}
