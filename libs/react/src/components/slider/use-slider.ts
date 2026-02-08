@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const SLIDER_KEYS = new Set([
   "ArrowDown",
@@ -105,9 +105,16 @@ export function useSlider(options: UseSliderOptions) {
   // Refs to hold latest versions of callbacks used inside DOM event listeners,
   // avoiding stale closures during pointer drag in controlled mode.
   const updateValueRef = useRef<(newValue: number) => void>(() => {});
-  const getValueFromPointerRef = useRef<(clientX: number, clientY: number) => number>(() => min);
+  const getValueFromPointerRef = useRef<
+    (clientX: number, clientY: number) => number
+  >(() => min);
   const onValueCommitRef = useRef(onValueCommit);
   onValueCommitRef.current = onValueCommit;
+
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  // Clean up any lingering pointer listeners if the component unmounts mid-drag
+  useEffect(() => () => cleanupRef.current?.(), []);
 
   // Helper: clamp and snap to step
   const clampAndSnap = useCallback(
@@ -130,7 +137,9 @@ export function useSlider(options: UseSliderOptions) {
 
   // Percentage for CSS positioning
   const percentage =
-    max === min ? 0 : Math.min(Math.max(((currentValue - min) / (max - min)) * 100, 0), 100);
+    max === min
+      ? 0
+      : Math.min(Math.max(((currentValue - min) / (max - min)) * 100, 0), 100);
 
   // Handler: Keyboard navigation
   const handleKeyDown = useCallback(
@@ -184,10 +193,7 @@ export function useSlider(options: UseSliderOptions) {
           1,
         );
       } else {
-        fraction = Math.min(
-          Math.max((clientX - rect.left) / rect.width, 0),
-          1,
-        );
+        fraction = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
       }
 
       return clampAndSnap(min + fraction * (max - min));
@@ -210,20 +216,33 @@ export function useSlider(options: UseSliderOptions) {
       const target = e.currentTarget as HTMLElement;
       target.setPointerCapture(e.pointerId);
 
+      let handlePointerUp: ((ev: PointerEvent) => void) | null = null;
+
       const handlePointerMove = (moveEvent: PointerEvent) => {
-        const moveValue = getValueFromPointerRef.current(moveEvent.clientX, moveEvent.clientY);
+        const moveValue = getValueFromPointerRef.current(
+          moveEvent.clientX,
+          moveEvent.clientY,
+        );
         updateValueRef.current(moveValue);
       };
 
-      const handlePointerUp = () => {
+      const removeListeners = () => {
         target.releasePointerCapture(e.pointerId);
         target.removeEventListener("pointermove", handlePointerMove);
-        target.removeEventListener("pointerup", handlePointerUp);
+        if (handlePointerUp) {
+          target.removeEventListener("pointerup", handlePointerUp);
+        }
+        cleanupRef.current = null;
+      };
+
+      handlePointerUp = () => {
+        removeListeners();
         onValueCommitRef.current?.(valueRef.current);
       };
 
       target.addEventListener("pointermove", handlePointerMove);
       target.addEventListener("pointerup", handlePointerUp);
+      cleanupRef.current = removeListeners;
     },
     [disabled],
   );

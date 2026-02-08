@@ -775,7 +775,18 @@ function TableInner<TData>(
                   data-ck="table-row"
                   data-clickable={onRowClick ? true : undefined}
                   data-selected={isSelected || undefined}
+                  tabIndex={onRowClick ? 0 : undefined}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onRowClick(row);
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} data-ck="table-cell">
