@@ -34,7 +34,7 @@
 | Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                       |
 | Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                 |
 | Button      | 168   | Medium     | Polymorphic, asChild, loading states                                                |
-| Toast       | ~150  | Medium     | Sonner integration, semantic markup, action button                                  |
+| Toast       | ~150  | Medium     | Sonner integration, semantic markup, Button component for action                    |
 | Textarea    | ~150  | Low        | Auto-resize support                                                                 |
 | Progress    | ~150  | Low        | Label, determinate/indeterminate, CSS custom property                               |
 | Input       | ~120  | Low        | Text input variants                                                                 |

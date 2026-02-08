@@ -18,9 +18,7 @@ function ToastPreview() {
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
         <Button
           variantName="primary"
-          onClick={() =>
-            toast({ title: "Success", variantName: "default" })
-          }
+          onClick={() => toast({ title: "Success", variantName: "default" })}
         >
           Basic Toast
         </Button>

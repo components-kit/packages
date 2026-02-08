@@ -158,7 +158,7 @@ interface AlertProps extends HTMLAttributes<HTMLDivElement> {
 const Alert = forwardRef<HTMLDivElement, AlertProps>(
   (
     { action, className, description, heading, icon, variantName, ...rest },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -189,7 +189,7 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Alert.displayName = "Alert";
