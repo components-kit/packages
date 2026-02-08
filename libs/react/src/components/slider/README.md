@@ -61,34 +61,36 @@ Also accepts all standard `div` HTML attributes.
 | `data-disabled` | Root | `true` | Present when disabled |
 | `data-variant` | Root | string | The variant name for styling |
 | `data-ck="slider-track"` | Track | `"slider-track"` | The track (bar background) element |
+| `data-ck="slider-range"` | Range | `"slider-range"` | The filled portion of the track |
 | `data-ck="slider-thumb"` | Thumb | `"slider-thumb"` | The draggable thumb element |
 
 ## CSS Custom Properties
 
 | Property | Applied On | Description |
 |----------|------------|-------------|
-| `--slider-value` | `[data-ck="slider-thumb"]` | Computed percentage (e.g., `"50%"`) |
+| `--slider-value` | `[data-ck="slider"]` | Computed percentage (e.g., `"50%"`) — inherited by range and thumb |
 
 ### Example CSS
 
 ```css
 [data-ck="slider"] {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  touch-action: none;
 }
 
 [data-ck="slider-track"] {
   position: relative;
   height: 8px;
+  width: 100%;
   background: var(--color-gray-200);
   border-radius: 4px;
   cursor: pointer;
-  touch-action: none;
+  overflow: hidden;
 }
 
-[data-ck="slider-track"]::before {
-  content: "";
+[data-ck="slider-range"] {
   position: absolute;
   left: 0;
   top: 0;
@@ -129,6 +131,7 @@ Also accepts all standard `div` HTML attributes.
 
 - Uses `role="slider"` on the thumb element with full WAI-ARIA support
 - Sets `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` on the thumb
+- Forwards `aria-label`, `aria-labelledby`, `aria-valuetext`, and `aria-describedby` to the thumb element
 - Always associate with a `<label>` using `aria-labelledby`, or use `aria-label`
 - Uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
 
