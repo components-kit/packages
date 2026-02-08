@@ -18,16 +18,20 @@ import { useSlider } from "./use-slider";
  * - Full keyboard navigation (Arrow keys, Home, End, PageUp, PageDown)
  * - Pointer (mouse/touch) drag interaction on the track
  * - Customizable min, max, and step values
- * - Data attributes for CSS-based styling (`data-variant`, `data-disabled`, `data-orientation`)
- * - CSS custom property (`--slider-value`) for flexible thumb/track positioning
+ * - Data attributes for CSS-based styling (`data-variant`, `data-disabled`)
+ * - CSS custom property (`--slider-value`) on the root for flexible thumb/range positioning
  *
  * @remarks
  * This component features:
+ * - **Sibling structure** where the thumb is a sibling of the track (Radix-style)
+ * - **Range element** (`data-ck="slider-range"`) inside the track for the filled portion
  * - **Pointer drag** on the track element to set the value by position
  * - **Step snapping** ensures the value always aligns to the nearest valid step
  * - **Value clamping** keeps values within `[min, max]` regardless of input
  * - **Disabled state** uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
- * - Uses `data-ck` attributes on root, track, and thumb for CSS targeting
+ * - Uses `data-ck` attributes on root, track, range, and thumb for CSS targeting
+ * - ARIA attributes (`aria-label`, `aria-labelledby`, `aria-valuetext`, `aria-describedby`)
+ *   are forwarded to the thumb element per WAI-ARIA guidelines
  * - Forwards refs correctly for DOM access
  *
  * ## Keyboard Support
@@ -46,9 +50,8 @@ import { useSlider } from "./use-slider";
  * This component follows the [WAI-ARIA Slider Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/):
  * - Uses `role="slider"` on the thumb element for screen reader identification
  * - Sets `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` on the thumb
- * - Provide an accessible name via `aria-label` or `aria-labelledby`
- * - Use `aria-valuetext` for human-readable value descriptions
- *   (e.g., "50 percent" or "Medium volume")
+ * - Forwards `aria-label`, `aria-labelledby`, `aria-valuetext`, and `aria-describedby`
+ *   to the thumb element (the element with `role="slider"`)
  * - Uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
  *   for screen reader users
  * - Prevents all keyboard and pointer interactions when disabled via event handlers
@@ -127,12 +130,17 @@ interface SliderProps extends HTMLAttributes<HTMLDivElement> {
 const Slider = forwardRef<HTMLDivElement, SliderProps>(
   (
     {
+      "aria-describedby": ariaDescribedBy,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      "aria-valuetext": ariaValueText,
       defaultValue,
       disabled,
       max = 100,
       min = 0,
       onValueChange,
       step = 1,
+      style,
       value,
       variantName,
       ...rest
@@ -155,13 +163,15 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
       value,
     });
 
-    const thumbStyle: CSSProperties = {
+    const sliderStyle: CSSProperties = {
+      ...style,
       "--slider-value": `${percentage}%`,
     } as CSSProperties;
 
     return (
       <div
         {...rest}
+        style={sliderStyle}
         data-ck="slider"
         data-disabled={disabled || undefined}
         data-variant={variantName}
@@ -172,18 +182,22 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
           onPointerDown={handlePointerDown}
           ref={trackRef}
         >
-          <div
-            style={thumbStyle}
-            aria-disabled={disabled || undefined}
-            aria-valuemax={max}
-            aria-valuemin={min}
-            aria-valuenow={currentValue}
-            data-ck="slider-thumb"
-            role="slider"
-            tabIndex={disabled ? -1 : 0}
-            onKeyDown={handleKeyDown}
-          />
+          <div data-ck="slider-range" />
         </div>
+        <div
+          aria-describedby={ariaDescribedBy}
+          aria-disabled={disabled || undefined}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-valuemax={max}
+          aria-valuemin={min}
+          aria-valuenow={currentValue}
+          aria-valuetext={ariaValueText}
+          data-ck="slider-thumb"
+          role="slider"
+          tabIndex={disabled ? -1 : 0}
+          onKeyDown={handleKeyDown}
+        />
       </div>
     );
   },

@@ -26,6 +26,29 @@ describe("Slider Component", () => {
       expect(thumb).toBeInTheDocument();
     });
 
+    it("renders range sub-element inside track", () => {
+      const { container } = render(<Slider aria-label="Volume" />);
+
+      const range = container.querySelector('[data-ck="slider-range"]');
+      expect(range).toBeInTheDocument();
+
+      const track = container.querySelector('[data-ck="slider-track"]');
+      expect(track).toContainElement(range as HTMLElement);
+    });
+
+    it("renders thumb as sibling to track, not inside track", () => {
+      const { container } = render(<Slider aria-label="Volume" />);
+
+      const track = container.querySelector('[data-ck="slider-track"]');
+      const thumb = container.querySelector('[data-ck="slider-thumb"]');
+
+      expect(track).not.toContainElement(thumb as HTMLElement);
+
+      const root = container.firstElementChild;
+      expect(root).toContainElement(track as HTMLElement);
+      expect(root).toContainElement(thumb as HTMLElement);
+    });
+
     it("applies data-ck='slider' on root element", () => {
       const { container } = render(<Slider aria-label="Volume" />);
 
@@ -397,6 +420,18 @@ describe("Slider Component", () => {
       expect(thumb).toBeInTheDocument();
     });
 
+    it("has data-ck='slider-range' inside track element", () => {
+      const { container } = render(
+        <Slider aria-label="Volume" defaultValue={50} />,
+      );
+
+      const range = container.querySelector('[data-ck="slider-range"]');
+      expect(range).toBeInTheDocument();
+
+      const track = container.querySelector('[data-ck="slider-track"]');
+      expect(track).toContainElement(range as HTMLElement);
+    });
+
     it("has data-variant on root when variantName is set", () => {
       const { container } = render(
         <Slider
@@ -431,15 +466,13 @@ describe("Slider Component", () => {
   });
 
   describe("CSS Custom Properties", () => {
-    it("sets --slider-value percentage on thumb", () => {
+    it("sets --slider-value percentage on root", () => {
       const { container } = render(
         <Slider aria-label="Volume" defaultValue={50} />,
       );
 
-      const thumb = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("50%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("50%");
     });
 
     it("sets --slider-value to 0% at min", () => {
@@ -447,10 +480,8 @@ describe("Slider Component", () => {
         <Slider aria-label="Volume" defaultValue={0} />,
       );
 
-      const thumb = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("0%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("0%");
     });
 
     it("sets --slider-value to 100% at max", () => {
@@ -458,10 +489,8 @@ describe("Slider Component", () => {
         <Slider aria-label="Volume" defaultValue={100} />,
       );
 
-      const thumb = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("100%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("100%");
     });
 
     it("calculates correct percentage with custom min/max", () => {
@@ -469,10 +498,8 @@ describe("Slider Component", () => {
         <Slider aria-label="Volume" defaultValue={75} max={150} min={50} />,
       );
 
-      const thumb = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("25%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("25%");
     });
 
     it("updates --slider-value when value changes", () => {
@@ -480,13 +507,11 @@ describe("Slider Component", () => {
         <Slider aria-label="Volume" value={25} />,
       );
 
-      const thumb = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("25%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("25%");
 
       rerender(<Slider aria-label="Volume" value={75} />);
-      expect(thumb.style.getPropertyValue("--slider-value")).toBe("75%");
+      expect(root.style.getPropertyValue("--slider-value")).toBe("75%");
     });
   });
 
@@ -524,7 +549,7 @@ describe("Slider Component", () => {
       expect(screen.getByLabelText("Volume control")).toBeInTheDocument();
     });
 
-    it("supports aria-labelledby passthrough", () => {
+    it("supports aria-labelledby on thumb", () => {
       render(
         <>
           <label id="volume-label">Volume</label>
@@ -532,11 +557,11 @@ describe("Slider Component", () => {
         </>,
       );
 
-      const root = screen.getByRole("slider").closest('[data-ck="slider"]');
-      expect(root).toHaveAttribute("aria-labelledby", "volume-label");
+      const thumb = screen.getByRole("slider");
+      expect(thumb).toHaveAttribute("aria-labelledby", "volume-label");
     });
 
-    it("supports aria-valuetext for human-readable descriptions", () => {
+    it("supports aria-valuetext on thumb", () => {
       render(
         <Slider
           aria-label="Priority"
@@ -547,15 +572,11 @@ describe("Slider Component", () => {
         />,
       );
 
-      // aria-valuetext is passed through via ...rest on the root, not the thumb
-      // The thumb gets ARIA range attrs from the hook
-      const root = screen.getByRole("slider").closest('[data-ck="slider"]');
-      // Actually, aria-valuetext should be on the root via ...rest spread
-      // but we need it on the thumb for screen readers. Let's verify it's rendered.
-      expect(root).toHaveAttribute("aria-valuetext", "Medium priority");
+      const thumb = screen.getByRole("slider");
+      expect(thumb).toHaveAttribute("aria-valuetext", "Medium priority");
     });
 
-    it("supports aria-describedby", () => {
+    it("supports aria-describedby on thumb", () => {
       render(
         <>
           <div id="description">Adjust the volume level</div>
@@ -567,8 +588,8 @@ describe("Slider Component", () => {
         </>,
       );
 
-      const root = screen.getByRole("slider").closest('[data-ck="slider"]');
-      expect(root).toHaveAttribute("aria-describedby", "description");
+      const thumb = screen.getByRole("slider");
+      expect(thumb).toHaveAttribute("aria-describedby", "description");
     });
   });
 
@@ -649,10 +670,8 @@ describe("Slider Component", () => {
       const thumb = screen.getByRole("slider");
       expect(thumb).toHaveAttribute("aria-valuenow", "0");
 
-      const thumbEl = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumbEl.style.getPropertyValue("--slider-value")).toBe("0%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("0%");
     });
 
     it("handles value at max boundary (100%)", () => {
@@ -663,10 +682,8 @@ describe("Slider Component", () => {
       const thumb = screen.getByRole("slider");
       expect(thumb).toHaveAttribute("aria-valuenow", "100");
 
-      const thumbEl = container.querySelector(
-        '[data-ck="slider-thumb"]',
-      ) as HTMLElement;
-      expect(thumbEl.style.getPropertyValue("--slider-value")).toBe("100%");
+      const root = container.firstElementChild as HTMLElement;
+      expect(root.style.getPropertyValue("--slider-value")).toBe("100%");
     });
 
     it("handles min equal to max", () => {
