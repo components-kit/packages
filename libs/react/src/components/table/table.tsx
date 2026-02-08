@@ -24,7 +24,6 @@ import {
   TableHTMLAttributes,
   useCallback,
   useId,
-  useMemo,
   useState,
 } from "react";
 
@@ -38,11 +37,12 @@ import {
  *
  * ## Features
  * - Sorting: Click column headers to sort, with keyboard support
- * - Pagination: Built-in pagination with customizable page size
+ * - Pagination: Row slicing with controlled page state (compose with Pagination for UI)
  * - Filtering: Global and column-level filtering
  * - Row Selection: Single or multi-select with checkbox support
  * - Row Expansion: Expandable rows with custom sub-components
- * - Custom Rendering: Full control over headers, cells, rows
+ * - Footer: Auto-renders when columns define `footer`, with custom render override
+ * - Custom Rendering: Full control over headers, cells, rows, footer
  * - Accessibility: Proper ARIA attributes, keyboard navigation
  *
  * @example
@@ -73,12 +73,21 @@ import {
  *
  * @example
  * ```tsx
- * // With pagination
+ * // With pagination (compose with Pagination component for UI)
+ * const [pageIndex, setPageIndex] = useState(0);
+ *
  * <Table
  *   data={users}
  *   columns={columns}
  *   enablePagination
+ *   pageIndex={pageIndex}
  *   pageSize={10}
+ *   onPageChange={setPageIndex}
+ * />
+ * <Pagination
+ *   page={pageIndex + 1}
+ *   totalPages={Math.ceil(users.length / 10)}
+ *   onPageChange={(page) => setPageIndex(page - 1)}
  * />
  * ```
  *
@@ -158,6 +167,12 @@ interface CellRenderContext<TData, TValue> {
 interface SubComponentRenderContext<TData> {
   row: Row<TData>;
 }
+
+/**
+ * Context provided to custom footer renderer.
+ * Same shape as HeaderRenderContext (both receive the table instance).
+ */
+type FooterRenderContext<TData> = HeaderRenderContext<TData>;
 
 /**
  * Props for the Table component.
@@ -358,6 +373,11 @@ interface TableProps<TData> extends Omit<
   renderEmpty?: () => ReactNode;
 
   /**
+   * Custom renderer for table footer.
+   */
+  renderFooter?: (context: FooterRenderContext<TData>) => ReactNode;
+
+  /**
    * Custom renderer for table header.
    */
   renderHeader?: (context: HeaderRenderContext<TData>) => ReactNode;
@@ -450,9 +470,10 @@ function TableInner<TData>(
     onSortingChange,
     pageCount,
     pageIndex: controlledPageIndex,
-    pageSize: controlledPageSize = 10,
+    pageSize: controlledPageSize,
     renderCell: customRenderCell,
     renderEmpty,
+    renderFooter: customRenderFooter,
     renderHeader: customRenderHeader,
     renderLoading,
     renderRow: customRenderRow,
@@ -475,7 +496,9 @@ function TableInner<TData>(
     useState<ColumnFiltersState>([]);
   const [internalExpanded, setInternalExpanded] = useState<ExpandedState>({});
   const [internalPageIndex, setInternalPageIndex] = useState(0);
-  const [internalPageSize, setInternalPageSize] = useState(controlledPageSize);
+  const [internalPageSize, setInternalPageSize] = useState(
+    controlledPageSize ?? 10,
+  );
 
   // Use controlled or internal state
   const sorting = controlledSorting ?? internalSorting;
@@ -484,7 +507,7 @@ function TableInner<TData>(
   const columnFilters = controlledColumnFilters ?? internalColumnFilters;
   const expanded = controlledExpanded ?? internalExpanded;
   const pageIndex = controlledPageIndex ?? internalPageIndex;
-  const pageSize = controlledPageSize ?? internalPageSize;
+  const pageSize = controlledPageSize ?? internalPageSize ?? 10;
 
   // Handlers
   const handleSortingChange = useCallback(
@@ -634,12 +657,11 @@ function TableInner<TData>(
     },
   });
 
-  // Memoize rows for performance
-  const rows = useMemo(() => table.getRowModel().rows, [table]);
-  const headerGroups = useMemo(() => table.getHeaderGroups(), [table]);
-
-  // Get column count for loading/empty state colspan
-  const columnCount = useMemo(() => table.getAllColumns().length, [table]);
+  const rows = table.getRowModel().rows;
+  const headerGroups = table.getHeaderGroups();
+  const hasFooter = columns.some((col) => col.footer !== undefined);
+  const footerGroups = hasFooter ? table.getFooterGroups() : [];
+  const columnCount = table.getAllColumns().length;
 
   return (
     <table
@@ -654,7 +676,7 @@ function TableInner<TData>(
       ref={ref}
     >
       {caption && (
-        <caption style={{ captionSide }} data-ck="table-caption">
+        <caption data-caption-side={captionSide} data-ck="table-caption">
           {caption}
         </caption>
       )}
@@ -664,11 +686,7 @@ function TableInner<TData>(
         {customRenderHeader
           ? customRenderHeader({ table })
           : headerGroups.map((headerGroup) => (
-              <tr
-                key={headerGroup.id}
-                data-ck="table-row"
-                data-header-row
-              >
+              <tr key={headerGroup.id} data-ck="table-row" data-header-row>
                 {headerGroup.headers.map((header) => {
                   const canSort = header.column.getCanSort();
                   const isSorted = header.column.getIsSorted();
@@ -682,7 +700,6 @@ function TableInner<TData>(
                       data-ck="table-head"
                       data-sort={canSort ? isSorted || "none" : undefined}
                       data-sortable={canSort || undefined}
-                      role={canSort ? "button" : undefined}
                       scope="col"
                       tabIndex={canSort ? 0 : undefined}
                       onClick={
@@ -754,9 +771,9 @@ function TableInner<TData>(
             return (
               <Fragment key={row.id}>
                 <tr
-                  style={onRowClick ? { cursor: "pointer" } : undefined}
                   aria-selected={enableRowSelection ? isSelected : undefined}
                   data-ck="table-row"
+                  data-clickable={onRowClick ? true : undefined}
                   data-selected={isSelected || undefined}
                   onClick={onRowClick ? () => onRowClick(row) : undefined}
                 >
@@ -787,61 +804,29 @@ function TableInner<TData>(
         )}
       </tbody>
 
-      {/* Footer - pagination info */}
-      {enablePagination && !isLoading && rows.length > 0 && (
+      {/* Footer */}
+      {(customRenderFooter || hasFooter) && (
         <tfoot data-ck="table-footer">
-          <tr data-ck="table-row">
-            <td
-              colSpan={columnCount}
-              data-ck="table-cell"
-              data-pagination-info
-            >
-              <div data-ck="table-pagination">
-                <span data-ck="table-pagination-info">
-                  Page {table.getState().pagination.pageIndex + 1} of{" "}
-                  {table.getPageCount()}
-                </span>
-                <div data-ck="table-pagination-controls">
-                  <button
-                    aria-label="Go to first page"
-                    data-ck="table-pagination-button"
-                    disabled={!table.getCanPreviousPage()}
-                    type="button"
-                    onClick={() => table.setPageIndex(0)}
-                  >
-                    {"<<"}
-                  </button>
-                  <button
-                    aria-label="Go to previous page"
-                    data-ck="table-pagination-button"
-                    disabled={!table.getCanPreviousPage()}
-                    type="button"
-                    onClick={() => table.previousPage()}
-                  >
-                    {"<"}
-                  </button>
-                  <button
-                    aria-label="Go to next page"
-                    data-ck="table-pagination-button"
-                    disabled={!table.getCanNextPage()}
-                    type="button"
-                    onClick={() => table.nextPage()}
-                  >
-                    {">"}
-                  </button>
-                  <button
-                    aria-label="Go to last page"
-                    data-ck="table-pagination-button"
-                    disabled={!table.getCanNextPage()}
-                    type="button"
-                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                  >
-                    {">>"}
-                  </button>
-                </div>
-              </div>
-            </td>
-          </tr>
+          {customRenderFooter
+            ? customRenderFooter({ table })
+            : footerGroups.map((footerGroup) => (
+                <tr key={footerGroup.id} data-ck="table-row" data-footer-row>
+                  {footerGroup.headers.map((footer) => (
+                    <td
+                      key={footer.id}
+                      colSpan={footer.colSpan}
+                      data-ck="table-cell"
+                    >
+                      {footer.isPlaceholder
+                        ? null
+                        : flexRender(
+                            footer.column.columnDef.footer,
+                            footer.getContext(),
+                          )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
         </tfoot>
       )}
     </table>
@@ -861,6 +846,7 @@ const Table = forwardRef(TableInner) as <TData>(
 
 export {
   type CellRenderContext,
+  type FooterRenderContext,
   type HeaderRenderContext,
   type RowRenderContext,
   type SubComponentRenderContext,

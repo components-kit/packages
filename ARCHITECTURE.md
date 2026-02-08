@@ -25,7 +25,7 @@
 
 | Component   | Lines | Complexity | Key Features                                                                        |
 | ----------- | ----- | ---------- | ----------------------------------------------------------------------------------- |
-| Table       | 870+  | High       | Sorting, pagination, filtering, row selection (TanStack Table)                      |
+| Table       | ~830  | High       | Sorting, pagination (data slicing), filtering, row selection (TanStack Table)       |
 | Select      | ~400  | High       | Dropdown with groups, type-ahead, keyboard nav (Downshift + Floating UI)            |
 | Combobox    | ~480  | High       | Searchable select with text filtering, keyboard nav (Downshift + Floating UI)       |
 | MultiSelect | ~600  | High       | Multi-value select with tags, filtering, tag keyboard nav (Downshift + Floating UI) |

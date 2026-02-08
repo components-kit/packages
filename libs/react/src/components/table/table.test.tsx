@@ -257,23 +257,6 @@ describe("Table Component", () => {
       role: i % 3 === 0 ? "Admin" : "User",
     }));
 
-    it("renders pagination controls when enabled", () => {
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageSize={10}
-        />
-      );
-
-      expect(screen.getByLabelText("Go to first page")).toBeInTheDocument();
-      expect(screen.getByLabelText("Go to previous page")).toBeInTheDocument();
-      expect(screen.getByLabelText("Go to next page")).toBeInTheDocument();
-      expect(screen.getByLabelText("Go to last page")).toBeInTheDocument();
-      expect(screen.getByText(/Page 1 of 3/)).toBeInTheDocument();
-    });
-
     it("limits rows to pageSize", () => {
       render(
         <Table
@@ -284,30 +267,12 @@ describe("Table Component", () => {
         />
       );
 
-      // Should only show 5 rows + loading/empty rows
       const rows = screen.getAllByRole("row");
-      // 1 header row + 5 data rows + 1 footer row (pagination)
-      expect(rows.length).toBe(7);
+      // 1 header row + 5 data rows
+      expect(rows.length).toBe(6);
     });
 
-    it("navigates to next page", async () => {
-      const user = userEvent.setup();
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageSize={10}
-        />
-      );
-
-      await user.click(screen.getByLabelText("Go to next page"));
-      expect(screen.getByText(/Page 2 of 3/)).toBeInTheDocument();
-    });
-
-    it("navigates to previous page", async () => {
-      const onPageChange = vi.fn();
-      const user = userEvent.setup();
+    it("shows correct rows for given pageIndex", () => {
       render(
         <Table
           columns={testColumns}
@@ -315,35 +280,18 @@ describe("Table Component", () => {
           enablePagination
           pageIndex={1}
           pageSize={10}
-          onPageChange={onPageChange}
         />
       );
 
-      await user.click(screen.getByLabelText("Go to previous page"));
-      expect(onPageChange).toHaveBeenCalledWith(0);
+      // Page 2 should show users 11-20
+      expect(screen.getByText("User 11")).toBeInTheDocument();
+      expect(screen.getByText("User 20")).toBeInTheDocument();
+      expect(screen.queryByText("User 1")).not.toBeInTheDocument();
+      expect(screen.queryByText("User 21")).not.toBeInTheDocument();
     });
 
-    it("navigates to first page", async () => {
-      const onPageChange = vi.fn();
-      const user = userEvent.setup();
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageIndex={2}
-          pageSize={10}
-          onPageChange={onPageChange}
-        />
-      );
-
-      await user.click(screen.getByLabelText("Go to first page"));
-      expect(onPageChange).toHaveBeenCalledWith(0);
-    });
-
-    it("navigates to last page", async () => {
-      const user = userEvent.setup();
-      render(
+    it("does not render pagination UI in tfoot", () => {
+      const { container } = render(
         <Table
           columns={testColumns}
           data={manyUsers}
@@ -352,60 +300,7 @@ describe("Table Component", () => {
         />
       );
 
-      await user.click(screen.getByLabelText("Go to last page"));
-      expect(screen.getByText(/Page 3 of 3/)).toBeInTheDocument();
-    });
-
-    it("disables first/previous on first page", () => {
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageSize={10}
-        />
-      );
-
-      expect(screen.getByLabelText("Go to first page")).toBeDisabled();
-      expect(screen.getByLabelText("Go to previous page")).toBeDisabled();
-      expect(screen.getByLabelText("Go to next page")).not.toBeDisabled();
-      expect(screen.getByLabelText("Go to last page")).not.toBeDisabled();
-    });
-
-    it("disables next/last on last page", () => {
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageIndex={2}
-          pageSize={10}
-        />
-      );
-
-      expect(screen.getByLabelText("Go to first page")).not.toBeDisabled();
-      expect(screen.getByLabelText("Go to previous page")).not.toBeDisabled();
-      expect(screen.getByLabelText("Go to next page")).toBeDisabled();
-      expect(screen.getByLabelText("Go to last page")).toBeDisabled();
-    });
-
-    it("calls onPageChange in controlled mode", async () => {
-      const onPageChange = vi.fn();
-      const user = userEvent.setup();
-
-      render(
-        <Table
-          columns={testColumns}
-          data={manyUsers}
-          enablePagination
-          pageIndex={0}
-          pageSize={10}
-          onPageChange={onPageChange}
-        />
-      );
-
-      await user.click(screen.getByLabelText("Go to next page"));
-      expect(onPageChange).toHaveBeenCalledWith(1);
+      expect(container.querySelector("tfoot")).not.toBeInTheDocument();
     });
   });
 
@@ -529,7 +424,7 @@ describe("Table Component", () => {
       expect(onRowClick.mock.calls[0][0].original).toEqual(testData[0]);
     });
 
-    it("applies cursor pointer style when onRowClick is provided", () => {
+    it("applies data-clickable when onRowClick is provided", () => {
       render(
         <Table
           columns={testColumns}
@@ -539,7 +434,7 @@ describe("Table Component", () => {
       );
 
       const rows = screen.getAllByRole("row");
-      expect(rows[1]).toHaveStyle({ cursor: "pointer" });
+      expect(rows[1]).toHaveAttribute("data-clickable", "true");
     });
   });
 
@@ -823,6 +718,71 @@ describe("Table Component", () => {
 
       const rows = screen.getAllByRole("row");
       expect(rows[1]).toHaveAttribute("aria-selected", "true");
+    });
+  });
+
+  describe("Footer", () => {
+    const columnsWithFooter: ColumnDef<User, unknown>[] = [
+      { accessorKey: "name", footer: "Total", header: "Name" },
+      { accessorKey: "email", header: "Email" },
+      { accessorKey: "role", footer: () => <span data-testid="role-footer">3 users</span>, header: "Role" },
+    ];
+
+    it("renders tfoot when columns define footer", () => {
+      const { container } = render(
+        <Table columns={columnsWithFooter} data={testData} />
+      );
+
+      const tfoot = container.querySelector("tfoot");
+      expect(tfoot).toBeInTheDocument();
+      expect(tfoot).toHaveAttribute("data-ck", "table-footer");
+    });
+
+    it("does not render tfoot when no columns define footer", () => {
+      const { container } = render(
+        <Table columns={testColumns} data={testData} />
+      );
+
+      expect(container.querySelector("tfoot")).not.toBeInTheDocument();
+    });
+
+    it("renders string footer content", () => {
+      render(<Table columns={columnsWithFooter} data={testData} />);
+
+      expect(screen.getByText("Total")).toBeInTheDocument();
+    });
+
+    it("renders function footer content with flexRender", () => {
+      render(<Table columns={columnsWithFooter} data={testData} />);
+
+      expect(screen.getByTestId("role-footer")).toHaveTextContent("3 users");
+    });
+
+    it("applies data-footer-row to footer rows", () => {
+      const { container } = render(
+        <Table columns={columnsWithFooter} data={testData} />
+      );
+
+      const footerRow = container.querySelector("tfoot tr");
+      expect(footerRow).toHaveAttribute("data-footer-row");
+      expect(footerRow).toHaveAttribute("data-ck", "table-row");
+    });
+
+    it("supports renderFooter for custom footer rendering", () => {
+      render(
+        <Table
+          columns={testColumns}
+          data={testData}
+          renderFooter={({ table }) => (
+            <tr data-testid="custom-footer-row">
+              <td colSpan={table.getAllColumns().length}>Custom footer</td>
+            </tr>
+          )}
+        />
+      );
+
+      expect(screen.getByTestId("custom-footer-row")).toBeInTheDocument();
+      expect(screen.getByText("Custom footer")).toBeInTheDocument();
     });
   });
 
