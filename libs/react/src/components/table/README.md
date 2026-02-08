@@ -7,7 +7,7 @@ A fully-featured data table component powered by TanStack Table.
 ## Usage
 
 ```tsx
-import { Table, ColumnDef } from '@components-kit/react';
+import { Table, Pagination, ColumnDef } from '@components-kit/react';
 
 interface User {
   id: string;
@@ -33,12 +33,22 @@ const [sorting, setSorting] = useState<SortingState>([]);
   onSortingChange={setSorting}
 />
 
-// With pagination
+// With pagination (compose with Pagination component)
+const [pageIndex, setPageIndex] = useState(0);
+const pageSize = 10;
+
 <Table
   data={users}
   columns={columns}
   enablePagination
-  pageSize={10}
+  pageIndex={pageIndex}
+  pageSize={pageSize}
+  onPageChange={setPageIndex}
+/>
+<Pagination
+  page={pageIndex + 1}
+  totalPages={Math.ceil(users.length / pageSize)}
+  onPageChange={(page) => setPageIndex(page - 1)}
 />
 
 // With row selection
@@ -61,6 +71,21 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
       header: 'Status',
       cell: ({ getValue }) => <Badge>{getValue()}</Badge>,
     },
+  ]}
+/>
+
+// With column footers
+<Table
+  data={users}
+  columns={[
+    { accessorKey: 'name', header: 'Name', footer: 'Total' },
+    { accessorKey: 'email', header: 'Email' },
+    { accessorKey: 'amount', header: 'Amount', footer: ({ table }) => {
+      const total = table.getRowModel().rows.reduce(
+        (sum, row) => sum + row.getValue<number>('amount'), 0
+      );
+      return `$${total}`;
+    }},
   ]}
 />
 
@@ -96,9 +121,11 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
 ### Pagination
 
+The Table handles pagination **data logic** (row slicing) but does not render pagination UI. Compose with the `Pagination` component for navigation controls.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `enablePagination` | `boolean` | `false` | Enable pagination |
+| `enablePagination` | `boolean` | `false` | Enable pagination (row slicing) |
 | `pageSize` | `number` | `10` | Rows per page |
 | `pageIndex` | `number` | `0` | Current page (0-indexed) |
 | `pageCount` | `number` | - | Total pages (manual pagination) |
@@ -112,6 +139,14 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 | `enableMultiRowSelection` | `boolean` | `true` | Allow multi-select |
 | `rowSelection` | `RowSelectionState` | - | Controlled selection state |
 | `onRowSelectionChange` | `(selection) => void` | - | Selection change callback |
+
+### Footer
+
+The table footer renders automatically when any column definition includes a `footer` property. No enable prop needed.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `renderFooter` | `({ table }) => ReactNode` | - | Custom footer renderer (overrides column footers) |
 
 ### Row Expansion
 
@@ -127,18 +162,19 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 | Attribute | Values | Description |
 |-----------|--------|-------------|
 | `data-variant` | string | Variant name for styling |
-| `data-component` | string | Identifies table sub-components |
+| `data-caption-side` | `"top"`, `"bottom"` | Caption position |
+| `data-clickable` | `true` | Row has click handler |
 | `data-loading` | `true` | Present when loading |
 | `data-sort` | `"asc"`, `"desc"`, `"none"` | Column sort direction |
 | `data-sortable` | `true` | Column is sortable |
 | `data-selected` | `true` | Row is selected |
+| `data-footer-row` | present | Row is a footer row |
 
 ## Accessibility
 
 - Proper `aria-sort` on sortable column headers
 - `aria-selected` on selectable rows
 - Keyboard navigation for sorting (Enter/Space on headers)
-- Pagination buttons with `aria-label`
 
 ### Best Practices
 

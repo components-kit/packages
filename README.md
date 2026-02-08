@@ -255,7 +255,7 @@ import Link from "next/link";
 | [Slider](libs/react/src/components/slider/README.md)            | Range input with keyboard navigation and pointer drag support            | -                                 |
 | [Slot](libs/react/src/components/slot/README.md)                | Utility for prop merging and asChild pattern                             | -                                 |
 | [Switch](libs/react/src/components/switch/README.md)            | Binary toggle control                                                    | -                                 |
-| [Table](libs/react/src/components/table/README.md)              | Data table with sorting, pagination, selection, and expansion            | `@tanstack/react-table`           |
+| [Table](libs/react/src/components/table/README.md)              | Data table with sorting, pagination (data slicing), selection, and expansion. Compose with Pagination for UI | `@tanstack/react-table`           |
 | [Text](libs/react/src/components/text/README.md)                | Polymorphic text element (p, span, strong, em, etc.)                     | -                                 |
 | [Textarea](libs/react/src/components/textarea/README.md)        | Multi-line text input with auto-resize                                   | -                                 |
 | [Toast](libs/react/src/components/toast/README.md)              | Toast notification function with semantic markup                         | `sonner`                          |
