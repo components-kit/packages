@@ -16,18 +16,22 @@ import { useSlider } from "./use-slider";
  * Slider pattern. It supports:
  * - Controlled (`value` + `onValueChange`) and uncontrolled (`defaultValue`) modes
  * - Full keyboard navigation (Arrow keys, Home, End, PageUp, PageDown)
- * - Pointer (mouse/touch) drag interaction on the track
+ * - Pointer (mouse/touch) drag interaction on both the track and thumb
+ * - Horizontal and vertical orientations
  * - Customizable min, max, and step values
- * - Data attributes for CSS-based styling (`data-variant`, `data-disabled`)
+ * - Data attributes for CSS-based styling (`data-variant`, `data-disabled`, `data-orientation`)
  * - CSS custom property (`--slider-value`) on the root for flexible thumb/range positioning
  *
  * @remarks
  * This component features:
  * - **Sibling structure** where the thumb is a sibling of the track (Radix-style)
  * - **Range element** (`data-ck="slider-range"`) inside the track for the filled portion
- * - **Pointer drag** on the track element to set the value by position
+ * - **Pointer drag** on the root element — both track and thumb clicks initiate drag
+ * - **Orientation** — supports `"horizontal"` (default) and `"vertical"` layouts
  * - **Step snapping** ensures the value always aligns to the nearest valid step
+ * - **Floating-point precision** — fractional steps produce clean values (e.g., `0.3` not `0.30000000000000004`)
  * - **Value clamping** keeps values within `[min, max]` regardless of input
+ * - **`onValueCommit`** fires only on pointer release (end of drag), not during every move
  * - **Disabled state** uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
  * - Uses `data-ck` attributes on root, track, range, and thumb for CSS targeting
  * - ARIA attributes (`aria-label`, `aria-labelledby`, `aria-valuetext`, `aria-describedby`)
@@ -50,6 +54,7 @@ import { useSlider } from "./use-slider";
  * This component follows the [WAI-ARIA Slider Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/slider/):
  * - Uses `role="slider"` on the thumb element for screen reader identification
  * - Sets `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` on the thumb
+ * - Sets `aria-orientation` on the thumb to communicate layout direction
  * - Forwards `aria-label`, `aria-labelledby`, `aria-valuetext`, and `aria-describedby`
  *   to the thumb element (the element with `role="slider"`)
  * - Uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
@@ -68,7 +73,9 @@ import { useSlider } from "./use-slider";
  * @param {boolean} [disabled] - If true, disables the slider.
  * @param {number} [max=100] - The maximum value of the slider.
  * @param {number} [min=0] - The minimum value of the slider.
- * @param {(value: number) => void} [onValueChange] - Callback fired when the value changes.
+ * @param {(value: number) => void} [onValueChange] - Callback fired when the value changes (on every move).
+ * @param {(value: number) => void} [onValueCommit] - Callback fired when the user finishes a pointer interaction (on pointer up). Not fired on keyboard changes.
+ * @param {"horizontal" | "vertical"} [orientation="horizontal"] - The orientation of the slider.
  * @param {number} [step=1] - The step increment between values.
  * @param {number} [value] - The controlled value. When provided, internal state is bypassed.
  * @param {string} [variantName] - The variant name for styling (e.g., "primary", "default").
@@ -88,8 +95,16 @@ import { useSlider } from "./use-slider";
  * <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
  *
  * @example
+ * // With onValueCommit (fires only when drag ends)
+ * <Slider aria-label="Volume" defaultValue={50} onValueCommit={(v) => saveToServer(v)} />
+ *
+ * @example
  * // Custom range and step
  * <Slider aria-label="Temperature" min={0} max={40} step={0.5} defaultValue={22} />
+ *
+ * @example
+ * // Vertical slider
+ * <Slider aria-label="Volume" defaultValue={50} orientation="vertical" />
  *
  * @example
  * // With variant
@@ -122,6 +137,8 @@ interface SliderProps extends HTMLAttributes<HTMLDivElement> {
   max?: number;
   min?: number;
   onValueChange?: (value: number) => void;
+  onValueCommit?: (value: number) => void;
+  orientation?: "horizontal" | "vertical";
   step?: number;
   value?: number;
   variantName?: string;
@@ -139,6 +156,8 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
       max = 100,
       min = 0,
       onValueChange,
+      onValueCommit,
+      orientation,
       step = 1,
       style,
       value,
@@ -151,6 +170,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
       currentValue,
       handleKeyDown,
       handlePointerDown,
+      orientation: resolvedOrientation,
       percentage,
       trackRef,
     } = useSlider({
@@ -159,6 +179,8 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
       max,
       min,
       onValueChange,
+      onValueCommit,
+      orientation,
       step,
       value,
     });
@@ -174,12 +196,13 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
         style={sliderStyle}
         data-ck="slider"
         data-disabled={disabled || undefined}
+        data-orientation={resolvedOrientation}
         data-variant={variantName}
+        onPointerDown={handlePointerDown}
         ref={ref}
       >
         <div
           data-ck="slider-track"
-          onPointerDown={handlePointerDown}
           ref={trackRef}
         >
           <div data-ck="slider-range" />
@@ -189,6 +212,7 @@ const Slider = forwardRef<HTMLDivElement, SliderProps>(
           aria-disabled={disabled || undefined}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
+          aria-orientation={resolvedOrientation}
           aria-valuemax={max}
           aria-valuemin={min}
           aria-valuenow={currentValue}

@@ -18,8 +18,14 @@ import { Slider } from '@components-kit/react';
 const [volume, setVolume] = useState(50);
 <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
 
+// With onValueCommit (fires only when drag ends)
+<Slider aria-label="Volume" defaultValue={50} onValueCommit={(v) => saveToServer(v)} />
+
 // Custom range and step
 <Slider aria-label="Temperature" min={0} max={40} step={0.5} defaultValue={22} />
+
+// Vertical slider
+<Slider aria-label="Volume" defaultValue={50} orientation="vertical" />
 
 // Disabled slider
 <Slider aria-label="Locked" defaultValue={30} disabled />
@@ -48,7 +54,9 @@ const [volume, setVolume] = useState(50);
 | `max` | `number` | `100` | Maximum value |
 | `step` | `number` | `1` | Step increment between values |
 | `disabled` | `boolean` | - | Disables the slider |
-| `onValueChange` | `(value: number) => void` | - | Callback fired when the value changes |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider |
+| `onValueChange` | `(value: number) => void` | - | Callback fired when the value changes (on every move) |
+| `onValueCommit` | `(value: number) => void` | - | Callback fired when the user finishes a pointer interaction (on pointer up) |
 | `variantName` | `string` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
@@ -59,6 +67,7 @@ Also accepts all standard `div` HTML attributes.
 |-----------|-----------|--------|-------------|
 | `data-ck="slider"` | Root | `"slider"` | Component identifier |
 | `data-disabled` | Root | `true` | Present when disabled |
+| `data-orientation` | Root | `"horizontal"` \| `"vertical"` | The slider orientation |
 | `data-variant` | Root | string | The variant name for styling |
 | `data-ck="slider-track"` | Track | `"slider-track"` | The track (bar background) element |
 | `data-ck="slider-range"` | Range | `"slider-range"` | The filled portion of the track |
@@ -80,37 +89,70 @@ Also accepts all standard `div` HTML attributes.
   touch-action: none;
 }
 
+[data-ck="slider"][data-orientation="vertical"] {
+  flex-direction: column;
+  height: 200px;
+  width: auto;
+}
+
 [data-ck="slider-track"] {
   position: relative;
-  height: 8px;
-  width: 100%;
-  background: var(--color-gray-200);
-  border-radius: 4px;
   cursor: pointer;
   overflow: hidden;
 }
 
+[data-ck="slider"][data-orientation="horizontal"] [data-ck="slider-track"] {
+  height: 8px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+[data-ck="slider"][data-orientation="vertical"] [data-ck="slider-track"] {
+  width: 8px;
+  height: 100%;
+  border-radius: 4px;
+}
+
 [data-ck="slider-range"] {
   position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: var(--slider-value, 0%);
   background: var(--color-primary);
   border-radius: 4px;
 }
 
+[data-ck="slider"][data-orientation="horizontal"] [data-ck="slider-range"] {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: var(--slider-value, 0%);
+}
+
+[data-ck="slider"][data-orientation="vertical"] [data-ck="slider-range"] {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--slider-value, 0%);
+}
+
 [data-ck="slider-thumb"] {
   position: absolute;
-  top: 50%;
-  left: var(--slider-value, 0%);
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: var(--color-primary);
-  transform: translate(-50%, -50%);
   cursor: grab;
   outline: none;
+}
+
+[data-ck="slider"][data-orientation="horizontal"] [data-ck="slider-thumb"] {
+  top: 50%;
+  left: var(--slider-value, 0%);
+  transform: translate(-50%, -50%);
+}
+
+[data-ck="slider"][data-orientation="vertical"] [data-ck="slider-thumb"] {
+  left: 50%;
+  bottom: var(--slider-value, 0%);
+  transform: translate(-50%, 50%);
 }
 
 [data-ck="slider-thumb"]:focus-visible {
@@ -131,6 +173,7 @@ Also accepts all standard `div` HTML attributes.
 
 - Uses `role="slider"` on the thumb element with full WAI-ARIA support
 - Sets `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` on the thumb
+- Sets `aria-orientation` on the thumb to communicate layout direction
 - Forwards `aria-label`, `aria-labelledby`, `aria-valuetext`, and `aria-describedby` to the thumb element
 - Always associate with a `<label>` using `aria-labelledby`, or use `aria-label`
 - Uses `aria-disabled` instead of native `disabled` to keep the thumb focusable
@@ -153,3 +196,4 @@ Also accepts all standard `div` HTML attributes.
 - Choose a `step` that makes sense for the value range
 - Ensure sufficient color contrast for the thumb and track
 - Consider displaying the current value alongside the slider
+- Use `onValueCommit` for expensive operations (e.g., network requests) that should only run when the user finishes dragging

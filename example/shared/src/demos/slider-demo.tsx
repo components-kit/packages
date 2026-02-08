@@ -7,6 +7,7 @@ import { type ComponentDemo } from "../types";
 
 function SliderPreview() {
   const [value, setValue] = useState(50);
+  const [committed, setCommitted] = useState<number | null>(null);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
@@ -44,14 +45,38 @@ function SliderPreview() {
       </div>
       <div>
         <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
-          Disabled
+          With onValueCommit{committed !== null ? `: committed ${committed}` : ""}
         </p>
         <Slider
-          aria-label="Locked slider"
-          defaultValue={30}
-          disabled
+          aria-label="Commit example"
+          defaultValue={50}
           variantName="default"
+          onValueCommit={setCommitted}
         />
+      </div>
+      <div style={{ display: "flex", gap: "20px" }}>
+        <div>
+          <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+            Vertical
+          </p>
+          <Slider
+            aria-label="Vertical slider"
+            defaultValue={60}
+            orientation="vertical"
+            variantName="default"
+          />
+        </div>
+        <div>
+          <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+            Disabled
+          </p>
+          <Slider
+            aria-label="Locked slider"
+            defaultValue={30}
+            disabled
+            variantName="default"
+          />
+        </div>
       </div>
     </div>
   );
@@ -78,6 +103,22 @@ const [value, setValue] = useState(50);
   max={40}
   min={0}
   step={0.5}
+  variantName="default"
+/>
+
+// onValueCommit fires only when drag ends
+<Slider
+  aria-label="Volume"
+  defaultValue={50}
+  variantName="default"
+  onValueCommit={(v) => saveToServer(v)}
+/>
+
+// Vertical orientation
+<Slider
+  aria-label="Volume"
+  defaultValue={60}
+  orientation="vertical"
   variantName="default"
 />
 

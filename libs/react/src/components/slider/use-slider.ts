@@ -1,11 +1,42 @@
 import { useCallback, useRef, useState } from "react";
 
+const SLIDER_KEYS = new Set([
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowUp",
+  "End",
+  "Home",
+  "PageDown",
+  "PageUp",
+]);
+
+function getDecimalPlaces(n: number): number {
+  const str = String(n);
+  const idx = str.indexOf(".");
+  return idx === -1 ? 0 : str.length - idx - 1;
+}
+
+function clampAndSnapValue(
+  raw: number,
+  min: number,
+  max: number,
+  step: number,
+): number {
+  const snapped = Math.round((raw - min) / step) * step + min;
+  const decimals = Math.max(getDecimalPlaces(step), getDecimalPlaces(min));
+  const rounded = parseFloat(snapped.toFixed(decimals));
+  return Math.min(Math.max(rounded, min), max);
+}
+
 interface UseSliderOptions {
   defaultValue?: number;
   disabled?: boolean;
   max: number;
   min: number;
   onValueChange?: (value: number) => void;
+  onValueCommit?: (value: number) => void;
+  orientation?: "horizontal" | "vertical";
   step: number;
   value?: number;
 }
@@ -46,27 +77,41 @@ interface UseSliderOptions {
  * @param {(value: number) => void} [options.onValueChange] - Callback fired when the value changes
  */
 export function useSlider(options: UseSliderOptions) {
-  const { defaultValue, disabled, max, min, onValueChange, step, value } =
-    options;
+  const {
+    defaultValue,
+    disabled,
+    max,
+    min,
+    onValueChange,
+    onValueCommit,
+    orientation = "horizontal",
+    step,
+    value,
+  } = options;
 
   const initialValue = defaultValue ?? min;
 
-  const [valueInternal, setValueInternal] = useState(() => {
-    // Clamp and snap the initial value
-    const snapped = Math.round((initialValue - min) / step) * step + min;
-    return Math.min(Math.max(snapped, min), max);
-  });
+  const [valueInternal, setValueInternal] = useState(() =>
+    clampAndSnapValue(initialValue, min, max, step),
+  );
 
   const currentValue = value !== undefined ? value : valueInternal;
 
+  const valueRef = useRef(currentValue);
+  valueRef.current = currentValue;
+
   const trackRef = useRef<HTMLDivElement | null>(null);
+
+  // Refs to hold latest versions of callbacks used inside DOM event listeners,
+  // avoiding stale closures during pointer drag in controlled mode.
+  const updateValueRef = useRef<(newValue: number) => void>(() => {});
+  const getValueFromPointerRef = useRef<(clientX: number, clientY: number) => number>(() => min);
+  const onValueCommitRef = useRef(onValueCommit);
+  onValueCommitRef.current = onValueCommit;
 
   // Helper: clamp and snap to step
   const clampAndSnap = useCallback(
-    (raw: number): number => {
-      const snapped = Math.round((raw - min) / step) * step + min;
-      return Math.min(Math.max(snapped, min), max);
-    },
+    (raw: number): number => clampAndSnapValue(raw, min, max, step),
     [max, min, step],
   );
 
@@ -81,6 +126,7 @@ export function useSlider(options: UseSliderOptions) {
     },
     [clampAndSnap, onValueChange, value],
   );
+  updateValueRef.current = updateValue;
 
   // Percentage for CSS positioning
   const percentage =
@@ -90,18 +136,7 @@ export function useSlider(options: UseSliderOptions) {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (disabled) {
-        if (
-          e.key === "ArrowRight" ||
-          e.key === "ArrowLeft" ||
-          e.key === "ArrowUp" ||
-          e.key === "ArrowDown" ||
-          e.key === "Home" ||
-          e.key === "End" ||
-          e.key === "PageUp" ||
-          e.key === "PageDown"
-        ) {
-          e.preventDefault();
-        }
+        if (SLIDER_KEYS.has(e.key)) e.preventDefault();
         return;
       }
 
@@ -136,53 +171,68 @@ export function useSlider(options: UseSliderOptions) {
 
   // Helper: compute value from pointer position
   const getValueFromPointer = useCallback(
-    (clientX: number): number => {
+    (clientX: number, clientY: number): number => {
       const track = trackRef.current;
-      if (!track) return currentValue;
+      if (!track) return min;
 
       const rect = track.getBoundingClientRect();
-      const fraction = Math.min(
-        Math.max((clientX - rect.left) / rect.width, 0),
-        1,
-      );
+      let fraction: number;
+
+      if (orientation === "vertical") {
+        fraction = Math.min(
+          Math.max((rect.bottom - clientY) / rect.height, 0),
+          1,
+        );
+      } else {
+        fraction = Math.min(
+          Math.max((clientX - rect.left) / rect.width, 0),
+          1,
+        );
+      }
+
       return clampAndSnap(min + fraction * (max - min));
     },
-    [clampAndSnap, currentValue, max, min],
+    [clampAndSnap, max, min, orientation],
   );
+  getValueFromPointerRef.current = getValueFromPointer;
 
-  // Handler: Pointer down on track (starts drag)
+  // Handler: Pointer down (starts drag)
+  // DOM event listeners inside use refs to always read the latest callbacks,
+  // avoiding stale closures when React re-renders during a drag.
   const handlePointerDown = useCallback(
     (e: React.PointerEvent) => {
       if (disabled) return;
 
       e.preventDefault();
-      const newValue = getValueFromPointer(e.clientX);
-      updateValue(newValue);
+      const newValue = getValueFromPointerRef.current(e.clientX, e.clientY);
+      updateValueRef.current(newValue);
 
       const target = e.currentTarget as HTMLElement;
       target.setPointerCapture(e.pointerId);
 
       const handlePointerMove = (moveEvent: PointerEvent) => {
-        const moveValue = getValueFromPointer(moveEvent.clientX);
-        updateValue(moveValue);
+        const moveValue = getValueFromPointerRef.current(moveEvent.clientX, moveEvent.clientY);
+        updateValueRef.current(moveValue);
       };
 
       const handlePointerUp = () => {
         target.releasePointerCapture(e.pointerId);
         target.removeEventListener("pointermove", handlePointerMove);
         target.removeEventListener("pointerup", handlePointerUp);
+        onValueCommitRef.current?.(valueRef.current);
       };
 
       target.addEventListener("pointermove", handlePointerMove);
       target.addEventListener("pointerup", handlePointerUp);
     },
-    [disabled, getValueFromPointer, updateValue],
+    [disabled],
   );
 
   return {
     currentValue,
     handleKeyDown,
     handlePointerDown,
+    orientation,
     percentage,
     trackRef,
   };

@@ -48,7 +48,7 @@
 | Text        | ~50   | Low        | Polymorphic text                                                                    |
 | Separator   | ~40   | Low        | Visual divider                                                                      |
 | Skeleton    | ~40   | Low        | Loading placeholder                                                                 |
-| Slider      | ~200  | Medium     | Keyboard nav, pointer drag, controlled/uncontrolled (useSlider hook)                |
+| Slider      | ~240  | Medium     | Keyboard nav, pointer drag, orientation, onValueCommit, controlled/uncontrolled (useSlider hook) |
 
 ### Core Patterns
 
