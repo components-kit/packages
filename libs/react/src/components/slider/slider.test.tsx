@@ -1,8 +1,17 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { Slider } from "./slider";
+
+// JSDOM does not implement PointerEvent, so we polyfill it for pointer tests
+class MockPointerEvent extends MouseEvent {
+  readonly pointerId: number;
+  constructor(type: string, init: MouseEventInit & PointerEventInit = {}) {
+    super(type, init);
+    this.pointerId = init.pointerId ?? 0;
+  }
+}
 
 describe("Slider Component", () => {
   describe("Basic Rendering", () => {
@@ -732,6 +741,260 @@ describe("Slider Component", () => {
 
       rerender(<Slider aria-label="Volume" value={75} />);
       expect(thumb).toHaveAttribute("aria-valuenow", "75");
+    });
+  });
+
+  describe("Floating-Point Precision", () => {
+    it("produces clean values with step=0.1", () => {
+      render(
+        <Slider aria-label="Volume" defaultValue={0} max={1} min={0} step={0.1} />,
+      );
+
+      const thumb = screen.getByRole("slider");
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+
+      expect(thumb).toHaveAttribute("aria-valuenow", "0.3");
+    });
+
+    it("produces clean values with step=0.01", () => {
+      render(
+        <Slider aria-label="Volume" defaultValue={0} max={1} min={0} step={0.01} />,
+      );
+
+      const thumb = screen.getByRole("slider");
+      for (let i = 0; i < 33; i++) {
+        fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      }
+
+      expect(thumb).toHaveAttribute("aria-valuenow", "0.33");
+    });
+
+    it("handles fractional min with fractional step", () => {
+      render(
+        <Slider aria-label="Volume" defaultValue={0.5} max={1.5} min={0.5} step={0.1} />,
+      );
+
+      const thumb = screen.getByRole("slider");
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+
+      expect(thumb).toHaveAttribute("aria-valuenow", "0.8");
+    });
+  });
+
+  describe("Orientation", () => {
+    it("defaults to horizontal orientation", () => {
+      const { container } = render(<Slider aria-label="Volume" />);
+
+      const root = container.firstElementChild;
+      expect(root).toHaveAttribute("data-orientation", "horizontal");
+
+      const thumb = screen.getByRole("slider");
+      expect(thumb).toHaveAttribute("aria-orientation", "horizontal");
+    });
+
+    it("applies vertical orientation", () => {
+      const { container } = render(
+        <Slider aria-label="Volume" orientation="vertical" />,
+      );
+
+      const root = container.firstElementChild;
+      expect(root).toHaveAttribute("data-orientation", "vertical");
+
+      const thumb = screen.getByRole("slider");
+      expect(thumb).toHaveAttribute("aria-orientation", "vertical");
+    });
+
+    it("applies horizontal orientation explicitly", () => {
+      const { container } = render(
+        <Slider aria-label="Volume" orientation="horizontal" />,
+      );
+
+      const root = container.firstElementChild;
+      expect(root).toHaveAttribute("data-orientation", "horizontal");
+    });
+
+    it("keyboard navigation works the same for vertical orientation", () => {
+      render(
+        <Slider aria-label="Volume" defaultValue={50} orientation="vertical" />,
+      );
+
+      const thumb = screen.getByRole("slider");
+      fireEvent.keyDown(thumb, { key: "ArrowUp" });
+      expect(thumb).toHaveAttribute("aria-valuenow", "51");
+
+      fireEvent.keyDown(thumb, { key: "ArrowDown" });
+      expect(thumb).toHaveAttribute("aria-valuenow", "50");
+    });
+  });
+
+  describe("Pointer Interaction", () => {
+    function setupSlider(container: HTMLElement) {
+      const track = container.querySelector(
+        '[data-ck="slider-track"]',
+      ) as HTMLElement;
+      track.getBoundingClientRect = vi.fn(() => ({
+        bottom: 20,
+        height: 20,
+        left: 0,
+        right: 200,
+        toJSON: () => {},
+        top: 0,
+        width: 200,
+        x: 0,
+        y: 0,
+      }));
+      const root = container.firstElementChild as HTMLElement;
+      root.setPointerCapture = vi.fn();
+      root.releasePointerCapture = vi.fn();
+      return { root, track };
+    }
+
+    it("updates value on pointerdown on the track", () => {
+      const handleChange = vi.fn();
+      const { container } = render(
+        <Slider aria-label="Volume" defaultValue={0} onValueChange={handleChange} />,
+      );
+
+      const { root } = setupSlider(container);
+
+      // clientX=100 on a 200px track starting at 0 = 50%
+      act(() => {
+        root.dispatchEvent(
+          new MockPointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10, pointerId: 1 }),
+        );
+      });
+
+      expect(handleChange).toHaveBeenCalledWith(50);
+    });
+
+    it("updates value on pointerdown on the thumb", () => {
+      const handleChange = vi.fn();
+      const { container } = render(
+        <Slider aria-label="Volume" defaultValue={50} onValueChange={handleChange} />,
+      );
+
+      setupSlider(container);
+
+      const thumb = container.querySelector(
+        '[data-ck="slider-thumb"]',
+      ) as HTMLElement;
+
+      // Clicking the thumb bubbles to root, which has onPointerDown
+      act(() => {
+        thumb.dispatchEvent(
+          new MockPointerEvent("pointerdown", { bubbles: true, clientX: 140, clientY: 10, pointerId: 1 }),
+        );
+      });
+
+      expect(handleChange).toHaveBeenCalledWith(70);
+    });
+
+    it("does not respond to pointer when disabled", () => {
+      const handleChange = vi.fn();
+      const { container } = render(
+        <Slider aria-label="Volume" defaultValue={50} disabled onValueChange={handleChange} />,
+      );
+
+      const { root } = setupSlider(container);
+
+      root.dispatchEvent(
+        new MockPointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10, pointerId: 1 }),
+      );
+
+      expect(handleChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("onValueCommit", () => {
+    function setupSlider(container: HTMLElement) {
+      const track = container.querySelector(
+        '[data-ck="slider-track"]',
+      ) as HTMLElement;
+      track.getBoundingClientRect = vi.fn(() => ({
+        bottom: 20,
+        height: 20,
+        left: 0,
+        right: 200,
+        toJSON: () => {},
+        top: 0,
+        width: 200,
+        x: 0,
+        y: 0,
+      }));
+      const root = container.firstElementChild as HTMLElement;
+      root.setPointerCapture = vi.fn();
+      root.releasePointerCapture = vi.fn();
+      return { root, track };
+    }
+
+    it("does not fire onValueCommit on keyboard interaction", () => {
+      const handleCommit = vi.fn();
+      render(
+        <Slider aria-label="Volume" defaultValue={50} onValueCommit={handleCommit} />,
+      );
+
+      const thumb = screen.getByRole("slider");
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+
+      expect(handleCommit).not.toHaveBeenCalled();
+    });
+
+    it("fires onValueCommit on pointerup after pointerdown", () => {
+      const handleCommit = vi.fn();
+      const { container } = render(
+        <Slider aria-label="Volume" defaultValue={0} onValueCommit={handleCommit} />,
+      );
+
+      const { root } = setupSlider(container);
+
+      act(() => {
+        root.dispatchEvent(
+          new MockPointerEvent("pointerdown", { bubbles: true, clientX: 100, clientY: 10, pointerId: 1 }),
+        );
+      });
+      expect(handleCommit).not.toHaveBeenCalled();
+
+      act(() => {
+        root.dispatchEvent(
+          new MockPointerEvent("pointerup", { bubbles: true, clientX: 100, clientY: 10, pointerId: 1 }),
+        );
+      });
+      expect(handleCommit).toHaveBeenCalledTimes(1);
+      expect(handleCommit).toHaveBeenCalledWith(50);
+    });
+
+    it("fires onValueChange during interaction but onValueCommit only at end", () => {
+      const handleChange = vi.fn();
+      const handleCommit = vi.fn();
+      const { container } = render(
+        <Slider
+          aria-label="Volume"
+          defaultValue={0}
+          onValueChange={handleChange}
+          onValueCommit={handleCommit}
+        />,
+      );
+
+      const { root } = setupSlider(container);
+
+      act(() => {
+        root.dispatchEvent(
+          new MockPointerEvent("pointerdown", { bubbles: true, clientX: 50, clientY: 10, pointerId: 1 }),
+        );
+      });
+      expect(handleChange).toHaveBeenCalledWith(25);
+      expect(handleCommit).not.toHaveBeenCalled();
+
+      act(() => {
+        root.dispatchEvent(
+          new MockPointerEvent("pointerup", { bubbles: true, clientX: 50, clientY: 10, pointerId: 1 }),
+        );
+      });
+      expect(handleCommit).toHaveBeenCalledTimes(1);
     });
   });
 
