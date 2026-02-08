@@ -95,7 +95,7 @@ toast({
 |------|------|---------|-------------|
 | `title` | `string \| ReactNode` | **Required** | Main title of the toast |
 | `description` | `string \| ReactNode` | - | Body content of the toast |
-| `button` | `{ label: string; onClick?: (e: MouseEvent) => void }` | - | Action button configuration. Toast auto-dismisses on click. |
+| `button` | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }` | - | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
 | `variantName` | `string` | - | Variant name for styling |
 | `duration` | `number` | `4000` | Time in ms before auto-dismiss |
 | `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen |
@@ -108,7 +108,8 @@ Inherits additional props from Sonner's `ExternalToast` type (className, style, 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
 | `data-ck` | `"toast"` | Toast container identifier |
-| `data-ck` | `"button"` | Button element identifier (for consistent styling) |
+| `data-ck` | `"button"` | Button element identifier (set by Button component) |
+| `data-size` | `"sm"` | Button size (always `"sm"` in toast) |
 | `data-variant` | `string` | The variant name for styling |
 | `data-has-title` | `true` \| `undefined` | Present when title is provided |
 | `data-has-description` | `true` \| `undefined` | Present when description is provided |
@@ -121,20 +122,14 @@ Inherits additional props from Sonner's `ExternalToast` type (className, style, 
 - Uses `aria-live="polite"` to announce without interrupting current speech
 - Icon slot is marked `aria-hidden="true"` (decorative)
 - Action button is fully keyboard accessible:
-  - Uses native `<button>` element with built-in keyboard support
+  - Uses shared `Button` component with built-in keyboard support, `aria-disabled`, and `aria-busy`
   - Has `type="button"` to prevent form submission
   - Focusable and activatable with Space/Enter keys
   - Has visible text label from `button.label` prop
+  - Supports `isLoading`, `leadingIcon`, and `trailingIcon` props
+  - Button variant is controlled by the parent toast's `variantName` via CSS
 - Title and description are announced by screen readers
 - Auto-dismiss doesn't interrupt user interaction
-
-### Why Native Button?
-
-The toast action button uses a native `<button>` element instead of the Button component because:
-- Simpler use case (no loading or disabled states needed)
-- Reduces complexity in Sonner's custom render
-- Still provides full keyboard accessibility
-- Maintains consistent styling through `data-ck="button"` attribute
 
 ### Best Practices
 
@@ -248,9 +243,14 @@ All toast styling is controlled via CSS using data attributes. The component is 
   /* icon styles */
 }
 
-/* Target the action button */
+/* Target the action button (always size="sm") */
 [data-ck="toast"] [data-ck="button"] {
   /* button styles */
+}
+
+/* Target action button by toast variant */
+[data-ck="toast"][data-variant="error"] [data-ck="button"] {
+  /* button styles for error toasts */
 }
 ```
 

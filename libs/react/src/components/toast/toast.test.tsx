@@ -52,7 +52,9 @@ describe("Toast Component", () => {
       await waitFor(() => {
         expect(screen.getByText("Test title")).toBeInTheDocument();
         expect(screen.getByText("Test description")).toBeInTheDocument();
-        expect(screen.getByRole("button", { name: "Action" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Action" }),
+        ).toBeInTheDocument();
       });
     });
 
@@ -62,16 +64,20 @@ describe("Toast Component", () => {
       });
 
       expect(toastId).toBeDefined();
-      expect(typeof toastId === "number" || typeof toastId === "string").toBe(true);
+      expect(typeof toastId === "number" || typeof toastId === "string").toBe(
+        true,
+      );
     });
 
-    it("applies data-ck=\"toast\" attribute", async () => {
+    it('applies data-ck="toast" attribute', async () => {
       toast({
         title: "Test",
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toBeInTheDocument();
       });
     });
@@ -83,7 +89,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "success");
       });
     });
@@ -97,7 +105,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "error");
       });
     });
@@ -108,7 +118,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).not.toHaveAttribute("data-variant");
       });
     });
@@ -119,7 +131,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test title").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test title")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-has-title");
       });
     });
@@ -131,7 +145,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-has-description");
       });
     });
@@ -142,7 +158,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).not.toHaveAttribute("data-has-description");
       });
     });
@@ -156,7 +174,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-has-action");
       });
     });
@@ -167,7 +187,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         expect(toastElement).not.toHaveAttribute("data-has-action");
       });
     });
@@ -182,10 +204,19 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText("Title").closest('[data-slot="title"]')).toBeInTheDocument();
-        expect(screen.getByText("Description").closest('[data-slot="description"]')).toBeInTheDocument();
-        expect(screen.getByRole("button").closest('[data-slot="actions"]')).toBeInTheDocument();
-        expect(screen.getByRole("button")).toHaveAttribute("data-slot", "action");
+        expect(
+          screen.getByText("Title").closest('[data-slot="title"]'),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText("Description").closest('[data-slot="description"]'),
+        ).toBeInTheDocument();
+        expect(
+          screen.getByRole("button").closest('[data-slot="actions"]'),
+        ).toBeInTheDocument();
+        expect(screen.getByRole("button")).toHaveAttribute(
+          "data-slot",
+          "action",
+        );
       });
     });
 
@@ -195,7 +226,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         const iconSlot = toastElement?.querySelector('[data-slot="icon"]');
         expect(iconSlot).toBeInTheDocument();
       });
@@ -260,8 +293,12 @@ describe("Toast Component", () => {
 
       await waitFor(() => {
         expect(screen.getByText("Only title")).toBeInTheDocument();
-        const toastElement = screen.getByText("Only title").closest('[data-ck="toast"]');
-        expect(toastElement?.querySelector('[data-slot="description"]')).not.toBeInTheDocument();
+        const toastElement = screen
+          .getByText("Only title")
+          .closest('[data-ck="toast"]');
+        expect(
+          toastElement?.querySelector('[data-slot="description"]'),
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -271,7 +308,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         const iconSlot = toastElement?.querySelector('[data-slot="icon"]');
         expect(iconSlot).toBeInTheDocument();
         expect(iconSlot).toHaveAttribute("aria-hidden", "true");
@@ -289,7 +328,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: "Click me" })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: "Click me" }),
+        ).toBeInTheDocument();
       });
     });
 
@@ -334,7 +375,7 @@ describe("Toast Component", () => {
       });
     });
 
-    it("button has type=\"button\"", async () => {
+    it('button has type="button"', async () => {
       toast({
         button: {
           label: "Action",
@@ -348,7 +389,7 @@ describe("Toast Component", () => {
       });
     });
 
-    it("button has data-ck=\"button\"", async () => {
+    it('button has data-ck="button"', async () => {
       toast({
         button: {
           label: "Action",
@@ -362,7 +403,7 @@ describe("Toast Component", () => {
       });
     });
 
-    it("button has data-slot=\"action\"", async () => {
+    it('button has data-slot="action"', async () => {
       toast({
         button: {
           label: "Action",
@@ -373,6 +414,36 @@ describe("Toast Component", () => {
       await waitFor(() => {
         const button = screen.getByRole("button");
         expect(button).toHaveAttribute("data-slot", "action");
+      });
+    });
+
+    it('button renders with data-size="sm"', async () => {
+      toast({
+        button: {
+          label: "Action",
+        },
+        title: "Test",
+      });
+
+      await waitFor(() => {
+        const button = screen.getByRole("button");
+        expect(button).toHaveAttribute("data-size", "sm");
+      });
+    });
+
+    it("button accepts isLoading and sets aria-busy and data-loading", async () => {
+      toast({
+        button: {
+          isLoading: true,
+          label: "Action",
+        },
+        title: "Test",
+      });
+
+      await waitFor(() => {
+        const button = screen.getByRole("button");
+        expect(button).toHaveAttribute("aria-busy", "true");
+        expect(button).toHaveAttribute("data-loading", "true");
       });
     });
 
@@ -429,7 +500,9 @@ describe("Toast Component", () => {
       });
 
       expect(toastId).toBeDefined();
-      expect(typeof toastId === "number" || typeof toastId === "string").toBe(true);
+      expect(typeof toastId === "number" || typeof toastId === "string").toBe(
+        true,
+      );
     });
 
     it("can be dismissed with sonnerToast.dismiss(id)", async () => {
@@ -462,7 +535,7 @@ describe("Toast Component", () => {
         () => {
           expect(screen.queryByText("Short duration")).not.toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
@@ -512,35 +585,41 @@ describe("Toast Component", () => {
   });
 
   describe("Accessibility", () => {
-    it("has role=\"status\"", async () => {
+    it('has role="status"', async () => {
       toast({
         title: "Test",
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[role="status"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[role="status"]');
         expect(toastElement).toBeInTheDocument();
       });
     });
 
-    it("has aria-live=\"polite\"", async () => {
+    it('has aria-live="polite"', async () => {
       toast({
         title: "Test",
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[aria-live="polite"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[aria-live="polite"]');
         expect(toastElement).toBeInTheDocument();
       });
     });
 
-    it("icon slot has aria-hidden=\"true\"", async () => {
+    it('icon slot has aria-hidden="true"', async () => {
       toast({
         title: "Test",
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Test").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Test")
+          .closest('[data-ck="toast"]');
         const iconSlot = toastElement?.querySelector('[data-slot="icon"]');
         expect(iconSlot).toHaveAttribute("aria-hidden", "true");
       });
@@ -600,7 +679,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Info").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Info")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "info");
       });
     });
@@ -612,7 +693,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Success").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Success")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "success");
       });
     });
@@ -624,7 +707,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Warning").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Warning")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "warning");
       });
     });
@@ -636,7 +721,9 @@ describe("Toast Component", () => {
       });
 
       await waitFor(() => {
-        const toastElement = screen.getByText("Error").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("Error")
+          .closest('[data-ck="toast"]');
         expect(toastElement).toHaveAttribute("data-variant", "error");
       });
     });
@@ -648,7 +735,9 @@ describe("Toast Component", () => {
 
       await waitFor(() => {
         expect(screen.getByText("No variant")).toBeInTheDocument();
-        const toastElement = screen.getByText("No variant").closest('[data-ck="toast"]');
+        const toastElement = screen
+          .getByText("No variant")
+          .closest('[data-ck="toast"]');
         expect(toastElement).not.toHaveAttribute("data-variant");
       });
     });

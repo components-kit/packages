@@ -371,7 +371,7 @@ Example accessibility features:
 | Slider      | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation                         |
 | Table       | `aria-sort`, `aria-selected`, keyboard navigation                                     |
 | Pagination  | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation         |
-| Toast       | `role="status"`, `aria-live="polite"`, native button with keyboard support            |
+| Toast       | `role="status"`, `aria-live="polite"`, Button component with `aria-disabled`, `aria-busy`, keyboard support |
 | Tabs        | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation`                            |
 
 ## TypeScript

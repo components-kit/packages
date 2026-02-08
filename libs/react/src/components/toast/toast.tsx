@@ -3,6 +3,8 @@
 import { ReactNode } from "react";
 import { ExternalToast, toast as sonnerToast } from "sonner";
 
+import { Button, ButtonProps } from "../button/button";
+
 /**
  * A toast notification function powered by Sonner for displaying temporary messages and alerts with semantic markup.
  *
@@ -25,8 +27,9 @@ import { ExternalToast, toast as sonnerToast } from "sonner";
  * - **Important:** Import `<Toaster />` from `sonner` directly, not from this package (prevents "use client" boundary issues in Next.js)
  * - Uses `toast.custom()` internally with semantic markup
  * - Action button auto-dismisses toast on click
- * - Button uses native `<button>` element with full keyboard accessibility
- * - Button has `data-ck="button"` for consistent styling with Button component
+ * - Action button uses the shared `Button` component with `size="sm"` for consistent accessibility and styling
+ * - Button inherits `Button` component features: `aria-disabled`, `aria-busy`, `data-size`, icon support
+ * - Button variant is controlled by the parent toast's `variantName` via CSS (e.g., `[data-ck="toast"][data-variant="error"] [data-ck="button"]`)
  * - Icon slot is always rendered but hidden from screen readers
  * - Returns toast ID (number or string) that can be used with `sonner.dismiss(id)`
  *
@@ -36,10 +39,11 @@ import { ExternalToast, toast as sonnerToast } from "sonner";
  * - Uses `aria-live="polite"` to announce without interrupting current speech
  * - Icon is marked `aria-hidden="true"` as it's decorative (meaning conveyed by text)
  * - Action button is fully keyboard accessible:
- *   - Uses native `<button>` element with built-in keyboard support
+ *   - Uses shared `Button` component with built-in keyboard support, `aria-disabled`, and `aria-busy`
  *   - Has `type="button"` to prevent form submission
  *   - Focusable and activatable with Space/Enter keys
  *   - Has visible text label from `button.label` prop
+ *   - Supports `isLoading`, `leadingIcon`, and `trailingIcon` props
  * - Title and description are announced by screen readers
  * - Auto-dismiss doesn't interrupt user interaction
  *
@@ -54,7 +58,7 @@ import { ExternalToast, toast as sonnerToast } from "sonner";
  *
  * @param {string | ReactNode} title - The main title/heading of the toast. Required. Can be a string or React element for rich content.
  * @param {string | ReactNode} [description] - The body content of the toast. Optional. Can be a string or React element for rich content.
- * @param {{ label: string; onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void }} [button] - Action button configuration. Optional. Provides a button with label and click handler. Toast auto-dismisses on click.
+ * @param {Omit<ButtonProps, "asChild" | "children" | "size" | "variantName"> & { label: string }} [button] - Action button configuration. Optional. Uses the shared `Button` component with `size="sm"`. Accepts Button props (isLoading, leadingIcon, trailingIcon, etc.) plus a required `label` for button text. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click.
  * @param {string} [variantName] - The variant name for CSS-based styling. Optional. No default - controlled via CSS.
  * @param {number} [duration=4000] - Time in milliseconds before auto-dismiss. Default is 4000ms (4 seconds). From Sonner's ExternalToast.
  * @param {'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'} [position='bottom-right'] - Toast position on screen. Default is 'bottom-right'. From Sonner's ExternalToast.
@@ -174,13 +178,39 @@ interface ToastProps extends Omit<
   | "icon"
   | "invert"
 > {
-  button?: {
+  button?: Omit<
+    ButtonProps,
+    "asChild" | "children" | "size" | "variantName"
+  > & {
     label: string;
-    onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   };
   description?: string | ReactNode;
   title: string | ReactNode;
   variantName?: string;
+}
+
+function ToastAction({
+  button,
+  toastId,
+}: {
+  button: NonNullable<ToastProps["button"]>;
+  toastId: number | string;
+}) {
+  const { label, onClick: buttonOnClick, ...buttonRest } = button;
+  return (
+    <Button
+      {...buttonRest}
+      data-slot="action"
+      size="sm"
+      onClick={(e) => {
+        e.stopPropagation();
+        buttonOnClick?.(e);
+        sonnerToast.dismiss(toastId);
+      }}
+    >
+      {label}
+    </Button>
+  );
 }
 
 const toastFn = (options: ToastProps): number | string => {
@@ -204,22 +234,7 @@ const toastFn = (options: ToastProps): number | string => {
         </div>
         {button && (
           <div data-slot="actions">
-            <button
-              data-ck="button"
-              data-slot="action"
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (typeof button === "object" && "onClick" in button) {
-                  button.onClick?.(e);
-                }
-                sonnerToast.dismiss(t);
-              }}
-            >
-              {typeof button === "object" && "label" in button
-                ? button.label
-                : button}
-            </button>
+            <ToastAction button={button} toastId={t} />
           </div>
         )}
       </div>
