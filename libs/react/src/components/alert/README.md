@@ -1,6 +1,6 @@
 # Alert
 
-Displays contextual feedback messages with optional icon, heading, description, and action button.
+Displays contextual feedback messages with heading, description, and action button. The icon is controlled by the variant via CSS.
 
 ## Usage
 
@@ -14,17 +14,8 @@ import { Alert } from '@components-kit/react';
   variantName="info"
 />
 
-// With icon
-<Alert
-  icon={<InfoIcon />}
-  heading="Success!"
-  description="Your changes have been saved."
-  variantName="success"
-/>
-
 // With action button
 <Alert
-  icon={<WarningIcon />}
   heading="Warning"
   description="Your session will expire in 5 minutes."
   action={{
@@ -37,31 +28,29 @@ import { Alert } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `icon` | `ReactNode` | - | Icon element (decorative, hidden from screen readers) |
-| `heading` | `ReactNode` | - | Main heading/title of the alert |
-| `description` | `ReactNode` | - | Body content of the alert |
-| `action` | `Omit<ButtonProps, "as" \| "size" \| "variantName">` | - | Action button props (size fixed to "sm"). Button variant is controlled by the parent alert's `variantName` via CSS. |
-| `variantName` | `string` | - | Variant name for styling |
+| Prop          | Type                                                 | Default | Description                                                                                                         |
+| ------------- | ---------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------- |
+| `heading`     | `ReactNode`                                          | -       | Main heading/title of the alert                                                                                     |
+| `description` | `ReactNode`                                          | -       | Body content of the alert                                                                                           |
+| `action`      | `Omit<ButtonProps, "as" \| "size" \| "variantName">` | -       | Action button props (size fixed to "sm"). Button variant is controlled by the parent alert's `variantName` via CSS. |
+| `variantName` | `string`                                             | -       | Variant name for styling                                                                                            |
 
 Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
-| `data-has-icon` | `true` | Present when icon is provided |
-| `data-has-heading` | `true` | Present when heading is provided |
-| `data-has-action` | `true` | Present when action is provided |
-| `data-slot` | `"icon"`, `"content"`, `"heading"`, `"description"`, `"action"` | Identifies internal slots |
+| Attribute          | Values                                                          | Description                      |
+| ------------------ | --------------------------------------------------------------- | -------------------------------- |
+| `data-variant`     | string                                                          | The variant name for styling     |
+| `data-has-heading` | `true`                                                          | Present when heading is provided |
+| `data-has-action`  | `true`                                                          | Present when action is provided  |
+| `data-slot`        | `"icon"`, `"content"`, `"heading"`, `"description"`, `"action"` | Identifies internal slots        |
 
 ## Accessibility
 
 - Uses `role="alert"` for immediate screen reader announcement
 - Uses `aria-live="polite"` to announce updates without interruption
-- Icon is marked `aria-hidden="true"` (decorative)
+- Icon slot is always rendered with `aria-hidden="true"` (controlled via CSS per variant)
 - Action button inherits full keyboard accessibility from Button component
 
 ### Best Practices

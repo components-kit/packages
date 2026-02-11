@@ -5,27 +5,27 @@ import { forwardRef, HTMLAttributes, ReactNode } from "react";
 import { Button, ButtonProps } from "../button/button";
 
 /**
- * An alert component for displaying important messages with optional icon and action.
+ * An alert component for displaying important messages with optional action.
  *
  * @description
  * The Alert component displays contextual feedback messages for user actions or system
- * states. It supports icons, headings, descriptions, and action buttons to create
- * comprehensive notification experiences.
+ * states. It supports headings, descriptions, and action buttons to create
+ * comprehensive notification experiences. The icon is controlled by the variant via CSS.
  *
  * ## Features
  * - Semantic `role="alert"` for screen reader announcements
  * - Live region with `aria-live="polite"` for dynamic updates
- * - Flexible icon support via ReactNode
+ * - Icon controlled by variant via CSS (`data-slot="icon"`)
  * - Optional heading and description slots
  * - Integrated action button support (fixed to size "sm")
  * - Data attributes for CSS-based styling (`data-variant`)
  * - Data slot attributes for targeted styling (`data-slot`)
- * - Conditional data attributes (`data-has-icon`, `data-has-heading`, `data-has-action`)
+ * - Conditional data attributes (`data-has-heading`, `data-has-action`)
  *
  * @remarks
  * - Uses `role="alert"` which causes screen readers to announce content immediately
  * - The `aria-live="polite"` attribute ensures updates are announced without interruption
- * - Icon is wrapped in `aria-hidden="true"` as it's decorative (meaning conveyed by text)
+ * - Icon slot is always rendered and marked `aria-hidden="true"`; icon content is set via CSS per variant
  * - Action button size is fixed to "sm" for visual balance
  * - All slots (icon, content, heading, description, action) have `data-slot` attributes
  * - `data-has-*` attributes enable conditional CSS styling based on content presence
@@ -34,7 +34,6 @@ import { Button, ButtonProps } from "../button/button";
  * This component follows WAI-ARIA Alert Pattern guidelines:
  * - Uses `role="alert"` for immediate screen reader announcement
  * - Uses `aria-live="polite"` to announce updates without interrupting current speech
- * - Icon is marked `aria-hidden="true"` as it's decorative
  * - Heading should use appropriate heading level (`<h2>`, `<h3>`, etc.) if used in document
  * - For critical alerts, consider using `role="alertdialog"` with focus management
  * - Action buttons inherit full keyboard accessibility from Button component
@@ -53,7 +52,6 @@ import { Button, ButtonProps } from "../button/button";
  * - Consider dismissible alerts for non-critical messages
  * - Group related information in a single alert rather than multiple
  *
- * @param {ReactNode} [icon] - Icon element to display (decorative, hidden from screen readers).
  * @param {ReactNode} [heading] - The main heading/title of the alert.
  * @param {ReactNode} [description] - The body content of the alert.
  * @param {Omit<ButtonProps, "as" | "size" | "variantName">} [action] - Action button props (size is fixed to "sm", polymorphic "as" not supported). Button variant is controlled by the parent alert's `variantName` via CSS.
@@ -68,18 +66,8 @@ import { Button, ButtonProps } from "../button/button";
  * />
  *
  * @example
- * // Success alert with icon
- * <Alert
- *   icon={<CheckCircleIcon />}
- *   heading="Success!"
- *   description="Your changes have been saved successfully."
- *   variantName="success"
- * />
- *
- * @example
  * // Warning alert with action
  * <Alert
- *   icon={<WarningIcon />}
  *   heading="Warning"
  *   description="Your session will expire in 5 minutes."
  *   action={{
@@ -92,7 +80,6 @@ import { Button, ButtonProps } from "../button/button";
  * @example
  * // Error alert with action
  * <Alert
- *   icon={<ErrorIcon />}
  *   heading="Error"
  *   description="Failed to save changes. Please try again."
  *   action={{
@@ -129,7 +116,6 @@ import { Button, ButtonProps } from "../button/button";
  * @example
  * // With semantic heading for document structure
  * <Alert
- *   icon={<InfoIcon />}
  *   heading={<h2>Important Notice</h2>}
  *   description="Please review the updated terms of service."
  *   variantName="info"
@@ -149,15 +135,11 @@ interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   action?: Omit<ButtonProps, "as" | "size" | "variantName">;
   description?: ReactNode;
   heading?: ReactNode;
-  icon?: ReactNode;
   variantName?: string;
 }
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(
-  (
-    { action, className, description, heading, icon, variantName, ...rest },
-    ref,
-  ) => {
+  ({ action, className, description, heading, variantName, ...rest }, ref) => {
     return (
       <div
         {...rest}
@@ -166,16 +148,11 @@ const Alert = forwardRef<HTMLDivElement, AlertProps>(
         data-ck="alert"
         data-has-action={action ? true : undefined}
         data-has-heading={heading ? true : undefined}
-        data-has-icon={icon ? true : undefined}
         data-variant={variantName}
         role="alert"
         ref={ref}
       >
-        {icon && (
-          <div aria-hidden="true" data-slot="icon">
-            {icon}
-          </div>
-        )}
+        <div aria-hidden="true" data-slot="icon" />
         <div data-slot="content">
           {heading && <div data-slot="heading">{heading}</div>}
           {description && <div data-slot="description">{description}</div>}
