@@ -1,7 +1,6 @@
 import { Alert } from "@components-kit/react";
 
 import { type ComponentDemo } from "../types";
-import { InfoIcon } from "./shared-data";
 
 function AlertPreview() {
   return (
@@ -9,14 +8,18 @@ function AlertPreview() {
       <Alert
         description="This is an alert description."
         heading="Alert Heading"
-        icon={<InfoIcon />}
-        variantName="primary"
+        variantName="default"
       />
       <Alert
         action={{ children: "Dismiss", onClick: () => alert("Dismissed") }}
         description="Alert with action button."
         heading="With Action"
-        variantName="primary"
+        variantName="default"
+      />
+      <Alert
+        description="Something went wrong. Please try again."
+        heading="Error"
+        variantName="destructive"
       />
     </div>
   );
@@ -28,15 +31,20 @@ export const alertDemo: ComponentDemo = {
 <Alert
   description="This is an alert description."
   heading="Alert Heading"
-  icon={<InfoIcon />}
-  variantName="primary"
+  variantName="default"
 />
 
 <Alert
   action={{ children: "Dismiss", onClick: () => alert("Dismissed") }}
   description="Alert with action button."
   heading="With Action"
-  variantName="primary"
+  variantName="default"
+/>
+
+<Alert
+  description="Something went wrong. Please try again."
+  heading="Error"
+  variantName="destructive"
 />`,
   id: "alert",
   name: "Alert",

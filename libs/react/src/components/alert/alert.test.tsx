@@ -15,9 +15,7 @@ describe("Alert Component", () => {
     });
 
     it("renders with heading and description", () => {
-      render(
-        <Alert description="Test description" heading="Test Heading" />
-      );
+      render(<Alert description="Test description" heading="Test Heading" />);
 
       expect(screen.getByText("Test Heading")).toBeInTheDocument();
       expect(screen.getByText("Test description")).toBeInTheDocument();
@@ -30,16 +28,10 @@ describe("Alert Component", () => {
       expect(screen.getByRole("alert")).toBeInTheDocument();
     });
 
-    it("displays icon when provided as ReactNode", () => {
-      render(
-        <Alert
-          description="Test message"
-          icon={<svg data-testid="alert-icon" />}
-        />
-      );
+    it("always renders icon slot", () => {
+      const { container } = render(<Alert description="Test message" />);
 
-      const icon = screen.getByTestId("alert-icon");
-      expect(icon).toBeInTheDocument();
+      expect(container.querySelector('[data-slot="icon"]')).toBeInTheDocument();
     });
 
     it("renders action button when provided", async () => {
@@ -53,7 +45,7 @@ describe("Alert Component", () => {
             onClick: handleClick,
           }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -64,12 +56,7 @@ describe("Alert Component", () => {
     });
 
     it("applies variantName as data attribute", () => {
-      render(
-        <Alert
-          description="Test message"
-          variantName="warning"
-        />
-      );
+      render(<Alert description="Test message" variantName="warning" />);
 
       const alert = screen.getByRole("alert");
       expect(alert).toHaveAttribute("data-variant", "warning");
@@ -97,16 +84,11 @@ describe("Alert Component", () => {
       expect(alert).toHaveAttribute("aria-live", "polite");
     });
 
-    it("hides icon from screen readers", () => {
-      const { container } = render(
-        <Alert
-          description="Test message"
-          icon={<svg data-testid="alert-icon" />}
-        />
-      );
+    it("icon slot is hidden from screen readers", () => {
+      const { container } = render(<Alert description="Test message" />);
 
-      const iconWrapper = container.querySelector('[data-slot="icon"]');
-      expect(iconWrapper).toHaveAttribute("aria-hidden", "true");
+      const iconSlot = container.querySelector('[data-slot="icon"]');
+      expect(iconSlot).toHaveAttribute("aria-hidden", "true");
     });
 
     it("supports keyboard navigation for action button", async () => {
@@ -120,7 +102,7 @@ describe("Alert Component", () => {
             onClick: handleClick,
           }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -143,7 +125,7 @@ describe("Alert Component", () => {
         <Alert
           description="Description text"
           heading={<h2>Alert Heading</h2>}
-        />
+        />,
       );
 
       const heading = screen.getByRole("heading", { level: 2 });
@@ -155,7 +137,7 @@ describe("Alert Component", () => {
         <Alert
           aria-label="Important notification"
           description="Test message"
-        />
+        />,
       );
 
       const alert = screen.getByLabelText("Important notification");
@@ -166,11 +148,8 @@ describe("Alert Component", () => {
       render(
         <>
           <span id="alert-desc">Additional description</span>
-          <Alert
-            aria-describedby="alert-desc"
-            description="Test message"
-          />
-        </>
+          <Alert aria-describedby="alert-desc" description="Test message" />
+        </>,
       );
 
       const alert = screen.getByRole("alert");
@@ -181,22 +160,18 @@ describe("Alert Component", () => {
   describe("Data Slots", () => {
     it("applies correct data-slot attributes", () => {
       const { container } = render(
-        <Alert
-          description="Content"
-          heading="Title"
-          icon={<svg data-testid="icon" />}
-        />
+        <Alert description="Content" heading="Title" />,
       );
 
       expect(container.querySelector('[data-slot="icon"]')).toBeInTheDocument();
       expect(
-        container.querySelector('[data-slot="content"]')
+        container.querySelector('[data-slot="content"]'),
       ).toBeInTheDocument();
       expect(
-        container.querySelector('[data-slot="heading"]')
+        container.querySelector('[data-slot="heading"]'),
       ).toBeInTheDocument();
       expect(
-        container.querySelector('[data-slot="description"]')
+        container.querySelector('[data-slot="description"]'),
       ).toBeInTheDocument();
     });
 
@@ -205,27 +180,23 @@ describe("Alert Component", () => {
         <Alert
           action={{ children: "Action", onClick: vi.fn() }}
           description="Content"
-        />
+        />,
       );
 
       expect(
-        container.querySelector('[data-slot="action"]')
+        container.querySelector('[data-slot="action"]'),
       ).toBeInTheDocument();
     });
 
-    it("omits slots when content is not provided", () => {
-      const { container } = render(
-        <Alert description="Only description" />
-      );
+    it("omits optional slots when content is not provided", () => {
+      const { container } = render(<Alert description="Only description" />);
 
+      expect(container.querySelector('[data-slot="icon"]')).toBeInTheDocument();
       expect(
-        container.querySelector('[data-slot="icon"]')
+        container.querySelector('[data-slot="heading"]'),
       ).not.toBeInTheDocument();
       expect(
-        container.querySelector('[data-slot="heading"]')
-      ).not.toBeInTheDocument();
-      expect(
-        container.querySelector('[data-slot="action"]')
+        container.querySelector('[data-slot="action"]'),
       ).not.toBeInTheDocument();
     });
   });
@@ -242,7 +213,7 @@ describe("Alert Component", () => {
             onClick: handleClick,
           }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -260,7 +231,7 @@ describe("Alert Component", () => {
             onClick: vi.fn(),
           }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -275,7 +246,7 @@ describe("Alert Component", () => {
             onClick: vi.fn(),
           }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -293,7 +264,7 @@ describe("Alert Component", () => {
               <a href="/link">links</a>
             </div>
           }
-        />
+        />,
       );
 
       expect(screen.getByText("bold text")).toBeInTheDocument();
@@ -309,7 +280,7 @@ describe("Alert Component", () => {
               Heading with <span className="badge">Badge</span>
             </div>
           }
-        />
+        />,
       );
 
       expect(screen.getByText("Badge")).toBeInTheDocument();
@@ -331,7 +302,7 @@ describe("Alert Component", () => {
               </p>
             </div>
           }
-        />
+        />,
       );
 
       expect(screen.getByText("First paragraph")).toBeInTheDocument();
@@ -371,7 +342,7 @@ describe("Alert Component", () => {
           data-testid="custom-alert"
           description="Test message"
           title="Alert title"
-        />
+        />,
       );
 
       const alert = screen.getByTestId("custom-alert");
@@ -384,7 +355,7 @@ describe("Alert Component", () => {
         <Alert
           className="custom-class another-class"
           description="Test message"
-        />
+        />,
       );
 
       const alert = screen.getByRole("alert");
@@ -396,7 +367,7 @@ describe("Alert Component", () => {
         <Alert
           style={{ backgroundColor: "red", padding: "20px" }}
           description="Styled alert"
-        />
+        />,
       );
 
       const alert = screen.getByRole("alert");
@@ -413,7 +384,7 @@ describe("Alert Component", () => {
           description="Interactive alert"
           onClick={handleClick}
           onMouseEnter={handleMouseEnter}
-        />
+        />,
       );
 
       const alert = screen.getByRole("alert");
@@ -436,7 +407,7 @@ describe("Alert Component", () => {
             data-testid={`alert-${variant}`}
             description={`${variant} alert`}
             variantName={variant}
-          />
+          />,
         );
 
         const alert = screen.getByTestId(`alert-${variant}`);
@@ -452,7 +423,7 @@ describe("Alert Component", () => {
           data-testid="edge-alert"
           description={null}
           heading={undefined}
-        />
+        />,
       );
 
       const alert = screen.getByTestId("edge-alert");
@@ -471,7 +442,7 @@ describe("Alert Component", () => {
         <Alert
           action={{ children: "No handler" }}
           description="Test message"
-        />
+        />,
       );
 
       const button = screen.getByRole("button");
@@ -491,16 +462,14 @@ describe("Alert Component", () => {
           }}
           description="Full description"
           heading="Full Heading"
-          icon={<svg data-testid="full-icon" />}
           variantName="info"
-        />
+        />,
       );
 
       expect(screen.getByRole("alert")).toHaveClass("full-alert");
       expect(screen.getByRole("alert")).toHaveAttribute("data-variant", "info");
       expect(screen.getByText("Full Heading")).toBeInTheDocument();
       expect(screen.getByText("Full description")).toBeInTheDocument();
-      expect(screen.getByTestId("full-icon")).toBeInTheDocument();
       expect(screen.getByRole("button")).toHaveTextContent("Action");
     });
   });

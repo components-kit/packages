@@ -23,31 +23,31 @@
 
 ### Components (24 total)
 
-| Component   | Lines | Complexity | Key Features                                                                        |
-| ----------- | ----- | ---------- | ----------------------------------------------------------------------------------- |
-| Table       | ~830  | High       | Sorting, pagination (data slicing), filtering, row selection (TanStack Table)       |
-| Select      | ~400  | High       | Dropdown with groups, type-ahead, keyboard nav (Downshift + Floating UI)            |
-| Combobox    | ~480  | High       | Searchable select with text filtering, keyboard nav (Downshift + Floating UI)       |
-| MultiSelect | ~600  | High       | Multi-value select with tags, filtering, tag keyboard nav (Downshift + Floating UI) |
-| AsyncSelect | ~550  | High       | Async search with debounce, caching, loading/error states (Downshift + Floating UI) |
-| Tabs        | ~300  | Medium     | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook)               |
-| Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                       |
-| Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                 |
-| Button      | 168   | Medium     | Polymorphic, asChild, loading states                                                |
-| Toast       | ~150  | Medium     | Sonner integration, semantic markup, Button component for action                    |
-| Textarea    | ~150  | Low        | Auto-resize support                                                                 |
-| Progress    | ~150  | Low        | Label, determinate/indeterminate, CSS custom property                               |
-| Input       | ~120  | Low        | Text input variants                                                                 |
-| Pagination  | ~200  | Medium     | Offset/cursor modes, ellipsis, controlled/uncontrolled (usePagination hook)         |
-| Checkbox    | ~120  | Low        | Indeterminate state                                                                 |
-| Switch      | ~100  | Low        | Toggle control                                                                      |
-| RadioGroup  | ~100  | Low        | Radio group pattern                                                                 |
-| Alert       | ~80   | Low        | Icon, heading, description, action                                                  |
-| Badge       | ~60   | Low        | Status indicator, asChild                                                           |
-| Heading     | ~50   | Low        | Polymorphic h1-h6                                                                   |
-| Text        | ~50   | Low        | Polymorphic text                                                                    |
-| Separator   | ~40   | Low        | Visual divider                                                                      |
-| Skeleton    | ~40   | Low        | Loading placeholder                                                                 |
+| Component   | Lines | Complexity | Key Features                                                                                     |
+| ----------- | ----- | ---------- | ------------------------------------------------------------------------------------------------ |
+| Table       | ~830  | High       | Sorting, pagination (data slicing), filtering, row selection (TanStack Table)                    |
+| Select      | ~400  | High       | Dropdown with groups, type-ahead, keyboard nav (Downshift + Floating UI)                         |
+| Combobox    | ~480  | High       | Searchable select with text filtering, keyboard nav (Downshift + Floating UI)                    |
+| MultiSelect | ~600  | High       | Multi-value select with tags, filtering, tag keyboard nav (Downshift + Floating UI)              |
+| AsyncSelect | ~550  | High       | Async search with debounce, caching, loading/error states (Downshift + Floating UI)              |
+| Tabs        | ~300  | Medium     | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook)                            |
+| Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                                    |
+| Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                              |
+| Button      | 168   | Medium     | Polymorphic, asChild, loading states                                                             |
+| Toast       | ~150  | Medium     | Sonner integration, semantic markup, Button component for action                                 |
+| Textarea    | ~150  | Low        | Auto-resize support                                                                              |
+| Progress    | ~150  | Low        | Label, determinate/indeterminate, CSS custom property                                            |
+| Input       | ~120  | Low        | Text input variants                                                                              |
+| Pagination  | ~200  | Medium     | Offset/cursor modes, ellipsis, controlled/uncontrolled (usePagination hook)                      |
+| Checkbox    | ~120  | Low        | Indeterminate state                                                                              |
+| Switch      | ~100  | Low        | Toggle control                                                                                   |
+| RadioGroup  | ~100  | Low        | Radio group pattern                                                                              |
+| Alert       | ~80   | Low        | Heading, description, action (icon via CSS variant)                                              |
+| Badge       | ~60   | Low        | Status indicator, asChild                                                                        |
+| Heading     | ~50   | Low        | Polymorphic h1-h6                                                                                |
+| Text        | ~50   | Low        | Polymorphic text                                                                                 |
+| Separator   | ~40   | Low        | Visual divider                                                                                   |
+| Skeleton    | ~40   | Low        | Loading placeholder                                                                              |
 | Slider      | ~240  | Medium     | Keyboard nav, pointer drag, orientation, onValueCommit, controlled/uncontrolled (useSlider hook) |
 
 ### Core Patterns
