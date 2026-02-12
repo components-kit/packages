@@ -676,4 +676,49 @@ describe("Select Component", () => {
       expect(screen.getByText("Select...")).toBeInTheDocument();
     });
   });
+
+  describe("Icon Slot", () => {
+    it("renders icon slot in trigger", () => {
+      const { container } = render(<Select options={["apple"]} />);
+      const iconSlot = container.querySelector(
+        '[data-ck="select-trigger"] [data-slot="icon"]',
+      );
+      expect(iconSlot).toBeInTheDocument();
+    });
+
+    it("icon slot has aria-hidden true", () => {
+      const { container } = render(<Select options={["apple"]} />);
+      const iconSlot = container.querySelector(
+        '[data-ck="select-trigger"] [data-slot="icon"]',
+      );
+      expect(iconSlot).toHaveAttribute("aria-hidden", "true");
+    });
+
+    it("icon slot is positioned after the value span", () => {
+      const { container } = render(<Select options={["apple"]} />);
+      const trigger = container.querySelector('[data-ck="select-trigger"]');
+      const children = Array.from(trigger!.children);
+      expect(children[0]).toHaveAttribute("data-ck", "select-value");
+      expect(children[1]).toHaveAttribute("data-slot", "icon");
+    });
+  });
+
+  describe("Placement", () => {
+    it("accepts placement prop without error", () => {
+      expect(() =>
+        render(<Select options={["apple"]} placement="top-start" />),
+      ).not.toThrow();
+    });
+
+    it("accepts different placement values", () => {
+      const { unmount } = render(
+        <Select options={["apple"]} placement="top" />,
+      );
+      unmount();
+
+      expect(() =>
+        render(<Select options={["apple"]} placement="bottom-end" />),
+      ).not.toThrow();
+    });
+  });
 });

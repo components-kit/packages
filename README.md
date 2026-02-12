@@ -246,7 +246,7 @@ import Link from "next/link";
 | [Pagination](libs/react/src/components/pagination/README.md)    | Accessible pagination with offset (numeric) and cursor-based modes                                           | -                                 |
 | [Progress](libs/react/src/components/progress/README.md)        | Linear progress bar with label, determinate/indeterminate modes                                              | -                                 |
 | [RadioGroup](libs/react/src/components/radio-group/README.md)   | Radio button group with RadioGroupItem                                                                       | -                                 |
-| [Select](libs/react/src/components/select/README.md)            | Dropdown select with keyboard navigation and type-ahead                                                      | `downshift`, `@floating-ui/react` |
+| [Select](libs/react/src/components/select/README.md)            | Dropdown select with keyboard navigation, type-ahead, and configurable placement                             | `downshift`, `@floating-ui/react` |
 | [Combobox](libs/react/src/components/combobox/README.md)        | Searchable select with text input filtering, async/loading/error support                                     | `downshift`, `@floating-ui/react` |
 | [MultiSelect](libs/react/src/components/multi-select/README.md) | Multi-value select with tags, filtering, and keyboard tag navigation                                         | `downshift`, `@floating-ui/react` |
 | [Separator](libs/react/src/components/separator/README.md)      | Visual divider (horizontal/vertical)                                                                         | -                                 |

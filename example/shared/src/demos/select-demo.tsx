@@ -10,9 +10,18 @@ function SelectPreview() {
   const [value, setValue] = useState<string>();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Basic
         </p>
         <Select
@@ -27,7 +36,9 @@ function SelectPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Labeled Options
         </p>
         <Select
@@ -42,7 +53,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Grouped Options
         </p>
         <Select
@@ -64,7 +77,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Object Values
         </p>
         <Select<User>
@@ -75,7 +90,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Select
@@ -86,13 +103,28 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Empty Options
         </p>
         <Select
           emptyContent="No items available"
           options={[]}
           placeholder="No options..."
+          variantName="default"
+        />
+      </div>
+      <div>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
+          Placement (Top)
+        </p>
+        <Select
+          options={["Apple", "Banana", "Cherry", "Date"]}
+          placeholder="Opens upward..."
+          placement="top-start"
           variantName="default"
         />
       </div>
@@ -130,6 +162,14 @@ export const selectDemo: ComponentDemo = {
     { label: "Vegetables", options: ["Carrot", "Broccoli"], type: "group" },
   ]}
   placeholder="Select food..."
+  variantName="default"
+/>
+
+{/* Placement */}
+<Select
+  options={["Apple", "Banana", "Cherry"]}
+  placement="top-start"
+  placeholder="Opens upward..."
   variantName="default"
 />`,
   id: "select",

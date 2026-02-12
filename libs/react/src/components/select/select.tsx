@@ -1,6 +1,6 @@
 "use client";
 
-import { FloatingPortal } from "@floating-ui/react";
+import { FloatingPortal, type Placement } from "@floating-ui/react";
 import { useSelect } from "downshift";
 import {
   forwardRef,
@@ -37,6 +37,8 @@ import {
  * - Support for string and object values via generic `<T>`
  * - Full accessibility (WAI-ARIA Listbox pattern)
  * - CSS-based styling via data attributes
+ * - Icon slot (`data-slot="icon"`) for CSS-injected chevron indicator
+ * - Configurable dropdown placement via Floating UI
  *
  * @remarks
  * - Built on Downshift's `useSelect` hook for state management
@@ -48,6 +50,7 @@ import {
  * - Uses `data-ck` attributes on root, trigger, value, content, items, separators, and
  *   group labels for CSS targeting
  * - Forwards refs correctly for DOM access
+ * - Trigger contains a `data-slot="icon"` div (`aria-hidden`) for CSS-driven open/close indicators
  *
  * ## Keyboard Support
  *
@@ -87,6 +90,8 @@ import {
  * @param {boolean} [disabled=false] - Whether the select is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
+ * @param {ReactNode} [emptyContent="No options"] - Custom content to display when there are no options.
+ * @param {Placement} [placement="bottom-start"] - Dropdown placement relative to the trigger (Floating UI placement).
  *
  * @example
  * ```tsx
@@ -148,6 +153,16 @@ import {
  * const selectRef = useRef<HTMLDivElement>(null);
  * <Select ref={selectRef} options={['apple', 'banana']} />
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Custom placement (opens upward)
+ * <Select
+ *   options={['apple', 'banana', 'cherry']}
+ *   placement="top-start"
+ *   placeholder="Opens upward..."
+ * />
+ * ```
  */
 
 // -----------------------------------------------------------------------------
@@ -193,6 +208,12 @@ interface SelectProps<T = string> extends Omit<
    */
   placeholder?: string;
   /**
+   * Placement of the dropdown relative to the trigger.
+   * Uses Floating UI placement values.
+   * @default "bottom-start"
+   */
+  placement?: Placement;
+  /**
    * Controlled value.
    */
   value?: T;
@@ -218,6 +239,7 @@ function SelectInner<T = string>(
     onValueChange,
     options,
     placeholder = "Select...",
+    placement,
     value,
     variantName,
     ...rest
@@ -269,7 +291,10 @@ function SelectInner<T = string>(
   });
 
   // Use Floating UI for positioning
-  const { floatingProps, referenceProps } = useFloatingSelect({ isOpen });
+  const { floatingProps, referenceProps } = useFloatingSelect({
+    isOpen,
+    placement,
+  });
 
   // Merge refs (memoized to avoid new callbacks on every render)
   const containerRef_ = useMemo(
@@ -312,6 +337,7 @@ function SelectInner<T = string>(
         >
           {selectedItem?.label ?? placeholder}
         </span>
+        <div aria-hidden="true" data-slot="icon" />
       </button>
 
       {/* Content - Rendered in portal */}
