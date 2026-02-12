@@ -1,18 +1,85 @@
 "use client";
 
 import { Combobox } from "@components-kit/react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { type ComponentDemo } from "../types";
 import { type User, users } from "./shared-data";
+
+const allCities = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+  "Austin",
+  "Jacksonville",
+  "Fort Worth",
+  "Columbus",
+  "Charlotte",
+];
+
+function AsyncComboboxExample() {
+  const [options, setOptions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const handleInputChange = useCallback((query: string) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (!query) {
+      setOptions([]);
+      setLoading(false);
+      setError(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(false);
+
+    timerRef.current = setTimeout(() => {
+      const results = allCities.filter((c) =>
+        c.toLowerCase().includes(query.toLowerCase()),
+      );
+      setOptions(results);
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  return (
+    <Combobox
+      error={error}
+      loading={loading}
+      options={options}
+      placeholder="Search cities..."
+      variantName="default"
+      onInputValueChange={handleInputChange}
+    />
+  );
+}
 
 function ComboboxPreview() {
   const [value, setValue] = useState<string>();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Basic
         </p>
         <Combobox
@@ -27,7 +94,9 @@ function ComboboxPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With Labeled Options
         </p>
         <Combobox
@@ -43,7 +112,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Grouped
         </p>
         <Combobox
@@ -64,7 +135,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Object Values
         </p>
         <Combobox<User>
@@ -75,7 +148,17 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
+          Async Search
+        </p>
+        <AsyncComboboxExample />
+      </div>
+      <div>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Combobox
@@ -108,6 +191,16 @@ export const comboboxDemo: ComponentDemo = {
   ]}
   placeholder="Search food..."
   variantName="default"
+/>
+
+{/* Async Search */}
+<Combobox
+  loading={loading}
+  error={error}
+  options={results}
+  placeholder="Search cities..."
+  variantName="default"
+  onInputValueChange={handleSearch}
 />`,
   id: "combobox",
   name: "Combobox",

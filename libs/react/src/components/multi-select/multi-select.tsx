@@ -76,6 +76,9 @@ import {
  *
  * This component follows the WAI-ARIA Combobox pattern with multiselectable Listbox:
  * - Follows WAI-ARIA Combobox pattern with `aria-multiselectable="true"` on listbox
+ * - Menu has `aria-labelledby` linking to the input
+ * - Groups wrapped in `role="group"` with `aria-labelledby` linking to group label
+ * - Group labels have `role="presentation"` and a unique `id` for `aria-labelledby`
  * - Tags have `aria-label="{label}, selected"` for screen readers
  * - Tag remove buttons have `aria-label="Remove {label}"`
  * - `aria-live="polite"` on empty and max-reached state messages
@@ -285,7 +288,7 @@ function MultiSelectInner<T = string>(
 
   // Process all options into flat selectable items and structured render items
   const { renderItems: allRenderItems, selectableItems: allSelectableItems } =
-    useMemo(() => processOptions(options), [options]);
+    useMemo(() => processOptions(options, inputId), [options, inputId]);
 
   const effectiveFilter = filterFn ?? defaultFilterFn;
 
@@ -467,16 +470,15 @@ function MultiSelectInner<T = string>(
           data-ck="multi-select-input"
           placeholder={selectedItems.length === 0 ? placeholder : ""}
         />
+        <button
+          {...getToggleButtonProps({ disabled })}
+          aria-label="toggle menu"
+          data-ck="multi-select-trigger"
+          data-state={isOpen ? "open" : "closed"}
+          tabIndex={-1}
+          type="button"
+        />
       </div>
-
-      <button
-        {...getToggleButtonProps({ disabled })}
-        aria-label="toggle menu"
-        data-ck="multi-select-trigger"
-        data-state={isOpen ? "open" : "closed"}
-        tabIndex={-1}
-        type="button"
-      />
 
       {/* Dropdown content - Rendered in portal */}
       <FloatingPortal>
@@ -484,6 +486,7 @@ function MultiSelectInner<T = string>(
           <div
             {...getMenuProps({ id: menuId, ref: menuRef })}
             style={floatingProps.style}
+            aria-labelledby={inputId}
             aria-multiselectable="true"
             data-ck="multi-select-content"
             data-state="open"
@@ -510,19 +513,50 @@ function MultiSelectInner<T = string>(
                 );
               }
 
-              if (renderItem.type === "group-label") {
+              if (renderItem.type === "group") {
                 return (
                   <div
                     key={`group-${renderItem.groupIndex}`}
-                    data-ck="multi-select-group-label"
-                    role="presentation"
+                    aria-labelledby={renderItem.groupLabelId}
+                    data-ck="multi-select-group"
+                    role="group"
                   >
-                    {renderItem.groupLabel}
+                    <div
+                      id={renderItem.groupLabelId}
+                      data-ck="multi-select-group-label"
+                      role="presentation"
+                    >
+                      {renderItem.groupLabel}
+                    </div>
+                    {renderItem.items.map(({ item, selectableIndex }) => {
+                      const isHighlighted = highlightedIndex === selectableIndex;
+                      const isDisabled = item.disabled ?? false;
+
+                      return (
+                        <div
+                          key={`item-${selectableIndex}`}
+                          {...getItemProps({
+                            disabled: isDisabled,
+                            index: selectableIndex,
+                            item,
+                          })}
+                          aria-disabled={isDisabled || undefined}
+                          aria-selected={false}
+                          data-ck="multi-select-item"
+                          data-disabled={isDisabled || undefined}
+                          data-highlighted={isHighlighted || undefined}
+                          data-state="unchecked"
+                          role="option"
+                        >
+                          {item.label}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }
 
-              // Item
+              // Standalone item (not in a group)
               const { item, selectableIndex } = renderItem;
               const isHighlighted = highlightedIndex === selectableIndex;
               const isDisabled = item.disabled ?? false;

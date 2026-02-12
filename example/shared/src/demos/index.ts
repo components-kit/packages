@@ -1,5 +1,4 @@
 export { alertDemo } from "./alert-demo";
-export { asyncSelectDemo } from "./async-select-demo";
 export { badgeDemo } from "./badge-demo";
 export { buttonDemo } from "./button-demo";
 export { checkboxDemo } from "./checkbox-demo";

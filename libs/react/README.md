@@ -22,7 +22,6 @@ Each component has its own detailed README in `src/components/<name>/README.md`:
 | Component | README |
 |-----------|--------|
 | Alert | [README](src/components/alert/README.md) |
-| AsyncSelect | [README](src/components/async-select/README.md) |
 | Badge | [README](src/components/badge/README.md) |
 | Button | [README](src/components/button/README.md) |
 | Checkbox | [README](src/components/checkbox/README.md) |

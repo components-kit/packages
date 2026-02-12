@@ -143,6 +143,45 @@ describe("Select Component", () => {
       expect(separator).toBeInTheDocument();
       expect(separator).toHaveAttribute("role", "separator");
     });
+
+    it("wraps grouped items in role=group with aria-labelledby", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={[
+            {
+              label: "Fruits",
+              options: ["apple", "banana"],
+              type: "group",
+            },
+            {
+              label: "Vegetables",
+              options: ["carrot"],
+              type: "group",
+            },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const groups = screen.getAllByRole("group");
+      expect(groups).toHaveLength(2);
+
+      // Each group has aria-labelledby pointing to its label
+      groups.forEach((group) => {
+        const labelId = group.getAttribute("aria-labelledby");
+        expect(labelId).toBeTruthy();
+        const label = document.getElementById(labelId!);
+        expect(label).toBeInTheDocument();
+        expect(label).toHaveAttribute("role", "presentation");
+      });
+
+      // Verify label text matches
+      const fruitsGroup = groups[0];
+      const labelId = fruitsGroup.getAttribute("aria-labelledby")!;
+      expect(document.getElementById(labelId)).toHaveTextContent("Fruits");
+    });
   });
 
   describe("Disabled Items", () => {
@@ -584,41 +623,6 @@ describe("Select Component", () => {
         (item) => item.getAttribute("data-highlighted") === "true",
       );
       expect(hasHighlighted).toBe(true);
-    });
-  });
-
-  describe("Empty State", () => {
-    it("renders emptyContent when options array is empty", async () => {
-      const user = userEvent.setup();
-      render(<Select options={[]} />);
-
-      await user.click(screen.getByRole("combobox"));
-
-      const emptyEl = document.querySelector('[data-ck="select-empty"]');
-      expect(emptyEl).toBeInTheDocument();
-      expect(emptyEl).toHaveTextContent("No options");
-    });
-
-    it("renders custom emptyContent", async () => {
-      const user = userEvent.setup();
-      render(<Select emptyContent="Nothing to show" options={[]} />);
-
-      await user.click(screen.getByRole("combobox"));
-
-      const emptyEl = document.querySelector('[data-ck="select-empty"]');
-      expect(emptyEl).toBeInTheDocument();
-      expect(emptyEl).toHaveTextContent("Nothing to show");
-    });
-
-    it("empty state has role status and aria-live polite", async () => {
-      const user = userEvent.setup();
-      render(<Select options={[]} />);
-
-      await user.click(screen.getByRole("combobox"));
-
-      const emptyEl = document.querySelector('[data-ck="select-empty"]');
-      expect(emptyEl).toHaveAttribute("role", "status");
-      expect(emptyEl).toHaveAttribute("aria-live", "polite");
     });
   });
 

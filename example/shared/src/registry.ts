@@ -1,6 +1,5 @@
 import {
   alertDemo,
-  asyncSelectDemo,
   badgeDemo,
   buttonDemo,
   checkboxDemo,
@@ -27,7 +26,6 @@ import { type ComponentDemo } from "./types";
 
 export const componentDemos: ComponentDemo[] = [
   alertDemo,
-  asyncSelectDemo,
   badgeDemo,
   buttonDemo,
   checkboxDemo,

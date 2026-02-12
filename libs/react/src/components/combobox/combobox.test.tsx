@@ -164,6 +164,43 @@ describe("Combobox Component", () => {
       expect(separator).toBeInTheDocument();
       expect(separator).toHaveAttribute("role", "separator");
     });
+
+    it("wraps grouped items in role=group with aria-labelledby", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox
+          options={[
+            {
+              label: "Fruits",
+              options: ["apple", "banana"],
+              type: "group",
+            },
+            {
+              label: "Vegetables",
+              options: ["carrot"],
+              type: "group",
+            },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const groups = screen.getAllByRole("group");
+      expect(groups).toHaveLength(2);
+
+      groups.forEach((group) => {
+        const labelId = group.getAttribute("aria-labelledby");
+        expect(labelId).toBeTruthy();
+        const label = document.getElementById(labelId!);
+        expect(label).toBeInTheDocument();
+        expect(label).toHaveAttribute("role", "presentation");
+      });
+
+      const fruitsGroup = groups[0];
+      const labelId = fruitsGroup.getAttribute("aria-labelledby")!;
+      expect(document.getElementById(labelId)).toHaveTextContent("Fruits");
+    });
   });
 
   describe("Disabled Items", () => {
@@ -825,6 +862,17 @@ describe("Combobox Component", () => {
       const separators = screen.getAllByRole("separator");
       expect(separators.length).toBeGreaterThanOrEqual(1);
     });
+
+    it("menu has aria-labelledby linking to input", async () => {
+      const user = userEvent.setup();
+      render(<Combobox options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const input = screen.getByRole("combobox");
+      const listbox = screen.getByRole("listbox");
+      expect(listbox).toHaveAttribute("aria-labelledby", input.id);
+    });
   });
 
   describe("Data Attributes", () => {
@@ -950,6 +998,224 @@ describe("Combobox Component", () => {
       // Input should still render with its placeholder
       const input = screen.getByRole("combobox");
       expect(input).toHaveAttribute("placeholder", "Search...");
+    });
+  });
+
+  describe("Loading State", () => {
+    it("shows loading content when loading prop is true", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const loadingEl = document.querySelector('[data-ck="combobox-loading"]');
+      expect(loadingEl).toBeInTheDocument();
+      expect(loadingEl).toHaveTextContent("Loading...");
+    });
+
+    it("renders data-ck='combobox-loading' element", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const loadingEl = document.querySelector('[data-ck="combobox-loading"]');
+      expect(loadingEl).toBeInTheDocument();
+    });
+
+    it("sets data-loading on root during loading", () => {
+      const { container } = render(
+        <Combobox loading options={[]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).toHaveAttribute("data-loading", "true");
+    });
+
+    it("sets aria-busy on root during loading", () => {
+      const { container } = render(
+        <Combobox loading options={[]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).toHaveAttribute("aria-busy", "true");
+    });
+
+    it("displays custom loadingContent", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading loadingContent="Fetching data..." options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(screen.getByText("Fetching data...")).toBeInTheDocument();
+    });
+
+    it("hides items while loading", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading options={["apple", "banana"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(
+        document.querySelector('[data-ck="combobox-item"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("hides empty state while loading", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(
+        document.querySelector('[data-ck="combobox-empty"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not set data-loading when not loading", () => {
+      const { container } = render(
+        <Combobox options={["apple"]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).not.toHaveAttribute("data-loading");
+      expect(root).not.toHaveAttribute("aria-busy");
+    });
+  });
+
+  describe("Error State", () => {
+    it("shows error content when error prop is true", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const errorEl = document.querySelector('[data-ck="combobox-error"]');
+      expect(errorEl).toBeInTheDocument();
+      expect(errorEl).toHaveTextContent("An error occurred");
+    });
+
+    it("renders data-ck='combobox-error' element", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const errorEl = document.querySelector('[data-ck="combobox-error"]');
+      expect(errorEl).toBeInTheDocument();
+    });
+
+    it("sets data-has-error on root when error", () => {
+      const { container } = render(
+        <Combobox error options={[]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).toHaveAttribute("data-has-error", "true");
+    });
+
+    it("displays custom errorContent", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error errorContent="Something went wrong!" options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(screen.getByText("Something went wrong!")).toBeInTheDocument();
+    });
+
+    it("hides items while error", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error options={["apple", "banana"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(
+        document.querySelector('[data-ck="combobox-item"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("hides empty state while error", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(
+        document.querySelector('[data-ck="combobox-empty"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("loading takes precedence over error", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error loading options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(
+        document.querySelector('[data-ck="combobox-loading"]'),
+      ).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-ck="combobox-error"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not set data-has-error when no error", () => {
+      const { container } = render(
+        <Combobox options={["apple"]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).not.toHaveAttribute("data-has-error");
+    });
+  });
+
+  describe("Loading/Error Accessibility", () => {
+    it("loading state has role status and aria-live polite", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox loading options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const loadingEl = document.querySelector('[data-ck="combobox-loading"]');
+      expect(loadingEl).toHaveAttribute("role", "status");
+      expect(loadingEl).toHaveAttribute("aria-live", "polite");
+    });
+
+    it("error state has role alert and aria-live assertive", async () => {
+      const user = userEvent.setup();
+      render(
+        <Combobox error options={["apple"]} />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const errorEl = document.querySelector('[data-ck="combobox-error"]');
+      expect(errorEl).toHaveAttribute("role", "alert");
+      expect(errorEl).toHaveAttribute("aria-live", "assertive");
     });
   });
 });

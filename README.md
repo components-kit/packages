@@ -32,7 +32,7 @@ npm install react react-dom
 # Optional - only if using Table component
 npm install @tanstack/react-table
 
-# Optional - only if using Select, Combobox, MultiSelect, or AsyncSelect
+# Optional - only if using Select, Combobox, or MultiSelect
 npm install downshift @floating-ui/react
 
 # Optional - only if using Toast component
@@ -247,9 +247,8 @@ import Link from "next/link";
 | [Progress](libs/react/src/components/progress/README.md)        | Linear progress bar with label, determinate/indeterminate modes                                              | -                                 |
 | [RadioGroup](libs/react/src/components/radio-group/README.md)   | Radio button group with RadioGroupItem                                                                       | -                                 |
 | [Select](libs/react/src/components/select/README.md)            | Dropdown select with keyboard navigation and type-ahead                                                      | `downshift`, `@floating-ui/react` |
-| [Combobox](libs/react/src/components/combobox/README.md)        | Searchable select with text input filtering                                                                  | `downshift`, `@floating-ui/react` |
+| [Combobox](libs/react/src/components/combobox/README.md)        | Searchable select with text input filtering, async/loading/error support                                     | `downshift`, `@floating-ui/react` |
 | [MultiSelect](libs/react/src/components/multi-select/README.md) | Multi-value select with tags, filtering, and keyboard tag navigation                                         | `downshift`, `@floating-ui/react` |
-| [AsyncSelect](libs/react/src/components/async-select/README.md) | Async searchable select with debounce, caching, and loading/error states                                     | `downshift`, `@floating-ui/react` |
 | [Separator](libs/react/src/components/separator/README.md)      | Visual divider (horizontal/vertical)                                                                         | -                                 |
 | [Skeleton](libs/react/src/components/skeleton/README.md)        | Loading placeholder with customizable dimensions                                                             | -                                 |
 | [Slider](libs/react/src/components/slider/README.md)            | Range input with keyboard navigation and pointer drag support                                                | -                                 |
@@ -358,19 +357,18 @@ All components follow WAI-ARIA guidelines:
 
 Example accessibility features:
 
-| Component   | Accessibility Features                                                                                      |
-| ----------- | ----------------------------------------------------------------------------------------------------------- |
-| Alert       | `role="alert"`, `aria-live="polite"`                                                                        |
-| Button      | `aria-disabled`, `aria-busy` for loading                                                                    |
-| Checkbox    | Label association, `aria-invalid`                                                                           |
-| Progress    | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label                                  |
-| Select      | WAI-ARIA Listbox pattern, type-ahead search, `aria-haspopup="listbox"`                                      |
-| Combobox    | WAI-ARIA Combobox pattern, `aria-expanded`, `aria-controls`, `role="status"` on empty                       |
-| MultiSelect | WAI-ARIA Combobox pattern, `aria-multiselectable`, tag keyboard navigation                                  |
-| AsyncSelect | WAI-ARIA Combobox pattern, `aria-busy` during loading, `role="alert"` on error                              |
-| Slider      | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation                                               |
-| Table       | `aria-sort`, `aria-selected`, keyboard navigation                                                           |
-| Pagination  | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation                               |
+| Component   | Accessibility Features                                                                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Alert       | `role="alert"`, `aria-live="polite"`                                                                                                                                     |
+| Button      | `aria-disabled`, `aria-busy` for loading                                                                                                                                 |
+| Checkbox    | Label association, `aria-invalid`                                                                                                                                        |
+| Progress    | `role="progressbar"`, `aria-valuenow/min/max`, `aria-labelledby` for label                                                                                               |
+| Select      | WAI-ARIA Listbox pattern, type-ahead search, `aria-haspopup="listbox"`, grouped options with `role="group"` + `aria-labelledby`                                          |
+| Combobox    | WAI-ARIA Combobox pattern, `aria-expanded`, `aria-controls`, `aria-labelledby` on menu, grouped options with `role="group"` + `aria-labelledby`, `aria-busy` during loading, `role="alert"` on error |
+| MultiSelect | WAI-ARIA Combobox pattern, `aria-multiselectable`, `aria-labelledby` on menu, grouped options with `role="group"` + `aria-labelledby`, tag keyboard navigation            |
+| Slider      | `role="slider"`, `aria-valuenow/min/max`, keyboard navigation                                                                                                            |
+| Table       | `aria-sort`, `aria-selected`, keyboard navigation                                                                                                                        |
+| Pagination  | `<nav>` landmark, `aria-current="page"`, `aria-disabled`, keyboard navigation                                                                                            |
 | Toast       | `role="status"`, `aria-live="polite"`, Button component with `aria-disabled`, `aria-busy`, keyboard support |
 | Tabs        | WAI-ARIA Tabs pattern, roving tabindex, `aria-orientation`                                                  |
 

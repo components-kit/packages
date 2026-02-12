@@ -46,7 +46,6 @@ import { Select } from '@components-kit/react';
 | `onValueChange`  | `(value: T \| undefined) => void` | -              | Callback when selection changes                                                                                                                                          |
 | `placeholder`    | `string`                          | `"Select..."`  | Placeholder text                                                                                                                                                         |
 | `disabled`       | `boolean`                         | `false`        | Disables the select                                                                                                                                                      |
-| `emptyContent`   | `ReactNode`                       | `"No options"` | Custom content displayed when there are no options                                                                                                                       |
 | `variantName`    | `string`                          | -              | Variant name for styling                                                                                                                                                 |
 | `getOptionValue` | `(option: T) => string \| number` | -              | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
@@ -103,8 +102,8 @@ The `getOptionValue` function is required for object values because React uses r
 | `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
 | `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
 | `data-ck="select-separator"`   | Div                          | -                                                | Visual separator between groups                                      |
-| `data-ck="select-group-label"` | Div                          | -                                                | Group heading label                                                  |
-| `data-ck="select-empty"`       | Div                          | -                                                | Empty state message                                                  |
+| `data-ck="select-group"`       | Div                          | -                                                | Group container (`role="group"` with `aria-labelledby`)              |
+| `data-ck="select-group-label"` | Div                          | -                                                | Group heading label (`role="presentation"`)                          |
 | `data-state`                   | Root, Trigger, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/content; checked/unchecked on items |
 | `data-disabled`                | Root, Item                   | `true`                                           | Present when disabled                                                |
 | `data-highlighted`             | Item                         | `true`                                           | Present on the currently highlighted item                            |
@@ -152,8 +151,8 @@ Use data attributes to style the select component:
 - Trigger has `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls`
 - Menu has `role="listbox"` with `aria-labelledby` linking to the trigger
 - Items have `role="option"` with `aria-selected` and `aria-disabled`
-- Empty state uses `role="status"` with `aria-live="polite"`
 - Separators use `role="separator"` with `aria-orientation="horizontal"`
+- Groups use `role="group"` with `aria-labelledby` linking to the group label
 
 ### Keyboard Support
 
@@ -174,5 +173,4 @@ Use data attributes to style the select component:
 - Use groups to organize related options
 - Consider using separators for visual grouping
 - Disable options rather than hiding them when possible
-- Provide custom `emptyContent` for a better user experience
 - Use `getOptionValue` when working with object values
