@@ -5,7 +5,6 @@ import { useSelect } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
-  ReactNode,
   useId,
   useMemo,
   useRef,
@@ -36,7 +35,6 @@ import {
  * - Type-ahead character search
  * - Controlled and uncontrolled modes
  * - Support for string and object values via generic `<T>`
- * - Empty state with customizable content
  * - Full accessibility (WAI-ARIA Listbox pattern)
  * - CSS-based styling via data attributes
  *
@@ -70,7 +68,8 @@ import {
  * - Trigger has `aria-haspopup="listbox"`, `aria-expanded`, and `aria-controls`
  * - Menu has `role="listbox"` with `aria-labelledby` linking to the trigger
  * - Items have `role="option"` with `aria-selected` and `aria-disabled`
- * - Empty state uses `role="status"` with `aria-live="polite"` for screen reader announcement
+ * - Groups wrapped in `role="group"` with `aria-labelledby` linking to group label
+ * - Group labels have `role="presentation"` and a unique `id` for `aria-labelledby`
  * - Separators use `role="separator"` with `aria-orientation="horizontal"`
  *
  * ## Best Practices
@@ -79,7 +78,6 @@ import {
  * - Use groups and separators to organize large option sets
  * - Use `getOptionValue` when working with object values
  * - Disable options rather than hiding them when possible
- * - Provide custom `emptyContent` for a better user experience when no options match
  *
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
@@ -89,7 +87,6 @@ import {
  * @param {boolean} [disabled=false] - Whether the select is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
- * @param {ReactNode} [emptyContent="No options"] - Custom content to display when there are no options.
  *
  * @example
  * ```tsx
@@ -174,11 +171,6 @@ interface SelectProps<T = string> extends Omit<
    */
   disabled?: boolean;
   /**
-   * Custom content to display when there are no options.
-   * @default "No options"
-   */
-  emptyContent?: ReactNode;
-  /**
    * Function to extract a unique primitive key from option values.
    * Required for object values where reference equality won't work.
    * For primitive values (string, number), this is not needed.
@@ -222,7 +214,6 @@ function SelectInner<T = string>(
     className,
     defaultValue,
     disabled = false,
-    emptyContent = "No options",
     getOptionValue,
     onValueChange,
     options,
@@ -240,8 +231,8 @@ function SelectInner<T = string>(
 
   // Process options into selectable items and render items
   const { renderItems, selectableItems } = useMemo(
-    () => processOptions(options),
-    [options],
+    () => processOptions(options, triggerId),
+    [options, triggerId],
   );
 
   // Find controlled/initial selected item
@@ -333,12 +324,6 @@ function SelectInner<T = string>(
             data-ck="select-content"
             data-state="open"
           >
-            {renderItems.length === 0 && (
-              <div aria-live="polite" data-ck="select-empty" role="status">
-                {emptyContent}
-              </div>
-            )}
-
             {renderItems.map((renderItem, idx) => {
               if (renderItem.type === "separator") {
                 return (
@@ -351,18 +336,53 @@ function SelectInner<T = string>(
                 );
               }
 
-              if (renderItem.type === "group-label") {
+              if (renderItem.type === "group") {
                 return (
                   <div
                     key={`group-${renderItem.groupIndex}`}
-                    data-ck="select-group-label"
+                    aria-labelledby={renderItem.groupLabelId}
+                    data-ck="select-group"
+                    role="group"
                   >
-                    {renderItem.groupLabel}
+                    <div
+                      id={renderItem.groupLabelId}
+                      data-ck="select-group-label"
+                      role="presentation"
+                    >
+                      {renderItem.groupLabel}
+                    </div>
+                    {renderItem.items.map(({ item, selectableIndex }) => {
+                      const isSelected = selectedItem
+                        ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
+                        : false;
+                      const isHighlighted = highlightedIndex === selectableIndex;
+                      const isDisabled = item.disabled ?? false;
+
+                      return (
+                        <div
+                          key={`item-${selectableIndex}`}
+                          {...getItemProps({
+                            disabled: isDisabled,
+                            index: selectableIndex,
+                            item,
+                          })}
+                          aria-disabled={isDisabled || undefined}
+                          aria-selected={isSelected}
+                          data-ck="select-item"
+                          data-disabled={isDisabled || undefined}
+                          data-highlighted={isHighlighted || undefined}
+                          data-state={isSelected ? "checked" : "unchecked"}
+                          role="option"
+                        >
+                          {item.label}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }
 
-              // Item
+              // Standalone item (not in a group)
               const { item, selectableIndex } = renderItem;
               const isSelected = selectedItem
                 ? areValuesEqual(selectedItem.value, item.value, getOptionValue)

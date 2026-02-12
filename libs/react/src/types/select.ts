@@ -47,10 +47,16 @@ interface NormalizedItem<T = string> {
 }
 
 /**
- * Render item for display (includes separators and group labels).
+ * Render item for display (includes separators, groups, and standalone items).
  */
 type RenderItem<T = string> =
-  | { groupIndex: number; groupLabel: string; type: "group-label" }
+  | {
+      groupIndex: number;
+      groupLabel: string;
+      groupLabelId: string;
+      items: Array<{ item: NormalizedItem<T>; selectableIndex: number }>;
+      type: "group";
+    }
   | { item: NormalizedItem<T>; selectableIndex: number; type: "item" }
   | { type: "separator" };
 

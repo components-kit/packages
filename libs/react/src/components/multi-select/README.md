@@ -64,6 +64,11 @@ const [selected, setSelected] = useState<string[]>(['apple']);
 | `getOptionValue` | `(option: T) => string \| number` | -             | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 | `filterFn`       | `(option, inputValue) => boolean` | -             | Custom filter function (default: case-insensitive includes)                                                                                                              |
 | `maxSelected`    | `number`                          | -             | Maximum number of items that can be selected                                                                                                                             |
+| `emptyContent`   | `ReactNode`                       | `"No results found"` | Custom content displayed when no options match the filter                                                                                                          |
+| `maxReachedContent` | `ReactNode`                    | `"Maximum selections reached"` | Custom content displayed when maximum selections reached                                                                                                |
+| `inputValue`     | `string`                          | -             | Controlled input text value                                                                                                                                              |
+| `defaultInputValue` | `string`                       | -             | Default input value (uncontrolled)                                                                                                                                       |
+| `onInputValueChange` | `(value: string) => void`     | -             | Callback when input text changes                                                                                                                                         |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -189,7 +194,8 @@ Use data attributes to style the multi-select component:
 | `data-ck="multi-select-item"`          | Item                   | -                    | Individual dropdown item                    |
 | `data-ck="multi-select-empty"`         | Div                    | -                    | Empty state / max-reached message           |
 | `data-ck="multi-select-separator"`     | Div                    | -                    | Visual separator between groups             |
-| `data-ck="multi-select-group-label"`   | Div                    | -                    | Group label heading                         |
+| `data-ck="multi-select-group"`         | Div                    | -                    | Group container (`role="group"` with `aria-labelledby`) |
+| `data-ck="multi-select-group-label"`   | Div                    | -                    | Group label heading (`role="presentation"`) |
 | `data-state`                           | Root, Trigger, Content | `"open"`, `"closed"` | Dropdown open/close state                   |
 | `data-disabled`                        | Root, Item             | `true`               | Present when disabled                       |
 | `data-highlighted`                     | Item                   | `true`               | Present on keyboard-highlighted item        |
@@ -201,6 +207,8 @@ Use data attributes to style the multi-select component:
 ## Accessibility
 
 - Follows WAI-ARIA Combobox pattern with `aria-multiselectable="true"` on the listbox
+- Menu has `aria-labelledby` linking to the input
+- Groups use `role="group"` with `aria-labelledby` linking to the group label
 
 ### Keyboard Support
 

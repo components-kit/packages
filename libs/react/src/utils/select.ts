@@ -48,8 +48,12 @@ function normalizeOption<T>(
 
 /**
  * Flattens options array into selectable items and render items.
+ * Groups are emitted as a single render item containing their label and child items.
+ *
+ * @param options - Array of options to process.
+ * @param baseId - Base ID for generating deterministic group label IDs (for aria-labelledby).
  */
-function processOptions<T>(options: SelectOption<T>[]): {
+function processOptions<T>(options: SelectOption<T>[], baseId: string = ""): {
   renderItems: RenderItem<T>[];
   selectableItems: NormalizedItem<T>[];
 } {
@@ -70,20 +74,23 @@ function processOptions<T>(options: SelectOption<T>[]): {
       if (option.type === "separator") {
         renderItems.push({ type: "separator" });
       } else if (option.type === "group") {
-        renderItems.push({
-          groupIndex: groupIndex++,
-          groupLabel: option.label,
-          type: "group-label",
-        });
+        const currentGroupIndex = groupIndex++;
+        const groupItems: Array<{ item: NormalizedItem<T>; selectableIndex: number }> = [];
         for (const groupItem of option.options) {
           const item = normalizeOption<T>(groupItem);
-          renderItems.push({
+          groupItems.push({
             item,
             selectableIndex: selectableItems.length,
-            type: "item",
           });
           selectableItems.push(item);
         }
+        renderItems.push({
+          groupIndex: currentGroupIndex,
+          groupLabel: option.label,
+          groupLabelId: `${baseId}-group-${currentGroupIndex}`,
+          items: groupItems,
+          type: "group",
+        });
       }
     } else {
       // LabeledOption
@@ -110,7 +117,7 @@ function itemToString<T>(item: NormalizedItem<T> | null): string {
 
 /**
  * Filters render items based on a predicate applied to selectable items.
- * Preserves group labels that have at least one visible child.
+ * Preserves groups that have at least one visible child (with filtered children).
  * Removes orphan separators (leading, trailing, or consecutive).
  *
  * Returns both the filtered flat selectable items (for Downshift)
@@ -144,36 +151,30 @@ function filterRenderItems<T>(
     }
   });
 
-  // 3. Walk render items, keeping passing items and non-empty groups
-  // First pass: determine which group labels have visible children
-  const groupHasChildren = new Map<number, boolean>();
-  let currentGroup = -1;
-
-  for (const ri of allRenderItems) {
-    if (ri.type === "group-label") {
-      currentGroup = ri.groupIndex;
-      groupHasChildren.set(currentGroup, false);
-    } else if (ri.type === "item") {
-      if (passingIndices.has(ri.selectableIndex) && currentGroup >= 0) {
-        groupHasChildren.set(currentGroup, true);
-      }
-    } else if (ri.type === "separator") {
-      currentGroup = -1;
-    }
-  }
-
-  // Second pass: build filtered render items
+  // 3. Walk render items, filtering groups and standalone items
   const rawFiltered: RenderItem<T>[] = [];
-  currentGroup = -1;
 
   for (const ri of allRenderItems) {
     if (ri.type === "separator") {
-      currentGroup = -1;
       rawFiltered.push(ri);
-    } else if (ri.type === "group-label") {
-      currentGroup = ri.groupIndex;
-      if (groupHasChildren.get(ri.groupIndex)) {
-        rawFiltered.push(ri);
+    } else if (ri.type === "group") {
+      // Filter children within the group
+      const filteredGroupItems = ri.items
+        .filter((child) => passingIndices.has(child.selectableIndex))
+        .map((child) => ({
+          item: child.item,
+          selectableIndex: indexMap.get(child.selectableIndex)!,
+        }));
+
+      // Only keep group if it has visible children
+      if (filteredGroupItems.length > 0) {
+        rawFiltered.push({
+          groupIndex: ri.groupIndex,
+          groupLabel: ri.groupLabel,
+          groupLabelId: ri.groupLabelId,
+          items: filteredGroupItems,
+          type: "group",
+        });
       }
     } else if (ri.type === "item") {
       if (passingIndices.has(ri.selectableIndex)) {

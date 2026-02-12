@@ -1,5 +1,4 @@
 export * from "./alert";
-export * from "./async-select";
 export * from "./badge";
 export * from "./button";
 export * from "./checkbox";

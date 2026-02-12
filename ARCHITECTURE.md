@@ -4,7 +4,7 @@
 
 **ComponentsKit** is a modern, headless React component library designed for accessibility and TypeScript safety. It's a monorepo with:
 
-- **24 accessible components** with zero production dependencies
+- **23 accessible components** with zero production dependencies
 - **Headless/unstyled design** — all styling via `data-*` attributes for CSS
 - **Figma design system sync** — CSS updates without code redeployment
 - **Polymorphic components** — render as any HTML element via `as` prop
@@ -21,15 +21,14 @@
 | `example/next-app-router/` | Next.js 15 SSR example                           |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example               |
 
-### Components (24 total)
+### Components (23 total)
 
 | Component   | Lines | Complexity | Key Features                                                                                     |
 | ----------- | ----- | ---------- | ------------------------------------------------------------------------------------------------ |
 | Table       | ~830  | High       | Sorting, pagination (data slicing), filtering, row selection (TanStack Table)                    |
 | Select      | ~400  | High       | Dropdown with groups, type-ahead, keyboard nav (Downshift + Floating UI)                         |
-| Combobox    | ~480  | High       | Searchable select with text filtering, keyboard nav (Downshift + Floating UI)                    |
+| Combobox    | ~500  | High       | Searchable select with text filtering, async/loading/error support, keyboard nav (Downshift + Floating UI) |
 | MultiSelect | ~600  | High       | Multi-value select with tags, filtering, tag keyboard nav (Downshift + Floating UI)              |
-| AsyncSelect | ~550  | High       | Async search with debounce, caching, loading/error states (Downshift + Floating UI)              |
 | Tabs        | ~300  | Medium     | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook)                            |
 | Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                                    |
 | Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                              |
@@ -87,11 +86,11 @@
 │  │   asChild   │  │  float. UI  │  │   sorting   │  │ prop merge  │    │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘    │
 │                                                                          │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                     │
-│  │  Combobox   │  │ MultiSelect │  │ AsyncSelect │                     │
-│  │  downshift  │  │  downshift  │  │  downshift  │                     │
-│  │  filtering  │  │  tags/keys  │  │  debounce   │                     │
-│  └─────────────┘  └─────────────┘  └─────────────┘                     │
+│  ┌─────────────┐  ┌─────────────┐                                      │
+│  │  Combobox   │  │ MultiSelect │                                      │
+│  │  downshift  │  │  downshift  │                                      │
+│  │ filter/async│  │  tags/keys  │                                      │
+│  └─────────────┘  └─────────────┘                                      │
 │                                                                          │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │
 │  │    Input    │  │  Textarea   │  │  Checkbox   │  │   Switch    │    │
@@ -157,7 +156,7 @@
 │         │                │                 │                  │              │     │
 │         ▼                ▼                 ▼                  ▼              ▼     │
 │  All Components    Select family     Select family       Table only     Toast only │
-│                   (Select, Combobox, MultiSelect, AsyncSelect)                     │
+│                   (Select, Combobox, MultiSelect)                                  │
 │                                                                 │
 └────────────────────────────────────────────────────────────────┘
 ```
@@ -170,9 +169,8 @@
 packages/
 ├── libs/react/                      # Main library
 │   ├── src/
-│   │   ├── components/              # 24 component directories
+│   │   ├── components/              # 23 component directories
 │   │   │   ├── alert/
-│   │   │   ├── async-select/
 │   │   │   ├── badge/
 │   │   │   ├── button/
 │   │   │   ├── checkbox/

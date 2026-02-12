@@ -261,6 +261,43 @@ describe("MultiSelect Component", () => {
       expect(separator).toBeInTheDocument();
       expect(separator).toHaveAttribute("role", "separator");
     });
+
+    it("wraps grouped items in role=group with aria-labelledby", async () => {
+      const user = userEvent.setup();
+      render(
+        <MultiSelect
+          options={[
+            {
+              label: "Fruits",
+              options: ["apple", "banana"],
+              type: "group",
+            },
+            {
+              label: "Vegetables",
+              options: ["carrot"],
+              type: "group",
+            },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const groups = screen.getAllByRole("group");
+      expect(groups).toHaveLength(2);
+
+      groups.forEach((group) => {
+        const labelId = group.getAttribute("aria-labelledby");
+        expect(labelId).toBeTruthy();
+        const label = document.getElementById(labelId!);
+        expect(label).toBeInTheDocument();
+        expect(label).toHaveAttribute("role", "presentation");
+      });
+
+      const fruitsGroup = groups[0];
+      const labelId = fruitsGroup.getAttribute("aria-labelledby")!;
+      expect(document.getElementById(labelId)).toHaveTextContent("Fruits");
+    });
   });
 
   describe("Disabled Items", () => {
@@ -989,6 +1026,17 @@ describe("MultiSelect Component", () => {
         '[data-ck="multi-select-separator"]',
       );
       expect(separator).toHaveAttribute("role", "separator");
+    });
+
+    it("menu has aria-labelledby", async () => {
+      const user = userEvent.setup();
+      render(<MultiSelect options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const listbox = screen.getByRole("listbox");
+      const labelledBy = listbox.getAttribute("aria-labelledby");
+      expect(labelledBy).toBeTruthy();
     });
   });
 

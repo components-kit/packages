@@ -41,6 +41,8 @@ import {
  * - Support for string and object values via generic `<T>`
  * - Custom filter function support
  * - Option groups, separators, and disabled items
+ * - Async/server-side search via controlled `options` + `loading`/`error` props
+ * - Loading and error states with customizable content and ARIA live regions
  * - Full accessibility (WAI-ARIA Combobox with Listbox Popup pattern)
  * - CSS-based styling via data attributes
  *
@@ -75,14 +77,21 @@ import {
  * - `aria-expanded` toggles with menu state
  * - `aria-controls` links input to listbox
  * - `aria-disabled` on disabled items
+ * - Menu has `aria-labelledby` linking to the input
+ * - Groups wrapped in `role="group"` with `aria-labelledby` linking to group label
+ * - Group labels have `role="presentation"` and a unique `id` for `aria-labelledby`
  * - `role="status"` with `aria-live="polite"` on empty state for screen reader announcement
  * - `role="separator"` on dividers
+ * - `aria-busy` on root element during loading (async mode)
+ * - Loading indicator with `role="status"` and `aria-live="polite"` (async mode)
+ * - Error message with `role="alert"` and `aria-live="assertive"` (async mode)
  *
  * ## Best Practices
  * - Provide a descriptive `aria-label` if no visible label
  * - Use `filterFn` for custom matching (e.g., fuzzy search)
  * - Use `getOptionValue` when working with object values
  * - Use groups and separators to organize large option sets
+ * - For async/server-side search, control `options`, `loading`, and `error` externally
  *
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
@@ -96,6 +105,10 @@ import {
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes.
+ * @param {boolean} [loading=false] - Whether the combobox is in a loading state (for async search).
+ * @param {ReactNode} [loadingContent="Loading..."] - Custom content displayed while loading.
+ * @param {boolean} [error=false] - Whether the combobox has an error (for async search).
+ * @param {ReactNode} [errorContent="An error occurred"] - Custom content displayed when an error occurs.
  *
  * @example
  * ```tsx
@@ -172,6 +185,35 @@ import {
  *   onValueChange={setSelectedUser}
  * />
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Async / server-side search
+ * const [options, setOptions] = useState([]);
+ * const [loading, setLoading] = useState(false);
+ * const [error, setError] = useState(false);
+ *
+ * const handleSearch = async (query) => {
+ *   setLoading(true);
+ *   setError(false);
+ *   try {
+ *     const results = await fetch(`/api/search?q=${query}`);
+ *     setOptions(await results.json());
+ *   } catch {
+ *     setError(true);
+ *   } finally {
+ *     setLoading(false);
+ *   }
+ * };
+ *
+ * <Combobox
+ *   options={options}
+ *   loading={loading}
+ *   error={error}
+ *   onInputValueChange={handleSearch}
+ *   placeholder="Search..."
+ * />
+ * ```
  */
 
 // -----------------------------------------------------------------------------
@@ -204,6 +246,17 @@ interface ComboboxProps<T = string> extends Omit<
    */
   emptyContent?: ReactNode;
   /**
+   * Whether the combobox has an error (for async/server-side search).
+   * When true, displays `errorContent` instead of options.
+   * @default false
+   */
+  error?: boolean;
+  /**
+   * Custom content to display when an error occurs.
+   * @default "An error occurred"
+   */
+  errorContent?: ReactNode;
+  /**
    * Custom filter function. Receives the normalized item and the current input value.
    * Return true to keep the item visible.
    * @default Case-insensitive includes match on label.
@@ -222,6 +275,17 @@ interface ComboboxProps<T = string> extends Omit<
    * Controlled input value.
    */
   inputValue?: string;
+  /**
+   * Whether the combobox is in a loading state (for async/server-side search).
+   * When true, displays `loadingContent` instead of options.
+   * @default false
+   */
+  loading?: boolean;
+  /**
+   * Custom content to display while loading.
+   * @default "Loading..."
+   */
+  loadingContent?: ReactNode;
   /**
    * Callback when input text changes.
    */
@@ -260,9 +324,13 @@ function ComboboxInner<T = string>(
     defaultValue,
     disabled = false,
     emptyContent = "No results found",
+    error = false,
+    errorContent = "An error occurred",
     filterFn,
     getOptionValue,
     inputValue: controlledInputValue,
+    loading = false,
+    loadingContent = "Loading...",
     onInputValueChange,
     onValueChange,
     options,
@@ -281,7 +349,7 @@ function ComboboxInner<T = string>(
 
   // Process all options into flat selectable items and structured render items
   const { renderItems: allRenderItems, selectableItems: allSelectableItems } =
-    useMemo(() => processOptions(options), [options]);
+    useMemo(() => processOptions(options, inputId), [options, inputId]);
 
   const effectiveFilter = filterFn ?? defaultFilterFn;
 
@@ -367,8 +435,11 @@ function ComboboxInner<T = string>(
     <div
       {...rest}
       className={className}
+      aria-busy={loading || undefined}
       data-ck="combobox"
       data-disabled={disabled || undefined}
+      data-has-error={error || undefined}
+      data-loading={loading || undefined}
       data-state={isOpen ? "open" : "closed"}
       data-variant={variantName}
       ref={containerRef_}
@@ -397,16 +468,41 @@ function ComboboxInner<T = string>(
           <div
             {...getMenuProps({ id: menuId, ref: menuRef })}
             style={floatingProps.style}
+            aria-labelledby={inputId}
             data-ck="combobox-content"
             data-state="open"
           >
-            {filteredRenderItems.length === 0 && (
+            {/* Loading state */}
+            {loading && (
+              <div
+                aria-label="Loading results"
+                aria-live="polite"
+                data-ck="combobox-loading"
+                role="status"
+              >
+                {loadingContent}
+              </div>
+            )}
+
+            {/* Error state */}
+            {!loading && error && (
+              <div
+                aria-live="assertive"
+                data-ck="combobox-error"
+                role="alert"
+              >
+                {errorContent}
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!loading && !error && filteredRenderItems.length === 0 && (
               <div aria-live="polite" data-ck="combobox-empty" role="status">
                 {emptyContent}
               </div>
             )}
 
-            {filteredRenderItems.map((renderItem, idx) => {
+            {!loading && !error && filteredRenderItems.map((renderItem, idx) => {
               if (renderItem.type === "separator") {
                 return (
                   <div
@@ -418,19 +514,53 @@ function ComboboxInner<T = string>(
                 );
               }
 
-              if (renderItem.type === "group-label") {
+              if (renderItem.type === "group") {
                 return (
                   <div
                     key={`group-${renderItem.groupIndex}`}
-                    data-ck="combobox-group-label"
-                    role="presentation"
+                    aria-labelledby={renderItem.groupLabelId}
+                    data-ck="combobox-group"
+                    role="group"
                   >
-                    {renderItem.groupLabel}
+                    <div
+                      id={renderItem.groupLabelId}
+                      data-ck="combobox-group-label"
+                      role="presentation"
+                    >
+                      {renderItem.groupLabel}
+                    </div>
+                    {renderItem.items.map(({ item, selectableIndex }) => {
+                      const isSelected = selectedItem
+                        ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
+                        : false;
+                      const isHighlighted = highlightedIndex === selectableIndex;
+                      const isDisabled = item.disabled ?? false;
+
+                      return (
+                        <div
+                          key={`item-${selectableIndex}`}
+                          {...getItemProps({
+                            disabled: isDisabled,
+                            index: selectableIndex,
+                            item,
+                          })}
+                          aria-disabled={isDisabled || undefined}
+                          aria-selected={isSelected}
+                          data-ck="combobox-item"
+                          data-disabled={isDisabled || undefined}
+                          data-highlighted={isHighlighted || undefined}
+                          data-state={isSelected ? "checked" : "unchecked"}
+                          role="option"
+                        >
+                          {item.label}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }
 
-              // Item
+              // Standalone item (not in a group)
               const { item, selectableIndex } = renderItem;
               const isSelected = selectedItem
                 ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
