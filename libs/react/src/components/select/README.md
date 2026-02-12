@@ -34,20 +34,29 @@ import { Select } from '@components-kit/react';
     { type: 'group', label: 'Vegetables', options: ['carrot', 'celery'] },
   ]}
 />
+
+// Custom placement (opens upward)
+<Select
+  options={['apple', 'banana', 'cherry']}
+  placement="top-start"
+  placeholder="Opens upward..."
+/>
 ```
 
 ## Props
 
-| Prop             | Type                              | Default        | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `options`        | `SelectOption<T>[]`               | **required**   | Array of options to display                                                                                                                                              |
-| `value`          | `T`                               | -              | Controlled value                                                                                                                                                         |
-| `defaultValue`   | `T`                               | -              | Default value (uncontrolled)                                                                                                                                             |
-| `onValueChange`  | `(value: T \| undefined) => void` | -              | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Select..."`  | Placeholder text                                                                                                                                                         |
-| `disabled`       | `boolean`                         | `false`        | Disables the select                                                                                                                                                      |
-| `variantName`    | `string`                          | -              | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -              | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| Prop             | Type                              | Default          | Description                                                                                                                                                              |
+| ---------------- | --------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `options`        | `SelectOption<T>[]`               | **required**     | Array of options to display                                                                                                                                              |
+| `placement`      | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
+| `value`          | `T`                               | -                | Controlled value                                                                                                                                                         |
+| `defaultValue`   | `T`                               | -                | Default value (uncontrolled)                                                                                                                                             |
+| `onValueChange`  | `(value: T \| undefined) => void` | -                | Callback when selection changes                                                                                                                                          |
+| `placeholder`    | `string`                          | `"Select..."`    | Placeholder text                                                                                                                                                         |
+| `disabled`       | `boolean`                         | `false`          | Disables the select                                                                                                                                                      |
+| `emptyContent`   | `ReactNode`                       | `"No options"`   | Custom content displayed when there are no options                                                                                                                       |
+| `variantName`    | `string`                          | -                | Variant name for styling                                                                                                                                                 |
+| `getOptionValue` | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
 ## Option Types
 
@@ -99,6 +108,7 @@ The `getOptionValue` function is required for object values because React uses r
 | `data-ck="select"`             | Root                         | -                                                | Component identifier                                                 |
 | `data-ck="select-trigger"`     | Button                       | -                                                | Trigger button                                                       |
 | `data-ck="select-value"`       | Span                         | -                                                | Value display area                                                   |
+| `data-slot="icon"`             | Div (inside trigger)         | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)         |
 | `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
 | `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
 | `data-ck="select-separator"`   | Div                          | -                                                | Visual separator between groups                                      |
@@ -115,14 +125,13 @@ The `getOptionValue` function is required for object values because React uses r
 Use data attributes to style the select component:
 
 ```css
-/* Add chevron to trigger */
-[data-ck="select-trigger"]::after {
+/* Chevron icon via data-slot */
+[data-ck="select-trigger"] [data-slot="icon"]::before {
   content: "▼";
-  margin-left: 8px;
   transition: transform 0.2s;
 }
 
-[data-ck="select-trigger"][data-state="open"]::after {
+[data-ck="select-trigger"][data-state="open"] [data-slot="icon"]::before {
   transform: rotate(180deg);
 }
 
