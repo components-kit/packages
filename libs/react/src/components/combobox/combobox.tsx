@@ -1,11 +1,13 @@
 "use client";
 
-import { FloatingPortal } from "@floating-ui/react";
+import { FloatingPortal, type Placement } from "@floating-ui/react";
 import { useCombobox } from "downshift";
 import {
   forwardRef,
   HTMLAttributes,
   ReactNode,
+  useCallback,
+  useEffect,
   useId,
   useMemo,
   useRef,
@@ -14,8 +16,9 @@ import {
 
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
-import { useFloatingSelect } from "../../hooks";
+import { useExitTransition, useFloatingSelect } from "../../hooks";
 import { mergeRefs } from "../../utils/merge-refs";
+import { renderDropdownItems } from "../../utils/render-dropdown-items";
 import {
   areValuesEqual,
   defaultFilterFn,
@@ -23,6 +26,7 @@ import {
   findItemByValue,
   itemToString,
   processOptions,
+  serializeValue,
 } from "../../utils/select";
 
 /**
@@ -43,6 +47,14 @@ import {
  * - Option groups, separators, and disabled items
  * - Async/server-side search via controlled `options` + `loading`/`error` props
  * - Loading and error states with customizable content and ARIA live regions
+ * - Configurable dropdown placement via Floating UI (`placement` prop)
+ * - Clearable selection via clear button (`clearable` prop)
+ * - Auto-focus on mount (`autoFocus` prop)
+ * - `onBlur`/`onFocus` callbacks for form integration and validation
+ * - Form integration via hidden `<input>` (`name` prop)
+ * - Read-only mode that prevents interaction while showing current value
+ * - Live region for screen reader selection and result count announcements
+ * - Icon slot (`data-slot="icon"`) for CSS-injected icons
  * - Full accessibility (WAI-ARIA Combobox with Listbox Popup pattern)
  * - CSS-based styling via data attributes
  *
@@ -77,6 +89,7 @@ import {
  * - `aria-expanded` toggles with menu state
  * - `aria-controls` links input to listbox
  * - `aria-disabled` on disabled items
+ * - `aria-required` when `required` prop is set
  * - Menu has `aria-labelledby` linking to the input
  * - Groups wrapped in `role="group"` with `aria-labelledby` linking to group label
  * - Group labels have `role="presentation"` and a unique `id` for `aria-labelledby`
@@ -85,6 +98,7 @@ import {
  * - `aria-busy` on root element during loading (async mode)
  * - Loading indicator with `role="status"` and `aria-live="polite"` (async mode)
  * - Error message with `role="alert"` and `aria-live="assertive"` (async mode)
+ * - Live region (`data-ck="combobox-live"`) announces selection changes
  *
  * ## Best Practices
  * - Provide a descriptive `aria-label` if no visible label
@@ -93,6 +107,8 @@ import {
  * - Use groups and separators to organize large option sets
  * - For async/server-side search, control `options`, `loading`, and `error` externally
  *
+ * @param {boolean} [autoFocus=false] - Whether to auto-focus the input on mount.
+ * @param {boolean} [clearable=false] - Whether to show a clear button when a value is selected.
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
  * @param {T} [defaultValue] - Default value for uncontrolled mode.
@@ -101,14 +117,24 @@ import {
  * @param {string} [defaultInputValue] - Default input value for uncontrolled input mode.
  * @param {(value: string) => void} [onInputValueChange] - Callback when input text changes.
  * @param {string} [placeholder="Search..."] - Placeholder text for the input.
+ * @param {string} [aria-label] - Accessible label for the input. Required when no visible label exists.
  * @param {boolean} [disabled=false] - Whether the combobox is disabled.
  * @param {string} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes.
+ * @param {(event: React.FocusEvent) => void} [onBlur] - Callback when the input loses focus.
+ * @param {(event: React.FocusEvent) => void} [onFocus] - Callback when the input receives focus.
  * @param {boolean} [loading=false] - Whether the combobox is in a loading state (for async search).
  * @param {ReactNode} [loadingContent="Loading..."] - Custom content displayed while loading.
- * @param {boolean} [error=false] - Whether the combobox has an error (for async search).
+ * @param {boolean} [error=false] - Whether the combobox has an error (for async search or validation).
  * @param {ReactNode} [errorContent="An error occurred"] - Custom content displayed when an error occurs.
+ * @param {number} [maxDropdownHeight] - Maximum height of the dropdown in pixels.
+ * @param {string} [name] - Form field name. When set, renders a hidden input for form submission.
+ * @param {(open: boolean) => void} [onOpenChange] - Callback when dropdown opens or closes.
+ * @param {boolean} [openOnFocus=true] - Whether to open dropdown when input receives focus.
+ * @param {Placement} [placement="bottom-start"] - Dropdown placement relative to the trigger (Floating UI placement).
+ * @param {boolean} [readOnly=false] - Whether the combobox is read-only.
+ * @param {boolean} [required=false] - Whether the combobox is required.
  *
  * @example
  * ```tsx
@@ -214,6 +240,37 @@ import {
  *   placeholder="Search..."
  * />
  * ```
+ *
+ * @example
+ * ```tsx
+ * // Read-only mode
+ * <Combobox
+ *   options={['apple', 'banana', 'cherry']}
+ *   defaultValue="banana"
+ *   readOnly
+ * />
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Custom placement
+ * <Combobox
+ *   options={['apple', 'banana', 'cherry']}
+ *   placement="top-start"
+ *   placeholder="Opens upward..."
+ * />
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Form integration
+ * <Combobox
+ *   options={['apple', 'banana', 'cherry']}
+ *   name="fruit"
+ *   required
+ *   placeholder="Select a fruit..."
+ * />
+ * ```
  */
 
 // -----------------------------------------------------------------------------
@@ -228,6 +285,22 @@ interface ComboboxProps<T = string> extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "defaultValue" | "onChange"
 > {
+  /**
+   * Accessible label for the combobox input.
+   * Required when there is no visible label element.
+   * Prefer a visible <label> element when possible.
+   */
+  "aria-label"?: string;
+  /**
+   * Whether to auto-focus the input on mount.
+   * @default false
+   */
+  autoFocus?: boolean;
+  /**
+   * Whether to show a clear button when a value is selected.
+   * @default false
+   */
+  clearable?: boolean;
   /**
    * Default input value for uncontrolled input mode.
    */
@@ -244,7 +317,7 @@ interface ComboboxProps<T = string> extends Omit<
    * Custom content to display when no options match the filter.
    * @default "No results found"
    */
-  emptyContent?: ReactNode;
+  emptyContent?: string;
   /**
    * Whether the combobox has an error (for async/server-side search).
    * When true, displays `errorContent` instead of options.
@@ -287,13 +360,39 @@ interface ComboboxProps<T = string> extends Omit<
    */
   loadingContent?: ReactNode;
   /**
+   * Maximum height of the dropdown in pixels.
+   * When set, the dropdown height will not exceed this value.
+   */
+  maxDropdownHeight?: number;
+  /**
+   * Form field name. When set, renders a hidden `<input>` for native form submission.
+   */
+  name?: string;
+  /**
+   * Callback when the input loses focus.
+   */
+  onBlur?: (event: React.FocusEvent) => void;
+  /**
+   * Callback when the input receives focus.
+   */
+  onFocus?: (event: React.FocusEvent) => void;
+  /**
    * Callback when input text changes.
    */
   onInputValueChange?: (value: string) => void;
   /**
+   * Callback when dropdown opens or closes.
+   */
+  onOpenChange?: (open: boolean) => void;
+  /**
    * Callback when selection changes.
    */
   onValueChange?: (value: T | undefined) => void;
+  /**
+   * Whether to open the dropdown when the input receives focus.
+   * @default true
+   */
+  openOnFocus?: boolean;
   /**
    * Array of options to display.
    */
@@ -303,6 +402,23 @@ interface ComboboxProps<T = string> extends Omit<
    * @default "Search..."
    */
   placeholder?: string;
+  /**
+   * Dropdown placement relative to the trigger.
+   * @default "bottom-start"
+   */
+  placement?: Placement;
+  /**
+   * Whether the combobox is read-only.
+   * Shows the current value but prevents interaction.
+   * @default false
+   */
+  readOnly?: boolean;
+  /**
+   * Whether the combobox is required.
+   * Adds `aria-required` and `data-required` attributes.
+   * @default false
+   */
+  required?: boolean;
   /**
    * Controlled selected value.
    */
@@ -319,7 +435,10 @@ interface ComboboxProps<T = string> extends Omit<
 
 function ComboboxInner<T = string>(
   {
+    "aria-label": ariaLabel,
+    autoFocus = false,
     className,
+    clearable = false,
     defaultInputValue,
     defaultValue,
     disabled = false,
@@ -331,10 +450,19 @@ function ComboboxInner<T = string>(
     inputValue: controlledInputValue,
     loading = false,
     loadingContent = "Loading...",
+    maxDropdownHeight,
+    name,
+    onBlur,
+    onFocus,
     onInputValueChange,
+    onOpenChange,
     onValueChange,
+    openOnFocus = true,
     options,
     placeholder = "Search...",
+    placement,
+    readOnly = false,
+    required = false,
     value,
     variantName,
     ...rest
@@ -344,8 +472,22 @@ function ComboboxInner<T = string>(
   const inputId = useId();
   const menuId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const inputWrapperRef = useRef<HTMLDivElement>(null);
   const menuNodeRef = useRef<HTMLDivElement | null>(null);
+  // Tracks when menu was opened by focus to prevent the subsequent InputClick from closing it
+  const openedByFocusRef = useRef(false);
+
+  // Live region announcement state
+  const [announcement, setAnnouncement] = useState("");
+  const selectionTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => {
+    return () => {
+      if (selectionTimerRef.current) clearTimeout(selectionTimerRef.current);
+    };
+  }, []);
+
+  const isInteractive = !disabled && !readOnly;
 
   // Process all options into flat selectable items and structured render items
   const { renderItems: allRenderItems, selectableItems: allSelectableItems } =
@@ -362,13 +504,18 @@ function ComboboxInner<T = string>(
   const currentInputValue =
     controlledInputValue !== undefined ? controlledInputValue : localInputValue;
 
+  // When the menu opens, show all items regardless of input text (which may
+  // still contain the selected item's label). Once the user starts typing,
+  // normal filtering resumes.
+  const [showAllItems, setShowAllItems] = useState(false);
+
   // Filter items based on current input value (computed before useCombobox)
   const { filteredRenderItems, filteredSelectableItems } = useMemo(
     () =>
       filterRenderItems(allRenderItems, allSelectableItems, (item) =>
-        effectiveFilter(item, currentInputValue),
+        showAllItems ? true : effectiveFilter(item, currentInputValue),
       ),
-    [allRenderItems, allSelectableItems, effectiveFilter, currentInputValue],
+    [allRenderItems, allSelectableItems, effectiveFilter, currentInputValue, showAllItems],
   );
 
   // Find controlled/initial selected item
@@ -391,7 +538,9 @@ function ComboboxInner<T = string>(
     getToggleButtonProps,
     highlightedIndex,
     isOpen,
+    openMenu,
     selectedItem,
+    selectItem,
   } = useCombobox<NormalizedItem<T>>({
     id: inputId,
     initialInputValue: defaultInputValue,
@@ -403,19 +552,70 @@ function ComboboxInner<T = string>(
     items: filteredSelectableItems,
     itemToString,
     menuId,
-    onInputValueChange: ({ inputValue: newVal }) => {
+    onInputValueChange: ({ inputValue: newVal, type }) => {
       const val = newVal ?? "";
       setLocalInputValue(val);
       onInputValueChange?.(val);
+      // User is actively typing — disable "show all" so filtering kicks in
+      if (type === useCombobox.stateChangeTypes.InputChange) {
+        setShowAllItems(false);
+      }
+    },
+    onIsOpenChange: ({ isOpen: open }) => {
+      if (readOnly) return;
+      if (open) {
+        setShowAllItems(true);
+      } else {
+        setShowAllItems(false);
+        openedByFocusRef.current = false;
+      }
+      onOpenChange?.(open ?? false);
     },
     onSelectedItemChange: ({ selectedItem: newItem }) => {
       onValueChange?.(newItem?.value);
+      if (newItem) {
+        setAnnouncement(`${newItem.label} selected`);
+        // Clear announcement after screen reader has had time to announce
+        if (selectionTimerRef.current) clearTimeout(selectionTimerRef.current);
+        selectionTimerRef.current = setTimeout(() => setAnnouncement(""), 1000);
+      }
     },
     selectedItem: controlledItem,
+    stateReducer: (_state, actionAndChanges) => {
+      const { changes, type } = actionAndChanges;
+      if (readOnly) {
+        return { ...changes, isOpen: false };
+      }
+      // Prevent InputClick from closing a menu that was just opened by focus.
+      // The reducer may be invoked multiple times for the same action (React
+      // StrictMode / Downshift internals), so we must NOT reset the ref
+      // synchronously here. Schedule the reset as a microtask so all
+      // invocations of this reducer see the same flag value.
+      if (
+        type === useCombobox.stateChangeTypes.InputClick &&
+        openedByFocusRef.current
+      ) {
+        queueMicrotask(() => { openedByFocusRef.current = false; });
+        return { ...changes, isOpen: true };
+      }
+      return changes;
+    },
   });
 
   // Use Floating UI for positioning
-  const { floatingProps, referenceProps } = useFloatingSelect({ isOpen });
+  const { floatingProps, referenceProps } = useFloatingSelect({
+    isOpen,
+    maxDropdownHeight,
+    placement,
+  });
+  const side = floatingProps.placement.split("-")[0];
+
+  // Delay unmount for CSS exit animations
+  const contentRef = useRef<HTMLDivElement>(null);
+  const { dataState: contentState, isMounted } = useExitTransition({
+    isOpen,
+    nodeRef: contentRef,
+  });
 
   // Merge refs (memoized to avoid new callbacks on every render)
   const containerRef_ = useMemo(
@@ -427,9 +627,59 @@ function ComboboxInner<T = string>(
     [referenceProps.ref],
   );
   const menuRef = useMemo(
-    () => mergeRefs<HTMLDivElement>(menuNodeRef, floatingProps.ref),
-    [floatingProps.ref],
+    () => mergeRefs<HTMLDivElement>(menuNodeRef, contentRef),
+    [],
   );
+
+  // Track latest isOpen in a ref so the focus handler never uses a stale closure.
+  const isOpenRef = useRef(isOpen);
+  isOpenRef.current = isOpen;
+
+  // Focus handler (openOnFocus + onFocus callback)
+  const handleInputFocus = useCallback(
+    (e: React.FocusEvent) => {
+      if (openOnFocus && isInteractive && !isOpenRef.current) {
+        openedByFocusRef.current = true;
+        openMenu();
+      }
+      onFocus?.(e);
+    },
+    [openOnFocus, isInteractive, openMenu, onFocus],
+  );
+
+  // Clear selection handler
+  const handleClear = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      // Downshift's selectItem accepts null at runtime to clear selection,
+      // but TypeScript types don't reflect this. Cast is safe here.
+      selectItem(null as unknown as NormalizedItem<T>);
+      setLocalInputValue("");
+      onInputValueChange?.("");
+      inputRef.current?.focus();
+    },
+    [selectItem, onInputValueChange],
+  );
+
+  // Serialize value for hidden input
+  const serializedValue = useMemo(() => {
+    if (!selectedItem) return "";
+    return serializeValue(selectedItem.value, getOptionValue);
+  }, [selectedItem, getOptionValue]);
+
+  // Announce result count when filtering
+  const announceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => {
+    if (announceTimerRef.current) clearTimeout(announceTimerRef.current);
+    if (!currentInputValue) return undefined;
+    const count = filteredSelectableItems.length;
+    announceTimerRef.current = setTimeout(() => {
+      setAnnouncement(`${count} result${count !== 1 ? "s" : ""} available`);
+    }, 300);
+    return () => {
+      if (announceTimerRef.current) clearTimeout(announceTimerRef.current);
+    };
+  }, [filteredSelectableItems.length, currentInputValue]);
 
   return (
     <div
@@ -438,158 +688,133 @@ function ComboboxInner<T = string>(
       aria-busy={loading || undefined}
       data-ck="combobox"
       data-disabled={disabled || undefined}
-      data-has-error={error || undefined}
+      data-error={error || undefined}
+      data-has-value={selectedItem ? true : undefined}
       data-loading={loading || undefined}
+      data-readonly={readOnly || undefined}
+      data-required={required || undefined}
       data-state={isOpen ? "open" : "closed"}
       data-variant={variantName}
       ref={containerRef_}
     >
+      {/* Hidden input for form submission */}
+      {name && <input name={name} type="hidden" value={serializedValue} />}
+
+      {/* Live region for screen reader announcements */}
+      <div
+        aria-atomic="true"
+        aria-live="polite"
+        data-ck="combobox-live"
+        role="status"
+      >
+        {announcement}
+      </div>
+
       {/* Input area */}
       <div data-ck="combobox-input-wrapper" ref={inputWrapperRef_}>
         <input
-          {...getInputProps({ disabled, id: inputId })}
+          {...getInputProps({
+            autoFocus,
+            disabled: disabled || readOnly,
+            id: inputId,
+            onBlur,
+            ref: inputRef,
+            ...(ariaLabel !== undefined && { "aria-label": ariaLabel }),
+          })}
           aria-disabled={disabled || undefined}
+          // Override Downshift's auto-generated aria-labelledby so the input
+          // relies on its own content or the consumer-provided aria-label instead.
+          aria-labelledby={undefined}
+          aria-required={required || undefined}
           data-ck="combobox-input"
           placeholder={placeholder}
+          onFocus={handleInputFocus}
         />
+        {clearable && selectedItem && isInteractive && (
+          <button
+            aria-label="Clear selection"
+            data-ck="combobox-clear"
+            tabIndex={-1}
+            type="button"
+            onClick={handleClear}
+          >
+            <div aria-hidden="true" data-slot="icon" />
+          </button>
+        )}
         <button
-          {...getToggleButtonProps({ disabled })}
-          aria-label="toggle menu"
+          {...getToggleButtonProps({ disabled: disabled || readOnly })}
+          aria-label="Toggle menu"
           data-ck="combobox-trigger"
           data-state={isOpen ? "open" : "closed"}
           tabIndex={-1}
           type="button"
-        />
+        >
+          <div aria-hidden="true" data-slot="icon" />
+        </button>
       </div>
 
       {/* Dropdown content - Rendered in portal */}
       <FloatingPortal>
-        {isOpen && (
+        {isMounted && (
           <div
-            {...getMenuProps({ id: menuId, ref: menuRef })}
-            style={floatingProps.style}
-            aria-labelledby={inputId}
-            data-ck="combobox-content"
-            data-state="open"
+            style={{
+              ...floatingProps.style,
+              ...(!isOpen && { pointerEvents: "none" }),
+            }}
+            ref={floatingProps.ref}
           >
-            {/* Loading state */}
-            {loading && (
-              <div
-                aria-label="Loading results"
-                aria-live="polite"
-                data-ck="combobox-loading"
-                role="status"
-              >
-                {loadingContent}
-              </div>
-            )}
-
-            {/* Error state */}
-            {!loading && error && (
-              <div
-                aria-live="assertive"
-                data-ck="combobox-error"
-                role="alert"
-              >
-                {errorContent}
-              </div>
-            )}
-
-            {/* Empty state */}
-            {!loading && !error && filteredRenderItems.length === 0 && (
-              <div aria-live="polite" data-ck="combobox-empty" role="status">
-                {emptyContent}
-              </div>
-            )}
-
-            {!loading && !error && filteredRenderItems.map((renderItem, idx) => {
-              if (renderItem.type === "separator") {
-                return (
-                  <div
-                    key={`separator-${idx}`}
-                    aria-orientation="horizontal"
-                    data-ck="combobox-separator"
-                    role="separator"
-                  />
-                );
-              }
-
-              if (renderItem.type === "group") {
-                return (
-                  <div
-                    key={`group-${renderItem.groupIndex}`}
-                    aria-labelledby={renderItem.groupLabelId}
-                    data-ck="combobox-group"
-                    role="group"
-                  >
-                    <div
-                      id={renderItem.groupLabelId}
-                      data-ck="combobox-group-label"
-                      role="presentation"
-                    >
-                      {renderItem.groupLabel}
-                    </div>
-                    {renderItem.items.map(({ item, selectableIndex }) => {
-                      const isSelected = selectedItem
-                        ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
-                        : false;
-                      const isHighlighted = highlightedIndex === selectableIndex;
-                      const isDisabled = item.disabled ?? false;
-
-                      return (
-                        <div
-                          key={`item-${selectableIndex}`}
-                          {...getItemProps({
-                            disabled: isDisabled,
-                            index: selectableIndex,
-                            item,
-                          })}
-                          aria-disabled={isDisabled || undefined}
-                          aria-selected={isSelected}
-                          data-ck="combobox-item"
-                          data-disabled={isDisabled || undefined}
-                          data-highlighted={isHighlighted || undefined}
-                          data-state={isSelected ? "checked" : "unchecked"}
-                          role="option"
-                        >
-                          {item.label}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              }
-
-              // Standalone item (not in a group)
-              const { item, selectableIndex } = renderItem;
-              const isSelected = selectedItem
-                ? areValuesEqual(selectedItem.value, item.value, getOptionValue)
-                : false;
-              const isHighlighted = highlightedIndex === selectableIndex;
-              const isDisabled = item.disabled ?? false;
-
-              const itemProps = getItemProps({
-                disabled: isDisabled,
-                index: selectableIndex,
-                item,
-              });
-
-              return (
+            <div
+              {...getMenuProps({ id: menuId, ref: menuRef })}
+              aria-labelledby={inputId}
+              aria-orientation="vertical"
+              data-ck="combobox-content"
+              data-empty={(!loading && !error && filteredRenderItems.length === 0) || undefined}
+              data-side={side}
+              data-state={contentState}
+            >
+              {/* Loading state */}
+              {loading && (
                 <div
-                  key={`item-${selectableIndex}`}
-                  {...itemProps}
-                  aria-disabled={isDisabled || undefined}
-                  aria-selected={isSelected}
-                  data-ck="combobox-item"
-                  data-disabled={isDisabled || undefined}
-                  data-highlighted={isHighlighted || undefined}
-                  data-state={isSelected ? "checked" : "unchecked"}
-                  role="option"
+                  aria-label="Loading results"
+                  aria-live="polite"
+                  data-ck="combobox-loading"
+                  role="status"
                 >
-                  {item.label}
+                  {loadingContent}
                 </div>
-              );
-            })}
+              )}
+
+              {/* Error state */}
+              {!loading && error && (
+                <div aria-live="assertive" data-ck="combobox-error" role="alert">
+                  {errorContent}
+                </div>
+              )}
+
+              {/* Empty state */}
+              {!loading && !error && filteredRenderItems.length === 0 && (
+                <div aria-live="polite" data-ck="combobox-empty" role="status">
+                  {emptyContent}
+                </div>
+              )}
+
+              {!loading &&
+                !error &&
+                renderDropdownItems({
+                  getItemProps,
+                  highlightedIndex,
+                  isItemSelected: (item) =>
+                    selectedItem
+                      ? areValuesEqual(
+                          selectedItem.value,
+                          item.value,
+                          getOptionValue,
+                        )
+                      : false,
+                  prefix: "combobox",
+                  renderItems: filteredRenderItems,
+                })}
+            </div>
           </div>
         )}
       </FloatingPortal>

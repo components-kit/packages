@@ -87,62 +87,6 @@ Also accepts all standard `nav` HTML attributes.
 | `data-state` | Page button | `"active"`, `"inactive"` | Current page state |
 | `data-slot="page-item"` | List items | `"page-item"` | Structural slot |
 
-### Example CSS
-
-```css
-[data-ck="pagination"] {
-  display: flex;
-  align-items: center;
-}
-
-[data-ck="pagination-list"] {
-  display: flex;
-  list-style: none;
-  gap: 4px;
-  padding: 0;
-  margin: 0;
-}
-
-[data-ck="pagination-page"],
-[data-ck="pagination-previous"],
-[data-ck="pagination-next"],
-[data-ck="pagination-first"],
-[data-ck="pagination-last"] {
-  min-width: 32px;
-  min-height: 32px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: transparent;
-  cursor: pointer;
-}
-
-[data-ck="pagination-page"][data-state="active"] {
-  background: var(--color-primary);
-  color: var(--color-primary-foreground);
-  border-color: var(--color-primary);
-}
-
-[data-ck="pagination-previous"]::before { content: "\2039"; }
-[data-ck="pagination-next"]::before { content: "\203A"; }
-[data-ck="pagination-first"]::before { content: "\00AB"; }
-[data-ck="pagination-last"]::before { content: "\00BB"; }
-
-[data-ck="pagination"] [aria-disabled="true"] {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-[data-ck="pagination-ellipsis"] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-}
-```
-
 ## Accessibility
 
 Uses `<nav>` landmark with `aria-label="Pagination"` following the WAI-ARIA navigation landmark pattern.
@@ -178,7 +122,6 @@ Uses `<nav>` landmark with `aria-label="Pagination"` following the WAI-ARIA navi
 - Use offset mode when the total page count is known
 - Use cursor mode for infinite scroll or streaming data patterns
 - Provide a unique `aria-label` when multiple pagination components exist on the same page
-- Set navigation button content (arrows, chevrons, text) via CSS `content` on `data-ck` selectors
 - Ensure button targets are at minimum 24x24 CSS pixels (WCAG 2.5.8)
 - Ensure sufficient color contrast between active/inactive states (WCAG 1.4.3)
 - After dynamic page load, manage focus to the new content area in your application

@@ -206,54 +206,6 @@ sonnerToast.dismiss(toastId);
 sonnerToast.dismiss();
 ```
 
-## Styling
-
-All toast styling is controlled via CSS using data attributes. The component is headless and receives styles from your ComponentsKit API bundle.
-
-```css
-/* Target the toast container */
-[data-ck="toast"] {
-  /* base styles */
-}
-
-/* Target specific variants */
-[data-ck="toast"][data-variant="success"] {
-  /* success variant styles */
-}
-
-[data-ck="toast"][data-variant="error"] {
-  /* error variant styles */
-}
-
-/* Conditional styling based on content */
-[data-ck="toast"][data-has-action] {
-  /* styles when button is present */
-}
-
-/* Target internal slots */
-[data-ck="toast"] [data-slot="title"] {
-  /* title styles */
-}
-
-[data-ck="toast"] [data-slot="description"] {
-  /* description styles */
-}
-
-[data-ck="toast"] [data-slot="icon"] {
-  /* icon styles */
-}
-
-/* Target the action button (always size="sm") */
-[data-ck="toast"] [data-ck="button"] {
-  /* button styles */
-}
-
-/* Target action button by toast variant */
-[data-ck="toast"][data-variant="error"] [data-ck="button"] {
-  /* button styles for error toasts */
-}
-```
-
 ## Common Patterns
 
 ### Success Notification
