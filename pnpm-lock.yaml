@@ -47,7 +47,7 @@ importers:
         version: 9.39.2
       eslint-js:
         specifier: github:eslint/js
-        version: https://codeload.github.com/eslint/js/tar.gz/c5aa04641d4afe5098f1a661e3043d91e8794c09
+        version: https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c
       eslint-plugin-perfectionist:
         specifier: ^4.15.0
         version: 4.15.1(eslint@9.39.2)(typescript@5.9.3)
@@ -148,6 +148,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.2.4(react@19.2.4)
+      react-hook-form:
+        specifier: ^7.71.1
+        version: 7.71.1(react@19.2.4)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1756,8 +1759,8 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-js@https://codeload.github.com/eslint/js/tar.gz/c5aa04641d4afe5098f1a661e3043d91e8794c09:
-    resolution: {tarball: https://codeload.github.com/eslint/js/tar.gz/c5aa04641d4afe5098f1a661e3043d91e8794c09}
+  eslint-js@https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c:
+    resolution: {tarball: https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c}
     version: 0.0.0
 
   eslint-plugin-perfectionist@4.15.1:
@@ -2479,6 +2482,12 @@ packages:
 
   react-dom@19.2.4:
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
+    peerDependencies:
+      react: ^19.0.0
+
+  react-hook-form@7.71.1:
+    resolution: {integrity: sha512-9SUJKCGKo8HUSsCO+y0CtqkqI5nNuaDqTxyqPsZPqIwudpj4rCrAz/jZV+jn57bx5gtZKOh3neQu94DXMc+w5w==}
+    engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^19.0.0
 
@@ -4545,7 +4554,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-js@https://codeload.github.com/eslint/js/tar.gz/c5aa04641d4afe5098f1a661e3043d91e8794c09: {}
+  eslint-js@https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c: {}
 
   eslint-plugin-perfectionist@4.15.1(eslint@9.39.2)(typescript@5.9.3):
     dependencies:
@@ -5322,6 +5331,10 @@ snapshots:
     dependencies:
       react: 19.2.4
       scheduler: 0.27.0
+
+  react-hook-form@7.71.1(react@19.2.4):
+    dependencies:
+      react: 19.2.4
 
   react-is@16.13.1: {}
 

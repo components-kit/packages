@@ -27,6 +27,12 @@ export interface UseFloatingSelectOptions {
    */
   isOpen: boolean;
   /**
+   * Maximum height of the dropdown in pixels.
+   * When set, the dropdown height will not exceed this value,
+   * even if more viewport space is available.
+   */
+  maxDropdownHeight?: number;
+  /**
    * Offset distance in pixels between trigger and dropdown.
    * @default 8
    */
@@ -64,6 +70,11 @@ export interface UseFloatingSelectReturn {
    * Includes ref and inline styles for positioning and sizing.
    */
   floatingProps: {
+    /**
+     * Resolved placement after middleware (e.g., flip) has been applied.
+     * May differ from the requested placement if the dropdown was flipped.
+     */
+    placement: Placement;
     ref: (node: HTMLElement | null) => void;
     style: React.CSSProperties;
   };
@@ -85,7 +96,7 @@ export interface UseFloatingSelectReturn {
  *
  * **Select-specific features:**
  * - **Width matching:** Dropdown min-width matches trigger width
- * - **Dynamic height:** Max-height adapts to available viewport space (like Radix/shadcn)
+ * - **Dynamic height:** Max-height adapts to available viewport space
  * - **Auto-scroll:** Adds `overflow-y: auto` when content exceeds max-height
  *
  * **Universal middleware (inherited):**
@@ -163,6 +174,7 @@ export function useFloatingSelect(
 ): UseFloatingSelectReturn {
   const {
     isOpen,
+    maxDropdownHeight,
     offsetDistance = 8,
     placement = "bottom-start",
     strategy = "absolute",
@@ -177,8 +189,11 @@ export function useFloatingSelect(
       size({
         apply({ availableHeight, elements, rects }) {
           // Match trigger width (minimum) + dynamic max-height
+          const effectiveMaxHeight = maxDropdownHeight
+            ? Math.min(availableHeight, maxDropdownHeight)
+            : availableHeight;
           Object.assign(elements.floating.style, {
-            maxHeight: `${availableHeight}px`,
+            maxHeight: `${effectiveMaxHeight}px`,
             minWidth: `${rects.reference.width}px`,
             overflowY: "auto",
           });
@@ -187,7 +202,7 @@ export function useFloatingSelect(
       }),
       hide({ strategy: "referenceHidden" }),
     ],
-    [offsetDistance, viewportPadding],
+    [maxDropdownHeight, offsetDistance, viewportPadding],
   );
 
   const floating = useFloatingUI({
@@ -201,6 +216,7 @@ export function useFloatingSelect(
   return {
     context: floating,
     floatingProps: {
+      placement: floating.placement,
       ref: floating.refs.setFloating,
       style: floating.floatingStyles,
     },

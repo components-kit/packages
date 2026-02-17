@@ -26,9 +26,9 @@
 | Component   | Lines | Complexity | Key Features                                                                                     |
 | ----------- | ----- | ---------- | ------------------------------------------------------------------------------------------------ |
 | Table       | ~830  | High       | Sorting, pagination (data slicing), filtering, row selection (TanStack Table)                    |
-| Select      | ~420  | High       | Dropdown with groups, type-ahead, keyboard nav, icon slot, placement (Downshift + Floating UI)   |
-| Combobox    | ~500  | High       | Searchable select with text filtering, async/loading/error support, keyboard nav (Downshift + Floating UI) |
-| MultiSelect | ~600  | High       | Multi-value select with tags, filtering, tag keyboard nav (Downshift + Floating UI)              |
+| Select      | ~520  | High       | Dropdown with groups, type-ahead, keyboard nav, icon slot, placement, form integration, read-only, error state, live region (Downshift + Floating UI) |
+| Combobox    | ~775  | High       | Searchable select with text filtering, clearable, placement, form integration, read-only, error state, live region with result count, async/loading support, autoFocus, onBlur/onFocus, keyboard nav (Downshift + Floating UI) |
+| MultiSelect | ~1015 | High       | Multi-value select with tags, filtering, tag keyboard nav, clearable, fixed tags, token separators, form integration, read-only, error state, live region (Downshift + Floating UI) |
 | Tabs        | ~300  | Medium     | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook)                            |
 | Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                                    |
 | Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                              |
@@ -123,8 +123,12 @@
 │                     src/hooks/, src/utils/ & types/                      │
 ├─────────────────────────────────────────────────────────────────────────┤
 │  hooks/use-floating-select.ts ─── Floating UI dropdown positioning      │
+│  hooks/use-exit-transition.ts ─── delayed unmount for CSS exit anims    │
 │  hooks/use-debounced-callback.ts ── debounced async callbacks           │
-│  utils/select.ts ─── processOptions, filterRenderItems, areValuesEqual  │
+│  utils/select.ts ─── processOptions, filterRenderItems, areValuesEqual, │
+│                       serializeValue, findItemByValue, findItemsByValue  │
+│  utils/render-dropdown-items.tsx ── shared dropdown item renderer        │
+│                       (Select, MultiSelect, Combobox)                    │
 │  utils/merge-refs.ts ─── ref merging utility                            │
 │  forward-ref.ts ─── polymorphicForwardRef(), createPolymorphicComponent │
 │  types/index.ts ─── PolymorphicComponentProps, PolymorphicRef           │

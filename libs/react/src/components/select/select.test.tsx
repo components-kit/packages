@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Select } from "./select";
 
@@ -15,6 +15,35 @@ describe("Select Component", () => {
       const select = container.querySelector('[data-ck="select"]');
       expect(select).toBeInTheDocument();
       expect(select).toHaveAttribute("data-state", "closed");
+    });
+
+    it("has data-placeholder on value span when no selection", () => {
+      const { container } = render(
+        <Select
+          options={["apple", "banana"]}
+          placeholder="Select a fruit..."
+        />,
+      );
+
+      const valueSpan = container.querySelector('[data-ck="select-value"]');
+      expect(valueSpan).toHaveAttribute("data-placeholder", "");
+    });
+
+    it("removes data-placeholder after selection", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select
+          options={["apple", "banana"]}
+          placeholder="Select..."
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+      await user.click(screen.getByRole("option", { name: "apple" }));
+
+      const valueSpan = container.querySelector('[data-ck="select-value"]');
+      expect(valueSpan).not.toHaveAttribute("data-placeholder");
+      expect(valueSpan).toHaveTextContent("apple");
     });
 
     it("renders placeholder when no value selected", () => {
@@ -321,7 +350,9 @@ describe("Select Component", () => {
       await user.click(screen.getByRole("combobox"));
       await user.click(screen.getByRole("option", { name: "Apple" }));
 
-      expect(screen.getByText("Apple")).toBeInTheDocument();
+      expect(
+        document.querySelector('[data-ck="select-value"]'),
+      ).toHaveTextContent("Apple");
     });
   });
 
@@ -425,7 +456,9 @@ describe("Select Component", () => {
   describe("Keyboard Navigation", () => {
     it("opens menu with Enter key", async () => {
       const user = userEvent.setup();
-      const { container } = render(<Select options={["apple", "banana"]} />);
+      const { container } = render(
+        <Select openOnFocus={false} options={["apple", "banana"]} />,
+      );
 
       const trigger = screen.getByRole("combobox");
       trigger.focus();
@@ -437,7 +470,9 @@ describe("Select Component", () => {
 
     it("opens menu with Space key", async () => {
       const user = userEvent.setup();
-      const { container } = render(<Select options={["apple", "banana"]} />);
+      const { container } = render(
+        <Select openOnFocus={false} options={["apple", "banana"]} />,
+      );
 
       const trigger = screen.getByRole("combobox");
       trigger.focus();
@@ -479,6 +514,20 @@ describe("Select Component", () => {
       expect(highlightedItems.length).toBe(1);
     });
 
+    it("returns focus to trigger after selecting with Enter", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select options={["apple", "banana"]} />,
+      );
+
+      const trigger = screen.getByRole("combobox");
+      await user.click(trigger);
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{Enter}");
+
+      expect(document.activeElement).toBe(trigger);
+    });
+
     it("selects item with Enter key", async () => {
       const onValueChange = vi.fn();
       const user = userEvent.setup();
@@ -492,6 +541,74 @@ describe("Select Component", () => {
       await user.keyboard("{Enter}");
 
       expect(onValueChange).toHaveBeenCalled();
+    });
+
+    it("jumps to first item with Home key", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana", "cherry", "date"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{ArrowDown}");
+      await user.keyboard("{ArrowDown}");
+      // Now on "date" (index 3)
+
+      await user.keyboard("{Home}");
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      expect(items[0]).toHaveAttribute("data-highlighted", "true");
+    });
+
+    it("jumps to last item with End key", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana", "cherry", "date"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{ArrowDown}");
+      // Now on "apple" (index 0)
+
+      await user.keyboard("{End}");
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      expect(items[items.length - 1]).toHaveAttribute("data-highlighted", "true");
+    });
+
+    it("supports type-ahead character search", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={["apple", "apricot", "banana", "blueberry", "cherry"]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      // Type "b" to jump to first item starting with "b"
+      await user.keyboard("b");
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      // Should highlight "banana" (index 2)
+      expect(items[2]).toHaveAttribute("data-highlighted", "true");
+      expect(items[2]).toHaveTextContent("banana");
+    });
+
+    it("supports type-ahead with rapid character input", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={["apple", "apricot", "banana", "blueberry", "cherry"]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      // Rapidly type "bl" to match "blueberry"
+      await user.keyboard("bl");
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      // Should highlight "blueberry" (index 3)
+      expect(items[3]).toHaveAttribute("data-highlighted", "true");
+      expect(items[3]).toHaveTextContent("blueberry");
     });
   });
 
@@ -545,6 +662,17 @@ describe("Select Component", () => {
       expect(listbox).toHaveAttribute("id", controlsId);
     });
 
+    it("listbox has aria-labelledby pointing to trigger id", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      const trigger = screen.getByRole("combobox");
+      await user.click(trigger);
+
+      const listbox = screen.getByRole("listbox");
+      expect(listbox).toHaveAttribute("aria-labelledby", trigger.id);
+    });
+
     it("marks selected item with aria-selected", async () => {
       const user = userEvent.setup();
       render(
@@ -575,6 +703,34 @@ describe("Select Component", () => {
     });
   });
 
+  describe("aria-label", () => {
+    it("applies aria-label to trigger button", () => {
+      render(
+        <Select
+          aria-label="Choose a fruit"
+          options={["apple", "banana"]}
+        />,
+      );
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveAttribute("aria-label", "Choose a fruit");
+    });
+
+    it("works without aria-label when not provided", () => {
+      render(<Select options={["apple", "banana"]} />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).not.toHaveAttribute("aria-label");
+    });
+
+    it("does not have dangling aria-labelledby on trigger", () => {
+      render(<Select options={["apple", "banana"]} />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).not.toHaveAttribute("aria-labelledby");
+    });
+  });
+
   describe("Data Attributes", () => {
     it("has data-state on trigger and content", async () => {
       const user = userEvent.setup();
@@ -589,7 +745,10 @@ describe("Select Component", () => {
 
       expect(trigger).toHaveAttribute("data-state", "open");
       const content = document.querySelector('[data-ck="select-content"]');
-      expect(content).toHaveAttribute("data-state", "open");
+      // content data-state transitions to "open" after rAF
+      await waitFor(() => {
+        expect(content).toHaveAttribute("data-state", "open");
+      });
     });
 
     it("has data-state on items for selection state", async () => {
@@ -627,6 +786,17 @@ describe("Select Component", () => {
   });
 
   describe("Edge Cases", () => {
+    it("renders custom emptyContent when options are empty", async () => {
+      const user = userEvent.setup();
+      render(<Select emptyContent="Nothing here" options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const emptyEl = document.querySelector('[data-ck="select-empty"]');
+      expect(emptyEl).toBeInTheDocument();
+      expect(emptyEl).toHaveTextContent("Nothing here");
+    });
+
     it("handles empty options array", () => {
       const { container } = render(<Select options={[]} />);
 
@@ -703,7 +873,58 @@ describe("Select Component", () => {
     });
   });
 
+  describe("Item Icon Slot", () => {
+    it("renders trailing icon slot inside each dropdown item", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana", "cherry"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      for (const item of items) {
+        const iconSlot = item.querySelector('[data-slot="icon"]');
+        expect(iconSlot).toBeInTheDocument();
+        expect(iconSlot).toHaveAttribute("aria-hidden", "true");
+      }
+    });
+
+    it("renders trailing icon slot inside grouped items", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={[
+            {
+              label: "Fruits",
+              options: ["apple", "banana"],
+              type: "group",
+            },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const items = document.querySelectorAll('[data-ck="select-item"]');
+      expect(items).toHaveLength(2);
+      for (const item of items) {
+        const iconSlot = item.querySelector('[data-slot="icon"]');
+        expect(iconSlot).toBeInTheDocument();
+        expect(iconSlot).toHaveAttribute("aria-hidden", "true");
+      }
+    });
+  });
+
   describe("Placement", () => {
+    it("sets data-side attribute on content reflecting placement", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const content = document.querySelector('[data-ck="select-content"]');
+      expect(content).toHaveAttribute("data-side");
+    });
+
     it("accepts placement prop without error", () => {
       expect(() =>
         render(<Select options={["apple"]} placement="top-start" />),
@@ -719,6 +940,507 @@ describe("Select Component", () => {
       expect(() =>
         render(<Select options={["apple"]} placement="bottom-end" />),
       ).not.toThrow();
+    });
+  });
+
+  describe("maxDropdownHeight", () => {
+    it("renders without error when maxDropdownHeight is provided", () => {
+      expect(() =>
+        render(<Select maxDropdownHeight={300} options={["apple", "banana"]} />),
+      ).not.toThrow();
+    });
+  });
+
+  describe("onOpenChange", () => {
+    it("fires with true when dropdown opens", async () => {
+      const onOpenChange = vi.fn();
+      const user = userEvent.setup();
+
+      render(
+        <Select
+          options={["apple", "banana"]}
+          onOpenChange={onOpenChange}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+    });
+
+    it("fires with false when dropdown closes via Escape", async () => {
+      const onOpenChange = vi.fn();
+      const user = userEvent.setup();
+
+      render(
+        <Select
+          options={["apple", "banana"]}
+          onOpenChange={onOpenChange}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+      onOpenChange.mockClear();
+
+      await user.keyboard("{Escape}");
+
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe("openOnFocus", () => {
+    it("opens dropdown when trigger receives focus and openOnFocus is true", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus options={["apple", "banana"]} />,
+      );
+
+      await user.tab();
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-state", "open");
+    });
+
+    it("does not open dropdown on focus when openOnFocus is false", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus={false} options={["apple", "banana"]} />,
+      );
+
+      await user.tab();
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-state", "closed");
+    });
+
+    it("closes dropdown when trigger is clicked while open", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus={false} options={["apple", "banana"]} />,
+      );
+
+      const trigger = container.querySelector('[data-ck="select-trigger"]')!;
+      const select = container.querySelector('[data-ck="select"]')!;
+
+      // Click to open
+      await user.click(trigger);
+      expect(select).toHaveAttribute("data-state", "open");
+
+      // Click again to close
+      await user.click(trigger);
+      expect(select).toHaveAttribute("data-state", "closed");
+    });
+
+    it("does not immediately close when trigger is clicked after focus-open", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus options={["apple", "banana"]} />,
+      );
+
+      // Click the trigger — this fires focus (opens) then click (should NOT toggle-close)
+      const trigger = container.querySelector('[data-ck="select-trigger"]')!;
+      await user.click(trigger);
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-state", "open");
+    });
+
+    it("reopens correctly after clicking outside to close then clicking trigger", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus options={["apple", "banana"]} />,
+      );
+
+      const trigger = container.querySelector('[data-ck="select-trigger"]')!;
+      const select = container.querySelector('[data-ck="select"]')!;
+
+      // Open by clicking trigger
+      await user.click(trigger);
+      expect(select).toHaveAttribute("data-state", "open");
+
+      // Close by clicking outside
+      await user.click(document.body);
+      expect(select).toHaveAttribute("data-state", "closed");
+
+      // Re-click trigger — should reopen, not flash open/close
+      await user.click(trigger);
+      expect(select).toHaveAttribute("data-state", "open");
+    });
+
+    it("reopens correctly after tab-open, click-outside-close, then click trigger", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select openOnFocus options={["apple", "banana"]} />,
+      );
+
+      const trigger = container.querySelector('[data-ck="select-trigger"]')!;
+      const select = container.querySelector('[data-ck="select"]')!;
+
+      // 1. Tab to focus trigger — openOnFocus opens the dropdown
+      await user.tab();
+      expect(select).toHaveAttribute("data-state", "open");
+
+      // 2. Click outside — closes dropdown and blurs trigger
+      await user.click(document.body);
+      expect(select).toHaveAttribute("data-state", "closed");
+
+      // 3. Click trigger to reopen — should stay open
+      await user.click(trigger);
+      expect(select).toHaveAttribute("data-state", "open");
+    });
+  });
+
+  describe("autoFocus", () => {
+    it("focuses the trigger on mount when autoFocus is true", () => {
+      render(<Select autoFocus options={["apple", "banana"]} />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveFocus();
+    });
+
+    it("does not focus trigger on mount when autoFocus is false", () => {
+      render(<Select options={["apple", "banana"]} />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).not.toHaveFocus();
+    });
+  });
+
+  describe("Read-only Mode", () => {
+    it("applies data-readonly on root when readOnly is true", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} readOnly />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-readonly", "true");
+    });
+
+    it("disables trigger button when readOnly", () => {
+      render(<Select options={["apple", "banana"]} readOnly />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toBeDisabled();
+    });
+
+    it("does not open dropdown when readOnly", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select options={["apple", "banana"]} readOnly />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-state", "closed");
+    });
+
+    it("does not call onOpenChange when readOnly", async () => {
+      const onOpenChange = vi.fn();
+      const user = userEvent.setup();
+
+      render(
+        <Select
+          options={["apple", "banana"]}
+          readOnly
+          onOpenChange={onOpenChange}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Form Integration (name prop)", () => {
+    it("renders hidden input with name attribute when name prop is set", () => {
+      const { container } = render(
+        <Select name="fruit" options={["apple", "banana"]} />,
+      );
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      expect(hiddenInput).toBeInTheDocument();
+      expect(hiddenInput).toHaveAttribute("name", "fruit");
+    });
+
+    it("hidden input has empty value when nothing is selected", () => {
+      const { container } = render(
+        <Select name="fruit" options={["apple", "banana"]} />,
+      );
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      expect(hiddenInput).toHaveAttribute("value", "");
+    });
+
+    it("hidden input has the selected value when an item is selected", () => {
+      const { container } = render(
+        <Select
+          name="fruit"
+          options={["apple", "banana"]}
+          value="apple"
+        />,
+      );
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      expect(hiddenInput).toHaveAttribute("value", "apple");
+    });
+
+    it("updates hidden input value after user selects an item", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <Select
+          name="fruit"
+          options={["apple", "banana"]}
+        />,
+      );
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      expect(hiddenInput).toHaveAttribute("value", "");
+
+      await user.click(screen.getByRole("combobox"));
+      await user.click(screen.getByRole("option", { name: "apple" }));
+
+      expect(hiddenInput).toHaveAttribute("value", "apple");
+    });
+
+    it("does not render hidden input when name is not set", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} />,
+      );
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      expect(hiddenInput).not.toBeInTheDocument();
+    });
+  });
+
+  describe("Required", () => {
+    it("applies data-required on root when required is true", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} required />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-required", "true");
+    });
+
+    it("applies aria-required on the trigger button when required is true", () => {
+      render(<Select options={["apple", "banana"]} required />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveAttribute("aria-required", "true");
+    });
+
+    it("does not have data-required when required is false", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).not.toHaveAttribute("data-required");
+    });
+  });
+
+  describe("data-has-value", () => {
+    it("is not present when no value is selected", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} placeholder="Select..." />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).not.toHaveAttribute("data-has-value");
+    });
+
+    it("is present when a value is selected (controlled)", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} value="apple" />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-has-value", "true");
+    });
+  });
+
+  describe("data-error", () => {
+    it("is present on root when error is true", () => {
+      const { container } = render(
+        <Select error options={["apple", "banana"]} />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-error", "true");
+    });
+
+    it("is not present when error is false", () => {
+      const { container } = render(
+        <Select options={["apple", "banana"]} />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).not.toHaveAttribute("data-error");
+    });
+  });
+
+  describe("data-empty on content", () => {
+    it("is present on dropdown content when there are no options", async () => {
+      const user = userEvent.setup();
+      render(<Select options={[]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const content = document.querySelector('[data-ck="select-content"]');
+      expect(content).toHaveAttribute("data-empty", "true");
+    });
+
+    it("is not present when there are options", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const content = document.querySelector('[data-ck="select-content"]');
+      expect(content).not.toHaveAttribute("data-empty");
+    });
+  });
+
+  describe("Live Region", () => {
+    it("renders live region element with data-ck select-live", () => {
+      render(<Select options={["apple", "banana"]} />);
+
+      const liveRegion = document.querySelector('[data-ck="select-live"]');
+      expect(liveRegion).toBeInTheDocument();
+    });
+
+    it("has aria-live polite and role status", () => {
+      render(<Select options={["apple", "banana"]} />);
+
+      const liveRegion = document.querySelector('[data-ck="select-live"]');
+      expect(liveRegion).toHaveAttribute("aria-live", "polite");
+      expect(liveRegion).toHaveAttribute("role", "status");
+    });
+
+    it("clears announcement after 1000ms", async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={[
+            { label: "Apple", value: "apple" },
+            { label: "Banana", value: "banana" },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+      await user.click(screen.getByRole("option", { name: "Apple" }));
+
+      const liveRegion = document.querySelector('[data-ck="select-live"]');
+      expect(liveRegion).toHaveTextContent("Apple selected");
+
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
+
+      expect(liveRegion).toHaveTextContent("");
+      vi.useRealTimers();
+    });
+
+    it("announces selection after selecting an item", async () => {
+      const user = userEvent.setup();
+      render(
+        <Select
+          options={[
+            { label: "Apple", value: "apple" },
+            { label: "Banana", value: "banana" },
+          ]}
+        />,
+      );
+
+      await user.click(screen.getByRole("combobox"));
+      await user.click(screen.getByRole("option", { name: "Apple" }));
+
+      const liveRegion = document.querySelector('[data-ck="select-live"]');
+      expect(liveRegion).toHaveTextContent("Apple selected");
+    });
+  });
+
+  describe("aria-orientation on listbox", () => {
+    it("has aria-orientation vertical on the listbox when open", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const listbox = screen.getByRole("listbox");
+      expect(listbox).toHaveAttribute("aria-orientation", "vertical");
+    });
+  });
+
+  describe("exit transition", () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("sets data-state='open' on content when dropdown is open", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+
+      const content = document.querySelector('[data-ck="select-content"]');
+      expect(content).toHaveAttribute("data-state", "open");
+    });
+
+    it("sets data-state='closed' on content before unmounting", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      expect(
+        document.querySelector('[data-ck="select-content"]'),
+      ).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+
+      // Content should still be in DOM with data-state="closed"
+      const content = document.querySelector('[data-ck="select-content"]');
+      expect(content).toBeInTheDocument();
+      expect(content).toHaveAttribute("data-state", "closed");
+    });
+
+    it("removes content from DOM after exit duration", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{Escape}");
+
+      // Advance past exit duration
+      act(() => {
+        vi.advanceTimersByTime(150);
+      });
+
+      expect(
+        document.querySelector('[data-ck="select-content"]'),
+      ).not.toBeInTheDocument();
+    });
+
+    it("disables pointer events during exit animation", async () => {
+      const user = userEvent.setup();
+      render(<Select options={["apple", "banana"]} />);
+
+      await user.click(screen.getByRole("combobox"));
+      await user.keyboard("{Escape}");
+
+      const content = document.querySelector(
+        '[data-ck="select-content"]',
+      ) as HTMLElement;
+      // pointerEvents is on the outer positioning wrapper, not the inner content div
+      expect(content.parentElement!.style.pointerEvents).toBe("none");
     });
   });
 });

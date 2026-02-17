@@ -291,6 +291,18 @@ function findItemsByValue<T>(
     .filter((item): item is NormalizedItem<T> => item !== undefined);
 }
 
+/**
+ * Serializes an option value to a string for form submission.
+ * Uses getOptionValue when provided, otherwise coerces via String().
+ */
+function serializeValue<T>(
+  value: T,
+  getOptionValue?: (option: T) => number | string,
+): string {
+  if (getOptionValue) return String(getOptionValue(value));
+  return String(value);
+}
+
 export {
   areValuesEqual,
   defaultFilterFn,
@@ -302,4 +314,5 @@ export {
   normalizeOption,
   normalizeStringOption,
   processOptions,
+  serializeValue,
 };
