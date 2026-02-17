@@ -6,16 +6,13 @@ import { InfoIcon, SearchIcon } from "./shared-data";
 function IconPreview() {
   return (
     <div style={{ alignItems: "center", display: "flex", gap: "16px" }}>
-      <Icon aria-hidden="true" height="16px" width="16px">
+      <Icon size="sm">
         <InfoIcon />
       </Icon>
-      <Icon aria-hidden="true" height="24px" width="24px">
+      <Icon>
         <InfoIcon />
       </Icon>
-      <Icon aria-hidden="true" height="32px" width="32px">
-        <InfoIcon />
-      </Icon>
-      <Icon aria-hidden="true" height="48px" width="48px">
+      <Icon size="lg">
         <SearchIcon />
       </Icon>
     </div>
@@ -25,16 +22,13 @@ function IconPreview() {
 export const iconDemo: ComponentDemo = {
   code: `import { Icon } from "@components-kit/react";
 
-<Icon aria-hidden="true" height="16px" width="16px">
+<Icon size="sm">
   <InfoIcon />
 </Icon>
-<Icon aria-hidden="true" height="24px" width="24px">
+<Icon>
   <InfoIcon />
 </Icon>
-<Icon aria-hidden="true" height="32px" width="32px">
-  <InfoIcon />
-</Icon>
-<Icon aria-hidden="true" height="48px" width="48px">
+<Icon size="lg">
   <SearchIcon />
 </Icon>`,
   id: "icon",

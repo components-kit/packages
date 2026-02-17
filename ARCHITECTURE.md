@@ -31,7 +31,7 @@
 | MultiSelect | ~1015 | High       | Multi-value select with tags, filtering, tag keyboard nav, clearable, fixed tags, token separators, form integration, read-only, error state, live region (Downshift + Floating UI) |
 | Tabs        | ~300  | Medium     | Roving tabindex, keyboard nav, controlled/uncontrolled (useTabs hook)                            |
 | Slot        | 267   | Medium     | Enables `asChild` pattern, smart prop merging                                                    |
-| Icon        | 178   | Medium     | Polymorphic, aria-hidden by default                                                              |
+| Icon        | ~110  | Low        | Icon wrapper, size variants (sm/md/lg), aria-hidden by default                                   |
 | Button      | 168   | Medium     | Polymorphic, asChild, loading states                                                             |
 | Toast       | ~150  | Medium     | Sonner integration, semantic markup, Button component for action                                 |
 | Textarea    | ~150  | Low        | Auto-resize support                                                                              |
@@ -51,7 +51,7 @@
 
 ### Core Patterns
 
-1. **Polymorphic** — Components render as different elements: `<Button as="a">`
+1. **Polymorphic** — Some components render as different elements: `<Heading as="h2">`
 2. **AsChild** — Merge props with children via Slot: `<Button asChild><Link/></Button>`
 3. **Data Attributes** — Styling hooks: `data-variant`, `data-size`, `data-loading`
 4. **Accessibility** — ARIA compliant, keyboard navigation, semantic HTML

@@ -16,46 +16,47 @@ describe("Icon Component", () => {
       expect(screen.getByTestId("icon-svg")).toBeInTheDocument();
     });
 
-    it("renders as span by default", () => {
+    it("renders as span", () => {
       render(<Icon data-testid="icon">Icon content</Icon>);
 
       const icon = screen.getByTestId("icon");
       expect(icon.tagName).toBe("SPAN");
     });
 
-    it("applies default dimensions", () => {
+    it("sets data-ck attribute", () => {
       render(<Icon data-testid="icon">Content</Icon>);
 
       const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("width: 20px");
-      expect(icon).toHaveStyle("height: 20px");
+      expect(icon).toHaveAttribute("data-ck", "icon");
     });
 
-    it("applies custom dimensions", () => {
+    it("applies default size of md", () => {
+      render(<Icon data-testid="icon">Content</Icon>);
+
+      const icon = screen.getByTestId("icon");
+      expect(icon).toHaveAttribute("data-size", "md");
+    });
+
+    it("renders with sm size", () => {
       render(
-        <Icon data-testid="icon" height="32px" width="32px">
+        <Icon data-testid="icon" size="sm">
           Content
         </Icon>
       );
 
       const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("width: 32px");
-      expect(icon).toHaveStyle("height: 32px");
+      expect(icon).toHaveAttribute("data-size", "sm");
     });
 
-    it("applies inline-flex display", () => {
-      render(<Icon data-testid="icon">Content</Icon>);
+    it("renders with lg size", () => {
+      render(
+        <Icon data-testid="icon" size="lg">
+          Content
+        </Icon>
+      );
 
       const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("display: inline-flex");
-    });
-
-    it("centers content with flexbox", () => {
-      render(<Icon data-testid="icon">Content</Icon>);
-
-      const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("align-items: center");
-      expect(icon).toHaveStyle("justify-content: center");
+      expect(icon).toHaveAttribute("data-size", "lg");
     });
 
     it("applies variant name as data attribute", () => {
@@ -77,51 +78,9 @@ describe("Icon Component", () => {
     });
   });
 
-  describe("Polymorphic Rendering", () => {
-    it("renders as div when specified", () => {
-      render(
-        <Icon as="div" data-testid="icon">
-          Content
-        </Icon>
-      );
-
-      const icon = screen.getByTestId("icon");
-      expect(icon.tagName).toBe("DIV");
-    });
-
-    it("renders as i when specified", () => {
-      render(
-        <Icon as="i" data-testid="icon">
-          Content
-        </Icon>
-      );
-
-      const icon = screen.getByTestId("icon");
-      expect(icon.tagName).toBe("I");
-    });
-
-    it("switches element type on rerender", () => {
-      const { rerender } = render(
-        <Icon as="span" data-testid="icon">
-          Content
-        </Icon>
-      );
-
-      expect(screen.getByTestId("icon").tagName).toBe("SPAN");
-
-      rerender(
-        <Icon as="div" data-testid="icon">
-          Content
-        </Icon>
-      );
-
-      expect(screen.getByTestId("icon").tagName).toBe("DIV");
-    });
-  });
-
   describe("Ref Forwarding", () => {
     it("forwards ref to span element", () => {
-      const ref = React.createRef<HTMLElement>();
+      const ref = React.createRef<HTMLSpanElement>();
 
       render(<Icon ref={ref}>Content</Icon>);
 
@@ -129,22 +88,9 @@ describe("Icon Component", () => {
       expect(ref.current?.tagName).toBe("SPAN");
     });
 
-    it("forwards ref to different element types", () => {
-      const ref = React.createRef<HTMLElement>();
-
-      render(
-        <Icon as="div" ref={ref}>
-          Content
-        </Icon>
-      );
-
-      expect(ref.current).toBeInstanceOf(HTMLDivElement);
-      expect(ref.current?.tagName).toBe("DIV");
-    });
-
     it("works with callback refs", () => {
-      let refElement: HTMLElement | null = null;
-      const callbackRef = (element: HTMLElement | null) => {
+      let refElement: HTMLSpanElement | null = null;
+      const callbackRef = (element: HTMLSpanElement | null) => {
         refElement = element;
       };
 
@@ -153,17 +99,16 @@ describe("Icon Component", () => {
       expect(refElement).toBeInstanceOf(HTMLSpanElement);
     });
 
-    it("ref is accessible for DOM manipulation", () => {
-      const ref = React.createRef<HTMLElement>();
+    it("ref is accessible for DOM access", () => {
+      const ref = React.createRef<HTMLSpanElement>();
 
       render(
-        <Icon height="32px" width="24px" ref={ref}>
+        <Icon size="lg" ref={ref}>
           Content
         </Icon>
       );
 
-      expect(ref.current?.style.width).toBe("24px");
-      expect(ref.current?.style.height).toBe("32px");
+      expect(ref.current?.dataset.size).toBe("lg");
     });
   });
 
@@ -191,40 +136,11 @@ describe("Icon Component", () => {
       expect(icon).toHaveClass("custom-class", "another-class");
     });
 
-    it("merges style correctly with dimensions", () => {
-      render(
-        <Icon
-          style={{ color: "red", opacity: 0.5 }}
-          data-testid="icon"
-          height="32px"
-          width="24px"
-        >
-          Content
-        </Icon>
-      );
+    it("does not render inline styles", () => {
+      render(<Icon data-testid="icon">Content</Icon>);
 
       const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle({ color: "rgb(255, 0, 0)" });
-      expect(icon).toHaveStyle("opacity: 0.5");
-      expect(icon).toHaveStyle("width: 24px");
-      expect(icon).toHaveStyle("height: 32px");
-    });
-
-    it("dimension props override style dimensions", () => {
-      render(
-        <Icon
-          style={{ height: "10px", width: "10px" }}
-          data-testid="icon"
-          height="32px"
-          width="24px"
-        >
-          Content
-        </Icon>
-      );
-
-      const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("width: 24px");
-      expect(icon).toHaveStyle("height: 32px");
+      expect(icon).not.toHaveAttribute("style");
     });
 
     it("supports event handlers", () => {
@@ -271,12 +187,10 @@ describe("Icon Component", () => {
       );
 
       const icon = screen.getByTestId("icon");
-      // aria-hidden={false} renders as aria-hidden="false" in DOM, which unhides the element
       expect(icon).toHaveAttribute("aria-hidden", "false");
     });
 
     it("supports aria-label for meaningful icons (requires aria-hidden override)", () => {
-      // For meaningful icons, consumers must override aria-hidden={false}
       render(
         <Icon aria-hidden={false} aria-label="Close button" role="img">
           <svg />
@@ -288,8 +202,6 @@ describe("Icon Component", () => {
     });
 
     it("supports role attribute (requires aria-hidden override)", () => {
-      // By default, Icon has aria-hidden="true". To make it accessible,
-      // consumers must override with aria-hidden={false}
       render(
         <Icon aria-hidden={false} data-testid="icon" role="img">
           <svg />
@@ -365,30 +277,6 @@ describe("Icon Component", () => {
 
       const icon = screen.getByTestId("icon");
       expect(icon).toBeInTheDocument();
-    });
-
-    it("handles zero dimensions", () => {
-      render(
-        <Icon data-testid="icon" height="0px" width="0px">
-          Content
-        </Icon>
-      );
-
-      const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("width: 0px");
-      expect(icon).toHaveStyle("height: 0px");
-    });
-
-    it("handles percentage dimensions", () => {
-      render(
-        <Icon data-testid="icon" height="100%" width="50%">
-          Content
-        </Icon>
-      );
-
-      const icon = screen.getByTestId("icon");
-      expect(icon).toHaveStyle("width: 50%");
-      expect(icon).toHaveStyle("height: 100%");
     });
 
     it("handles multiple children", () => {
