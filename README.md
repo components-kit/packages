@@ -214,7 +214,7 @@ Some components support the `as` prop to render as different HTML elements:
 <Button as="a" href="/home" variantName="link">Go Home</Button>
 ```
 
-**Polymorphic components:** Button, Heading, Icon, Text
+**Polymorphic components:** Button, Heading, Text
 
 ### Composition with asChild
 
@@ -241,7 +241,7 @@ import Link from "next/link";
 | [Button](libs/react/src/components/button/README.md)            | Polymorphic button with loading, icons, and composition support                                              | -                                 |
 | [Checkbox](libs/react/src/components/checkbox/README.md)        | Boolean selection with indeterminate state support                                                           | -                                 |
 | [Heading](libs/react/src/components/heading/README.md)          | Polymorphic heading (h1-h6) with semantic hierarchy                                                          | -                                 |
-| [Icon](libs/react/src/components/icon/README.md)                | Flexible icon wrapper with consistent sizing                                                                 | -                                 |
+| [Icon](libs/react/src/components/icon/README.md)                | Icon wrapper with size variants (sm/md/lg) for icon library components                                       | -                                 |
 | [Input](libs/react/src/components/input/README.md)              | Text input with type variants                                                                                | -                                 |
 | [Pagination](libs/react/src/components/pagination/README.md)    | Accessible pagination with offset (numeric) and cursor-based modes                                           | -                                 |
 | [Progress](libs/react/src/components/progress/README.md)        | Linear progress bar with label, determinate/indeterminate modes                                              | -                                 |

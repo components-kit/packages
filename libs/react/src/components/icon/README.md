@@ -1,58 +1,62 @@
 # Icon
 
-A polymorphic icon container for rendering icons with controlled dimensions.
+An icon wrapper component for consistent icon sizing and styling.
 
 ## Usage
 
 ```tsx
 import { Icon } from '@components-kit/react';
 
-// Basic icon with SVG
-<Icon width="24px" height="24px">
-  <svg viewBox="0 0 24 24">
-    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-  </svg>
+// Basic icon wrapping a Lucide icon
+<Icon>
+  <Search />
+</Icon>
+
+// Small icon
+<Icon size="sm">
+  <Check />
+</Icon>
+
+// Large icon with variant
+<Icon size="lg" variantName="primary">
+  <Star />
 </Icon>
 
 // Decorative icon (aria-hidden="true" is the default)
-<Icon width="16px" height="16px">
-  <CheckmarkSvg />
+<Icon size="sm">
+  <CheckmarkIcon />
 </Icon>
 <span>Success</span>
 
 // Meaningful icon with accessible label (override aria-hidden)
-<Icon aria-hidden={false} aria-label="Warning" role="img" width="20px" height="20px">
-  <WarningSvg />
+<Icon aria-hidden={false} aria-label="Warning" role="img">
+  <AlertTriangle />
 </Icon>
 
-// Icon button with accessibility (aria-hidden="true" is automatic on Icon)
+// Icon button (aria-hidden="true" is automatic on Icon)
 <button aria-label="Close dialog">
-  <Icon>
-    <CloseSvg />
+  <Icon size="sm">
+    <X />
   </Icon>
 </button>
-
-// With variant styling
-<Icon variantName="primary" width="32px" height="32px">
-  <StarSvg />
-</Icon>
 ```
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `as` | `ElementType` | `"span"` | HTML element to render as (polymorphic) |
-| `width` | `string` | `"20px"` | Width of the icon container |
-| `height` | `string` | `"20px"` | Height of the icon container |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | The size of the icon |
 | `variantName` | `string` | - | Variant name for styling |
+| `children` | `ReactNode` | - | The icon content (e.g., Lucide icon component) |
 
-Also accepts all HTML attributes for the rendered element.
+Accepts all standard `<span>` HTML attributes except `style`.
 
 ## Data Attributes
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
+| `data-ck` | `"icon"` | Component identifier |
+| `data-size` | `"sm"`, `"md"`, `"lg"` | The size variant |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
