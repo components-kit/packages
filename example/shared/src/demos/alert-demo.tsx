@@ -17,9 +17,22 @@ function AlertPreview() {
         variantName="default"
       />
       <Alert
+        action={{ children: "Retry", onClick: () => alert("Retrying...") }}
         description="Something went wrong. Please try again."
         heading="Error"
         variantName="destructive"
+      />
+      <Alert
+        action={{ children: "View", onClick: () => alert("Viewing...") }}
+        description="Your changes have been saved successfully."
+        heading="Success"
+        variantName="success"
+      />
+      <Alert
+        action={{ children: "Review", onClick: () => alert("Reviewing...") }}
+        description="Please review your input before proceeding."
+        heading="Warning"
+        variantName="warning"
       />
     </div>
   );
@@ -42,9 +55,24 @@ export const alertDemo: ComponentDemo = {
 />
 
 <Alert
+  action={{ children: "Retry", onClick: () => alert("Retrying...") }}
   description="Something went wrong. Please try again."
   heading="Error"
   variantName="destructive"
+/>
+
+<Alert
+  action={{ children: "View", onClick: () => alert("Viewing...") }}
+  description="Your changes have been saved successfully."
+  heading="Success"
+  variantName="success"
+/>
+
+<Alert
+  action={{ children: "Review", onClick: () => alert("Reviewing...") }}
+  description="Please review your input before proceeding."
+  heading="Warning"
+  variantName="warning"
 />`,
   id: "alert",
   name: "Alert",

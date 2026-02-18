@@ -93,8 +93,8 @@ VITE_COMPONENTS_KIT_KEY=your_api_key_here
 // app/layout.tsx
 const BASE_URL = process.env.NEXT_PUBLIC_COMPONENTS_KIT_URL;
 const API_KEY = process.env.NEXT_PUBLIC_COMPONENTS_KIT_KEY;
-const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`;
-const FONTS_URL = `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`;
+const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.min.css?key=${API_KEY}`;
+const FONTS_URL = `${BASE_URL}/v1/public/fonts.css?key=${API_KEY}`;
 
 export default function RootLayout({
   children,
@@ -143,11 +143,11 @@ export default defineConfig(({ mode }) => {
           return html
             .replace(
               /__BUNDLE_URL__/g,
-              `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`,
+              `${BASE_URL}/v1/public/bundle.min.css?key=${API_KEY}`,
             )
             .replace(
               /__FONTS_URL__/g,
-              `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`,
+              `${BASE_URL}/v1/public/fonts.css?key=${API_KEY}`,
             );
         },
       },

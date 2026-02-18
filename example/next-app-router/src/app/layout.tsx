@@ -6,8 +6,8 @@ import { Toaster } from "sonner";
 
 const BASE_URL = process.env.NEXT_PUBLIC_COMPONENTS_KIT_URL;
 const API_KEY = process.env.NEXT_PUBLIC_COMPONENTS_KIT_KEY;
-const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`;
-const FONTS_URL = `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`;
+const BUNDLE_URL = `${BASE_URL}/v1/public/bundle.min.css?key=${API_KEY}`;
+const FONTS_URL = `${BASE_URL}/v1/public/fonts.css?key=${API_KEY}`;
 
 export const metadata: Metadata = {
   description: "SSR example app for testing @components-kit/react",
