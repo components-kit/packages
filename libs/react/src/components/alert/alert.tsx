@@ -2,6 +2,8 @@
 
 import { forwardRef, HTMLAttributes, ReactNode } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { Button, ButtonProps } from "../button/button";
 
 /**
@@ -55,7 +57,7 @@ import { Button, ButtonProps } from "../button/button";
  * @param {ReactNode} [heading] - The main heading/title of the alert.
  * @param {ReactNode} [description] - The body content of the alert.
  * @param {Omit<ButtonProps, "as" | "size" | "variantName">} [action] - Action button props (size is fixed to "sm", polymorphic "as" not supported). Button variant is controlled by the parent alert's `variantName` via CSS.
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"alert">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic info alert
@@ -135,7 +137,7 @@ interface AlertProps extends HTMLAttributes<HTMLDivElement> {
   action?: Omit<ButtonProps, "as" | "size" | "variantName">;
   description?: ReactNode;
   heading?: ReactNode;
-  variantName?: string;
+  variantName?: VariantFor<"alert">;
 }
 
 const Alert = forwardRef<HTMLDivElement, AlertProps>(

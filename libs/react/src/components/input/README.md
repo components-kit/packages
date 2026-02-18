@@ -56,7 +56,7 @@ const [value, setValue] = useState('');
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `type` | `string` | `"text"` | Input type (text, email, password, number, etc.) |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"input">` | - | Variant name for styling |
 
 Also accepts all standard `input` HTML attributes.
 

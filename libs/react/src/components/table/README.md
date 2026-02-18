@@ -106,7 +106,7 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 |------|------|---------|-------------|
 | `data` | `TData[]` | **required** | Data array to display |
 | `columns` | `ColumnDef<TData>[]` | **required** | Column definitions |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"table">` | - | Variant name for styling |
 | `caption` | `ReactNode` | - | Table caption |
 | `isLoading` | `boolean` | `false` | Shows loading state |
 

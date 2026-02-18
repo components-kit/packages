@@ -43,7 +43,7 @@ import { Text } from '@components-kit/react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `as` | `ElementType` | `"p"` | HTML element to render as (polymorphic) |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"text">` | - | Variant name for styling |
 
 Also accepts all HTML attributes for the rendered element.
 

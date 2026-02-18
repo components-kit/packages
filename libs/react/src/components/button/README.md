@@ -41,7 +41,7 @@ import { Button } from '@components-kit/react';
 | `as` | `ElementType` | `"button"` | HTML element to render as (polymorphic) |
 | `asChild` | `boolean` | `false` | Merge props with child element |
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the button |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"button">` | - | Variant name for styling |
 | `isLoading` | `boolean` | `false` | Shows loading state, disables button |
 | `disabled` | `boolean` | - | Disables the button |
 | `fullWidth` | `boolean` | - | Makes button full width |

@@ -96,7 +96,7 @@ toast({
 | `title` | `string \| ReactNode` | **Required** | Main title of the toast |
 | `description` | `string \| ReactNode` | - | Body content of the toast |
 | `button` | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }` | - | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"toast">` | - | Variant name for styling |
 | `duration` | `number` | `4000` | Time in ms before auto-dismiss |
 | `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen |
 | `dismissible` | `boolean` | `true` | Whether toast can be dismissed by user (swipe) |

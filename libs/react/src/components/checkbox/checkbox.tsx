@@ -2,6 +2,8 @@
 
 import { forwardRef, InputHTMLAttributes } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A checkbox input component for boolean selections.
  *
@@ -44,7 +46,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
  * - Provide error feedback using `aria-describedby`
  * - Don't use checkboxes for mutually exclusive options (use radio instead)
  *
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"checkbox">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic checkbox with label
@@ -119,7 +121,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
  */
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
-  variantName?: string;
+  variantName?: VariantFor<"checkbox">;
 }
 
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(

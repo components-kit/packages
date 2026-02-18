@@ -10,6 +10,8 @@ import {
   ReactNode,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { Slot } from "../slot/slot";
 
 /**
@@ -47,7 +49,7 @@ import { Slot } from "../slot/slot";
  * @param {ReactNode} [leadingIcon] - Icon or element to render before the button content.
  * @param {"sm" | "md" | "lg"} [size="md"] - The size variant of the button.
  * @param {ReactNode} [trailingIcon] - Icon or element to render after the button content.
- * @param {string} [variantName] - The variant name for styling (e.g., "primary", "secondary", "outline").
+ * @param {VariantFor<"button">} [variantName] - The variant name for styling (e.g., "primary", "secondary", "outline").
  *
  * @example
  * // Basic usage
@@ -83,7 +85,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   leadingIcon?: ReactNode;
   size?: "lg" | "md" | "sm";
   trailingIcon?: ReactNode;
-  variantName?: string;
+  variantName?: VariantFor<"button">;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(

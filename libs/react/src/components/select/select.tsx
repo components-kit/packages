@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import { useExitTransition, useFloatingSelect } from "../../hooks";
@@ -99,7 +100,7 @@ import {
  * @param {string} [placeholder="Select..."] - Placeholder text shown when no value is selected.
  * @param {string} [aria-label] - Accessible label for the trigger. Required when no visible label exists.
  * @param {boolean} [disabled=false] - Whether the select is disabled.
- * @param {string} [variantName] - Variant name for styling via `data-variant`.
+ * @param {VariantFor<"select">} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {string} [emptyContent="No options"] - Text to display when there are no options.
  * @param {Placement} [placement="bottom-start"] - Dropdown placement relative to the trigger (Floating UI placement).
@@ -287,7 +288,7 @@ interface SelectProps<T = string> extends Omit<
   /**
    * Variant name for styling via `data-variant` attribute.
    */
-  variantName?: string;
+  variantName?: VariantFor<"select">;
 }
 
 // -----------------------------------------------------------------------------

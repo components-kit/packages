@@ -2,6 +2,8 @@
 
 import { forwardRef, HTMLAttributes, ReactNode } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * An icon wrapper component for consistent icon sizing and styling.
  *
@@ -44,7 +46,7 @@ import { forwardRef, HTMLAttributes, ReactNode } from "react";
  * - Use consistent icon sizes throughout the application
  *
  * @param {"sm" | "md" | "lg"} [size="md"] - The size of the icon.
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"icon">} [variantName] - The variant name for styling.
  * @param {ReactNode} children - The icon content (icon component, SVG, etc.).
  *
  * @example
@@ -83,7 +85,7 @@ import { forwardRef, HTMLAttributes, ReactNode } from "react";
 interface IconProps extends Omit<HTMLAttributes<HTMLSpanElement>, "style"> {
   children?: ReactNode;
   size?: "lg" | "md" | "sm";
-  variantName?: string;
+  variantName?: VariantFor<"icon">;
 }
 
 const Icon = forwardRef<HTMLSpanElement, IconProps>(

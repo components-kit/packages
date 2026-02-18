@@ -2,6 +2,8 @@
 
 import React, { forwardRef, ReactNode, useId } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { useTabs } from "./use-tabs";
 
 /**
@@ -56,7 +58,7 @@ import { useTabs } from "./use-tabs";
  * @param {string} [value] - Controlled active tab ID
  * @param {(tabId: string) => void} [onValueChange] - Callback fired when active tab changes
  * @param {"horizontal" | "vertical"} [orientation="horizontal"] - Tab list orientation
- * @param {string} [variantName] - Style variant name for CSS targeting
+ * @param {VariantFor<"tabs">} [variantName] - Style variant name for CSS targeting
  *
  * @returns A fully accessible tabs component
  *
@@ -249,7 +251,7 @@ interface TabsProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
   tabs: TabItem[];
   value?: string;
-  variantName?: string;
+  variantName?: VariantFor<"tabs">;
 }
 
 const Tabs = forwardRef<HTMLDivElement, TabsProps>(

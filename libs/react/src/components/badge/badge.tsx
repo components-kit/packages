@@ -2,6 +2,8 @@
 
 import { forwardRef, HTMLAttributes, ReactNode } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { Slot } from "../slot/slot";
 
 /**
@@ -46,7 +48,7 @@ import { Slot } from "../slot/slot";
  *
  * @param {boolean} [asChild=false] - Merge props with child element instead of wrapping.
  * @param {string} [size="md"] - The size of the badge: "sm", "md", or "lg".
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"badge">} [variantName] - The variant name for styling.
  * @param {ReactNode} children - The badge content.
  *
  * @example
@@ -117,7 +119,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   asChild?: boolean;
   children?: ReactNode;
   size?: "lg" | "md" | "sm";
-  variantName?: string;
+  variantName?: VariantFor<"badge">;
 }
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(

@@ -131,7 +131,7 @@ function AsyncSearch() {
 | `readOnly` | `boolean` | `false` | Read-only mode (prevents interaction) |
 | `required` | `boolean` | `false` | Required field (adds `aria-required` and `data-required`) |
 | `value` | `T` | - | Controlled selected value |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"combobox">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

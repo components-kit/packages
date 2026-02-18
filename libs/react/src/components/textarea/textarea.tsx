@@ -9,6 +9,8 @@ import {
   useRef,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { mergeRefs } from "../../utils/merge-refs";
 
 /**
@@ -51,7 +53,7 @@ import { mergeRefs } from "../../utils/merge-refs";
  * - Consider using `rows` to hint at expected content length
  * - Group related form fields with fieldset and legend
  *
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"textarea">} [variantName] - The variant name for styling.
  * @param {function} [onInput] - Handler called on input, after auto-resize.
  *
  * @example
@@ -141,7 +143,7 @@ import { mergeRefs } from "../../utils/merge-refs";
  */
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  variantName?: string;
+  variantName?: VariantFor<"textarea">;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(

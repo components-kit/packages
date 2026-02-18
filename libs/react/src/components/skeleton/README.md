@@ -45,7 +45,7 @@ import { Skeleton } from '@components-kit/react';
 |------|------|---------|-------------|
 | `width` | `string` | - | Width of the skeleton (e.g., "200px", "100%") |
 | `height` | `string` | - | Height of the skeleton (e.g., "100px", "1em") |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"skeleton">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

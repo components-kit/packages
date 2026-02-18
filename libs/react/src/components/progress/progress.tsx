@@ -8,6 +8,8 @@ import {
   useId,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A linear progress bar component for displaying completion status.
  *
@@ -54,7 +56,7 @@ import {
  * @param {number} [max=100] - The maximum value of the progress bar.
  * @param {number} [min=0] - The minimum value of the progress bar.
  * @param {number | null} [value] - The current value. Null or undefined for indeterminate mode.
- * @param {string} [variantName] - The variant name for styling (e.g., "primary", "success").
+ * @param {VariantFor<"progress">} [variantName] - The variant name for styling (e.g., "primary", "success").
  *
  * @example
  * // With label
@@ -97,7 +99,7 @@ interface ProgressProps extends HTMLAttributes<HTMLDivElement> {
   max?: number;
   min?: number;
   value?: number | null;
-  variantName?: string;
+  variantName?: VariantFor<"progress">;
 }
 
 const Progress = forwardRef<HTMLDivElement, ProgressProps>(

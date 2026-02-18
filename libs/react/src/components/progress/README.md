@@ -40,7 +40,7 @@ import { Progress } from '@components-kit/react';
 | `value` | `number \| null` | - | Current value. Null/undefined = indeterminate |
 | `min` | `number` | `0` | Minimum value |
 | `max` | `number` | `100` | Maximum value |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"progress">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

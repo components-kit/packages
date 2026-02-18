@@ -56,7 +56,7 @@ const [selected, setSelected] = useState('option1');
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"radio_group">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

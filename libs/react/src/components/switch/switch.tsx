@@ -2,6 +2,8 @@
 
 import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A toggle switch component for binary on/off choices.
  *
@@ -53,7 +55,7 @@ import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
  * - Ensure the switch is large enough for touch targets
  * - Provide visual feedback for state changes
  *
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"switch">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic switch with label
@@ -131,7 +133,7 @@ import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
  */
 
 interface SwitchProps extends InputHTMLAttributes<HTMLInputElement> {
-  variantName?: string;
+  variantName?: VariantFor<"switch">;
 }
 
 const Switch = forwardRef<HTMLInputElement, SwitchProps>(

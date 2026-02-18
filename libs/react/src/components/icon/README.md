@@ -46,7 +46,7 @@ import { Icon } from '@components-kit/react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | The size of the icon |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"icon">` | - | Variant name for styling |
 | `children` | `ReactNode` | - | The icon content (e.g., Lucide icon component) |
 
 Accepts all standard `<span>` HTML attributes except `style`.

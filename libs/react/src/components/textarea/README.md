@@ -58,7 +58,7 @@ const [value, setValue] = useState('');
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"textarea">` | - | Variant name for styling |
 
 Also accepts all standard `textarea` HTML attributes.
 
