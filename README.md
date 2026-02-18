@@ -179,6 +179,38 @@ export default defineConfig(({ mode }) => {
 </html>
 ```
 
+## Type-Safe Variants (Optional)
+
+Use `@components-kit/cli` to generate TypeScript types for `variantName` props. This gives you autocomplete and build-time validation.
+
+```bash
+npm install -D @components-kit/cli
+npx ck init
+npx ck generate
+```
+
+Add the generated types to your `tsconfig.json`:
+
+```json
+{
+  "include": ["src", "types"]
+}
+```
+
+Now `variantName` props autocomplete with your project's actual variants:
+
+```tsx
+// Autocomplete suggests "primary", "secondary", "destructive", etc.
+<Button variantName="primary">Submit</Button>
+
+// TypeScript error: Type '"invalid"' is not assignable
+<Button variantName="invalid">Submit</Button>
+```
+
+Without the CLI, `variantName` accepts any `string` — the CLI is optional but recommended.
+
+See the [@components-kit/cli README](libs/cli/README.md) for full documentation.
+
 ## Core Concepts
 
 ### Headless Components with Data Attributes
@@ -396,6 +428,20 @@ interface User {
 
 <Table<User> data={users} columns={columns} />;
 ```
+
+### Variant Type Registration
+
+The library exports `ComponentsKitVariants` and `VariantFor<T>` for type-safe variant names:
+
+```tsx
+import type { ComponentsKitVariants, VariantFor } from "@components-kit/react";
+
+// VariantFor<"button"> resolves to the registered union (e.g., "primary" | "secondary" | ...)
+// or falls back to `string` if no augmentation is configured
+type ButtonVariant = VariantFor<"button">;
+```
+
+Run `npx ck generate` from `@components-kit/cli` to augment `ComponentsKitVariants` with your project's variants. See [Type-Safe Variants](#type-safe-variants-optional) above.
 
 ## Examples
 

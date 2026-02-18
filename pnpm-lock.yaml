@@ -47,7 +47,7 @@ importers:
         version: 9.39.2
       eslint-js:
         specifier: github:eslint/js
-        version: https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c
+        version: https://codeload.github.com/eslint/js/tar.gz/b699f3200cad596c731d077b22c239ce55fc7a06
       eslint-plugin-perfectionist:
         specifier: ^4.15.0
         version: 4.15.1(eslint@9.39.2)(typescript@5.9.3)
@@ -207,6 +207,22 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.4.1(@types/node@22.19.7)(tsx@4.21.0)
+
+  libs/cli:
+    dependencies:
+      commander:
+        specifier: ^13.0.0
+        version: 13.1.0
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.7
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
 
   libs/react:
     dependencies:
@@ -1580,6 +1596,10 @@ packages:
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
 
+  commander@13.1.0:
+    resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
+    engines: {node: '>=18'}
+
   commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
@@ -1759,8 +1779,8 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-js@https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c:
-    resolution: {tarball: https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c}
+  eslint-js@https://codeload.github.com/eslint/js/tar.gz/b699f3200cad596c731d077b22c239ce55fc7a06:
+    resolution: {tarball: https://codeload.github.com/eslint/js/tar.gz/b699f3200cad596c731d077b22c239ce55fc7a06}
     version: 0.0.0
 
   eslint-plugin-perfectionist@4.15.1:
@@ -4277,6 +4297,8 @@ snapshots:
 
   color-name@1.1.4: {}
 
+  commander@13.1.0: {}
+
   commander@4.1.1: {}
 
   compute-scroll-into-view@3.1.1: {}
@@ -4554,7 +4576,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-js@https://codeload.github.com/eslint/js/tar.gz/6ec0770da26ffb7d39c298dce2221dcdb61e2e8c: {}
+  eslint-js@https://codeload.github.com/eslint/js/tar.gz/b699f3200cad596c731d077b22c239ce55fc7a06: {}
 
   eslint-plugin-perfectionist@4.15.1(eslint@9.39.2)(typescript@5.9.3):
     dependencies:

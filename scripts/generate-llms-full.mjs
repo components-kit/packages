@@ -173,7 +173,23 @@ const sections = EXPORTED_COMPONENTS.map((name) => {
   }
 }).filter(Boolean);
 
-const fullText = [HEADER, ...sections].join("\n\n---\n\n");
+// Append package READMEs (CLI, etc.) after component docs
+const PACKAGE_READMES = [join(ROOT, "libs/cli/README.md")];
+
+const packageSections = PACKAGE_READMES.map((readmePath) => {
+  try {
+    let content = readFileSync(readmePath, "utf-8").trim();
+    content = content.replace(/^# /, "## ");
+    return content;
+  } catch {
+    console.warn(`Warning: README not found at ${readmePath}`);
+    return null;
+  }
+}).filter(Boolean);
+
+const fullText = [HEADER, ...sections, ...packageSections].join(
+  "\n\n---\n\n"
+);
 
 writeFileSync(OUTPUT_FILE, fullText + "\n");
 console.warn(

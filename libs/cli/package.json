@@ -1,0 +1,63 @@
+{
+  "name": "@components-kit/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for generating TypeScript types from your ComponentsKit design system",
+  "keywords": [
+    "components-kit",
+    "cli",
+    "codegen",
+    "typescript",
+    "design-system"
+  ],
+  "author": "ComponentsKit Team",
+  "license": "MIT",
+  "homepage": "https://componentskit.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/components-kit/packages.git",
+    "directory": "libs/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/components-kit/packages/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "ck": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
