@@ -179,7 +179,7 @@ export default defineConfig(({ mode }) => {
 </html>
 ```
 
-## Type-Safe Variants (Optional)
+## Type-Safe Variants
 
 Use `@components-kit/cli` to generate TypeScript types for `variantName` props. This gives you autocomplete and build-time validation.
 
@@ -206,8 +206,6 @@ Now `variantName` props autocomplete with your project's actual variants:
 // TypeScript error: Type '"invalid"' is not assignable
 <Button variantName="invalid">Submit</Button>
 ```
-
-Without the CLI, `variantName` accepts any `string` — the CLI is optional but recommended.
 
 See the [@components-kit/cli README](libs/cli/README.md) for full documentation.
 
@@ -241,12 +239,9 @@ Some components support the `as` prop to render as different HTML elements:
 
 // Renders as <span>
 <Text as="span" variantName="caption">Inline text</Text>
-
-// Renders as <a>
-<Button as="a" href="/home" variantName="link">Go Home</Button>
 ```
 
-**Polymorphic components:** Button, Heading, Text
+**Polymorphic components:** Heading, Text
 
 ### Composition with asChild
 
@@ -270,7 +265,7 @@ import Link from "next/link";
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------- |
 | [Alert](libs/react/src/components/alert/README.md)              | Contextual feedback messages with heading, description, and action                                           | -                                 |
 | [Badge](libs/react/src/components/badge/README.md)              | Small status indicator for labels and counts                                                                 | -                                 |
-| [Button](libs/react/src/components/button/README.md)            | Polymorphic button with loading, icons, and composition support                                              | -                                 |
+| [Button](libs/react/src/components/button/README.md)            | Button with loading, icons, and composition support                                                          | -                                 |
 | [Checkbox](libs/react/src/components/checkbox/README.md)        | Boolean selection with indeterminate state support                                                           | -                                 |
 | [Heading](libs/react/src/components/heading/README.md)          | Polymorphic heading (h1-h6) with semantic hierarchy                                                          | -                                 |
 | [Icon](libs/react/src/components/icon/README.md)                | Icon wrapper with size variants (sm/md/lg) for icon library components                                       | -                                 |
@@ -441,7 +436,7 @@ import type { ComponentsKitVariants, VariantFor } from "@components-kit/react";
 type ButtonVariant = VariantFor<"button">;
 ```
 
-Run `npx ck generate` from `@components-kit/cli` to augment `ComponentsKitVariants` with your project's variants. See [Type-Safe Variants](#type-safe-variants-optional) above.
+Run `npx ck generate` from `@components-kit/cli` to augment `ComponentsKitVariants` with your project's variants. See [Type-Safe Variants](#type-safe-variants) above.
 
 ## Examples
 
