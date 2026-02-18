@@ -15,6 +15,17 @@ See the [main README](../../README.md) for full documentation including:
 - Accessibility guide
 - TypeScript usage
 
+## Type-Safe Variants
+
+All `variantName` props use the `VariantFor<T>` type, which accepts any `string` by default. To enable autocomplete and build-time validation, use `@components-kit/cli` to generate type augmentations:
+
+```bash
+npm install -D @components-kit/cli
+npx ck init && npx ck generate
+```
+
+See the [@components-kit/cli README](../cli/README.md) for details.
+
 ## Component READMEs
 
 Each component has its own detailed README in `src/components/<name>/README.md`:

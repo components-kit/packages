@@ -42,6 +42,13 @@ const eslintConfig = defineConfig([
       strict: ["error", "global"],
     },
   },
+  // CLI — allow console.log for CLI output
+  {
+    files: ["libs/cli/**/*.{js,mjs,cjs,ts}"],
+    rules: {
+      "no-console": "off",
+    },
+  },
   // React
   {
     files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],

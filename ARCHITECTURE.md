@@ -18,6 +18,7 @@
 | Location                   | Purpose                                          |
 | -------------------------- | ------------------------------------------------ |
 | `libs/react/`              | Main component library (`@components-kit/react`) |
+| `libs/cli/`                | CLI for generating variant types (`@components-kit/cli`) |
 | `example/next-app-router/` | Next.js 15 SSR example                           |
 | `example/tanstack-router/` | Vite + TanStack Router CSR example               |
 
@@ -55,6 +56,35 @@
 2. **AsChild** — Merge props with children via Slot: `<Button asChild><Link/></Button>`
 3. **Data Attributes** — Styling hooks: `data-variant`, `data-size`, `data-loading`
 4. **Accessibility** — ARIA compliant, keyboard navigation, semantic HTML
+5. **Type-Safe Variants** — Register pattern for `variantName` autocomplete (see below)
+
+### Type System — Register Pattern
+
+The `variantName` prop on every component uses `VariantFor<T>` from `types/register.ts`:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  @components-kit/react (library)                         │
+│                                                          │
+│  interface ComponentsKitVariants {}  ← empty by default  │
+│  type VariantFor<T> = T extends keyof ComponentsKitVariants │
+│    ? ComponentsKitVariants[T]                            │
+│    : string                          ← fallback          │
+└──────────────────────────────────────────────────────────┘
+                         │
+                         │ declare module "@components-kit/react"
+                         │ (TypeScript declaration merging)
+                         │
+┌──────────────────────────────────────────────────────────┐
+│  @components-kit/cli  (ck generate)                      │
+│                                                          │
+│  Fetches variants from API → generates .d.ts that        │
+│  augments ComponentsKitVariants with actual unions:       │
+│    button: "primary" | "secondary" | "destructive" | ... │
+└──────────────────────────────────────────────────────────┘
+```
+
+Without the CLI, `VariantFor<"button">` resolves to `string`. With the generated `.d.ts`, it narrows to the specific union — enabling autocomplete and build-time errors.
 
 ---
 
@@ -132,6 +162,7 @@
 │  utils/merge-refs.ts ─── ref merging utility                            │
 │  forward-ref.ts ─── polymorphicForwardRef(), createPolymorphicComponent │
 │  types/index.ts ─── PolymorphicComponentProps, PolymorphicRef           │
+│  types/register.ts ── ComponentsKitVariants, VariantFor<T>             │
 │  types/select.ts ── NormalizedItem, SelectOption, RenderItem            │
 └─────────────────────────────────────────────────────────────────────────┘
          │
@@ -171,6 +202,15 @@
 
 ```
 packages/
+├── libs/cli/                        # CLI tool (@components-kit/cli)
+│   ├── src/
+│   │   ├── index.ts                 # Commander entry (ck binary)
+│   │   ├── config.ts                # Config loading/saving
+│   │   ├── generate.ts              # Generation orchestration
+│   │   ├── codegen.ts               # TypeScript code generation
+│   │   └── fetch-variants.ts        # API fetching
+│   ├── package.json
+│   └── tsup.config.ts
 ├── libs/react/                      # Main library
 │   ├── src/
 │   │   ├── components/              # 23 component directories
@@ -203,6 +243,7 @@ packages/
 │   │   │   ├── use-floating.ts
 │   │   │   └── index.ts
 │   │   ├── types/                   # TypeScript type definitions
+│   │   │   ├── register.ts         # ComponentsKitVariants + VariantFor<T>
 │   │   ├── utils/                   # Utility functions (incl. select.ts, merge-refs.ts)
 │   │   └── index.tsx                # Main export barrel
 │   ├── package.json
