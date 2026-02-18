@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import { useExitTransition, useFloatingSelect } from "../../hooks";
@@ -119,7 +120,7 @@ import {
  * @param {string} [placeholder="Search..."] - Placeholder text for the input.
  * @param {string} [aria-label] - Accessible label for the input. Required when no visible label exists.
  * @param {boolean} [disabled=false] - Whether the combobox is disabled.
- * @param {string} [variantName] - Variant name for styling via `data-variant`.
+ * @param {VariantFor<"combobox">} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes.
  * @param {(event: React.FocusEvent) => void} [onBlur] - Callback when the input loses focus.
@@ -426,7 +427,7 @@ interface ComboboxProps<T = string> extends Omit<
   /**
    * Variant name for styling via `data-variant` attribute.
    */
-  variantName?: string;
+  variantName?: VariantFor<"combobox">;
 }
 
 // -----------------------------------------------------------------------------

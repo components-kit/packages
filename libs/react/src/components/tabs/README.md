@@ -94,7 +94,7 @@ import { UserIcon, SettingsIcon, BellIcon } from 'lucide-react';
 | `value` | `string` | - | Controlled active tab ID |
 | `onValueChange` | `(tabId: string) => void` | - | Callback fired when active tab changes |
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Tab list orientation |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"tabs">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

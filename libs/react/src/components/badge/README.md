@@ -37,7 +37,7 @@ import { Badge } from '@components-kit/react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the badge |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"badge">` | - | Variant name for styling |
 | `asChild` | `boolean` | `false` | Merge props with child element instead of wrapping |
 
 Also accepts all standard `span` HTML attributes.

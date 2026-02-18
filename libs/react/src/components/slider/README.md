@@ -57,7 +57,7 @@ const [volume, setVolume] = useState(50);
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider |
 | `onValueChange` | `(value: number) => void` | - | Callback fired when the value changes (on every move) |
 | `onValueCommit` | `(value: number) => void` | - | Callback fired when the user finishes a pointer interaction (on pointer up) |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"slider">` | - | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 

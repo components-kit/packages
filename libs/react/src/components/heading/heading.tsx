@@ -2,6 +2,8 @@
 
 import { ElementType, ReactNode, Ref } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   createPolymorphicComponent,
   PolymorphicComponentPropsWithRef,
@@ -43,7 +45,7 @@ import {
  * - Example: An h2 can look like an h1 visually using variantName="h1"
  *
  * @param {ElementType} [as="h1"] - The HTML element to render as.
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"heading">} [variantName] - The variant name for styling.
  * @param {ReactNode} children - The content to render inside the heading.
  *
  * @example
@@ -100,7 +102,7 @@ import {
 
 interface HeadingOwnProps {
   children?: ReactNode;
-  variantName?: string;
+  variantName?: VariantFor<"heading">;
 }
 
 type HeadingProps<C extends ElementType = "h1"> = PolymorphicComponentPropsWithRef<

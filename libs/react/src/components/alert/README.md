@@ -33,7 +33,7 @@ import { Alert } from '@components-kit/react';
 | `heading`     | `ReactNode`                                          | -       | Main heading/title of the alert                                                                                     |
 | `description` | `ReactNode`                                          | -       | Body content of the alert                                                                                           |
 | `action`      | `Omit<ButtonProps, "as" \| "size" \| "variantName">` | -       | Action button props (size fixed to "sm"). Button variant is controlled by the parent alert's `variantName` via CSS. |
-| `variantName` | `string`                                             | -       | Variant name for styling                                                                                            |
+| `variantName` | `VariantFor<"alert">`                                | -       | Variant name for styling                                                                                            |
 
 Also accepts all standard `div` HTML attributes.
 

@@ -46,7 +46,7 @@ useEffect(() => {
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"checkbox">` | - | Variant name for styling |
 
 Also accepts all standard `input[type="checkbox"]` HTML attributes.
 

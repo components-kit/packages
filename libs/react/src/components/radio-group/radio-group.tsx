@@ -2,6 +2,8 @@
 
 import { forwardRef, HTMLAttributes, InputHTMLAttributes } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A container component for grouping radio buttons.
  *
@@ -39,7 +41,7 @@ import { forwardRef, HTMLAttributes, InputHTMLAttributes } from "react";
  * - Use `aria-describedby` for additional instructions
  * - Don't use radio groups for yes/no questions (use checkbox or switch)
  *
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"radio_group">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic radio group with labels
@@ -140,7 +142,7 @@ import { forwardRef, HTMLAttributes, InputHTMLAttributes } from "react";
  */
 
 interface RadioGroupProps extends HTMLAttributes<HTMLDivElement> {
-  variantName?: string;
+  variantName?: VariantFor<"radio_group">;
 }
 
 const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(

@@ -13,6 +13,7 @@ import {
   useState,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import { useExitTransition, useFloatingSelect } from "../../hooks";
@@ -114,7 +115,7 @@ import {
  * @param {string} [aria-label] - Accessible label for the input. Required when no visible label exists.
  * @param {boolean} [autoFocus=false] - Auto-focus the input on mount.
  * @param {boolean} [disabled=false] - Whether the multi-select is disabled.
- * @param {string} [variantName] - Variant name for styling via `data-variant`.
+ * @param {VariantFor<"multi_select">} [variantName] - Variant name for styling via `data-variant`.
  * @param {(option: T) => string | number} [getOptionValue] - Function to extract unique primitive key from option values for object values.
  * @param {(option: NormalizedItem<T>, inputValue: string) => boolean} [filterFn] - Custom filter function. Default: case-insensitive includes match on label.
  * @param {number} [maxSelected] - Maximum number of items that can be selected.
@@ -367,7 +368,7 @@ interface MultiSelectProps<T = string> extends Omit<
   /**
    * Variant name for styling via `data-variant` attribute.
    */
-  variantName?: string;
+  variantName?: VariantFor<"multi_select">;
 }
 
 // -----------------------------------------------------------------------------

@@ -57,7 +57,7 @@ const [page, setPage] = useState(1);
 | `siblings` | `number` | `1` | Sibling pages on each side of current |
 | `disabled` | `boolean` | - | Disables all buttons |
 | `showFirstLast` | `boolean` | `false` | Show first/last navigation buttons |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"pagination">` | - | Variant name for styling |
 | `hasNextPage` | `boolean` | - | Next page available (cursor mode) |
 | `hasPreviousPage` | `boolean` | - | Previous page available (cursor mode) |
 | `onNext` | `() => void` | - | Next callback (cursor mode) |

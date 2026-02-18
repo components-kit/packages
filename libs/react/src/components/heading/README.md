@@ -42,7 +42,7 @@ import { Heading } from '@components-kit/react';
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `as` | `ElementType` | `"h1"` | HTML element to render as (polymorphic) |
-| `variantName` | `string` | - | Variant name for styling |
+| `variantName` | `VariantFor<"heading">` | - | Variant name for styling |
 
 Also accepts all HTML attributes for the rendered element.
 

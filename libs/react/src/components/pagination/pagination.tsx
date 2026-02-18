@@ -2,6 +2,8 @@
 
 import React, { forwardRef, useId } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { type PageItem, usePagination } from "./use-pagination";
 
 /**
@@ -70,7 +72,7 @@ import { type PageItem, usePagination } from "./use-pagination";
  * @param {number} [siblings=1] - Number of sibling pages visible on each side of the current page.
  * @param {boolean} [disabled] - Whether all pagination buttons are disabled.
  * @param {boolean} [showFirstLast=false] - Whether to show first/last navigation buttons.
- * @param {string} [variantName] - Style variant name for CSS targeting via `data-variant`.
+ * @param {VariantFor<"pagination">} [variantName] - Style variant name for CSS targeting via `data-variant`.
  * @param {boolean} [hasNextPage] - Whether a next page exists (cursor mode).
  * @param {boolean} [hasPreviousPage] - Whether a previous page exists (cursor mode).
  * @param {() => void} [onNext] - Callback fired when "Next" is activated (cursor mode).
@@ -161,7 +163,7 @@ interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   showFirstLast?: boolean;
   siblings?: number;
   totalPages?: number;
-  variantName?: string;
+  variantName?: VariantFor<"pagination">;
 }
 
 const Pagination = forwardRef<HTMLElement, PaginationProps>(

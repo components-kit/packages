@@ -2,6 +2,8 @@
 
 import { forwardRef, InputHTMLAttributes } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A text input component for single-line user input.
  *
@@ -43,7 +45,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
  * - Use inputMode for mobile keyboard optimization
  * - Group related inputs with fieldset and legend
  *
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"input">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic text input with label
@@ -147,7 +149,7 @@ import { forwardRef, InputHTMLAttributes } from "react";
  */
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  variantName?: string;
+  variantName?: VariantFor<"input">;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(

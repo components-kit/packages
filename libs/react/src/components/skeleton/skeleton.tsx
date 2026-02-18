@@ -2,6 +2,8 @@
 
 import { CSSProperties, forwardRef, HTMLAttributes } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A placeholder loading component that indicates content is being loaded.
  *
@@ -34,7 +36,7 @@ import { CSSProperties, forwardRef, HTMLAttributes } from "react";
  *
  * @param {string} [height] - The height of the skeleton (e.g., "100px", "50%").
  * @param {string} [width] - The width of the skeleton (e.g., "200px", "100%").
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"skeleton">} [variantName] - The variant name for styling.
  *
  * @example
  * // Basic skeleton with dimensions
@@ -75,7 +77,7 @@ import { CSSProperties, forwardRef, HTMLAttributes } from "react";
 
 interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
   height?: string;
-  variantName?: string;
+  variantName?: VariantFor<"skeleton">;
   width?: string;
 }
 

@@ -64,7 +64,7 @@ import { Select } from '@components-kit/react';
 | `openOnFocus`    | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |
 | `readOnly`       | `boolean`                         | `false`          | Read-only mode — visually normal but prevents interaction                                                                                                                |
 | `required`       | `boolean`                         | `false`          | Marks the select as required (`aria-required` + `data-required`)                                                                                                         |
-| `variantName`    | `string`                          | -                | Variant name for styling                                                                                                                                                 |
+| `variantName`    | `VariantFor<"select">`            | -                | Variant name for styling                                                                                                                                                 |
 | `getOptionValue` | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
 ## Option Types

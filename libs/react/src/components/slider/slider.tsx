@@ -6,6 +6,8 @@ import {
   HTMLAttributes,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import { useSlider } from "./use-slider";
 
 /**
@@ -78,7 +80,7 @@ import { useSlider } from "./use-slider";
  * @param {"horizontal" | "vertical"} [orientation="horizontal"] - The orientation of the slider.
  * @param {number} [step=1] - The step increment between values.
  * @param {number} [value] - The controlled value. When provided, internal state is bypassed.
- * @param {string} [variantName] - The variant name for styling (e.g., "primary", "default").
+ * @param {VariantFor<"slider">} [variantName] - The variant name for styling (e.g., "primary", "default").
  *
  * @example
  * // Basic slider with external label
@@ -141,7 +143,7 @@ interface SliderProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
   step?: number;
   value?: number;
-  variantName?: string;
+  variantName?: VariantFor<"slider">;
 }
 
 const Slider = forwardRef<HTMLDivElement, SliderProps>(

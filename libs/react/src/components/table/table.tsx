@@ -27,6 +27,8 @@ import {
   useState,
 } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 /**
  * A fully-featured data table component powered by TanStack Table.
  *
@@ -410,7 +412,7 @@ interface TableProps<TData> extends Omit<
   /**
    * Variant name for styling via data-variant attribute.
    */
-  variantName?: string;
+  variantName?: VariantFor<"table">;
 }
 
 // -----------------------------------------------------------------------------

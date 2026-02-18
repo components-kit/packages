@@ -3,6 +3,8 @@
 import { ReactNode } from "react";
 import { ExternalToast, toast as sonnerToast } from "sonner";
 
+import type { VariantFor } from "../../types/register";
+
 import { Button, ButtonProps } from "../button/button";
 
 /**
@@ -59,7 +61,7 @@ import { Button, ButtonProps } from "../button/button";
  * @param {string | ReactNode} title - The main title/heading of the toast. Required. Can be a string or React element for rich content.
  * @param {string | ReactNode} [description] - The body content of the toast. Optional. Can be a string or React element for rich content.
  * @param {Omit<ButtonProps, "asChild" | "children" | "size" | "variantName"> & { label: string }} [button] - Action button configuration. Optional. Uses the shared `Button` component with `size="sm"`. Accepts Button props (isLoading, leadingIcon, trailingIcon, etc.) plus a required `label` for button text. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click.
- * @param {string} [variantName] - The variant name for CSS-based styling. Optional. No default - controlled via CSS.
+ * @param {VariantFor<"toast">} [variantName] - The variant name for CSS-based styling. Optional. No default - controlled via CSS.
  * @param {number} [duration=4000] - Time in milliseconds before auto-dismiss. Default is 4000ms (4 seconds). From Sonner's ExternalToast.
  * @param {'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'} [position='bottom-right'] - Toast position on screen. Default is 'bottom-right'. From Sonner's ExternalToast.
  * @param {boolean} [dismissible=true] - Whether toast can be dismissed by user (swipe). Default is true. From Sonner's ExternalToast.
@@ -186,7 +188,7 @@ interface ToastProps extends Omit<
   };
   description?: string | ReactNode;
   title: string | ReactNode;
-  variantName?: string;
+  variantName?: VariantFor<"toast">;
 }
 
 function ToastAction({

@@ -2,6 +2,8 @@
 
 import { ElementType, ReactNode, Ref } from "react";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   createPolymorphicComponent,
   PolymorphicComponentPropsWithRef,
@@ -46,7 +48,7 @@ import {
  * - For interactive text, use `<button>` or `<a>` instead
  *
  * @param {ElementType} [as="p"] - The HTML element to render as.
- * @param {string} [variantName] - The variant name for styling.
+ * @param {VariantFor<"text">} [variantName] - The variant name for styling.
  * @param {ReactNode} children - The content to render inside the text element.
  *
  * @example
@@ -106,7 +108,7 @@ import {
 
 interface TextOwnProps {
   children?: ReactNode;
-  variantName?: string;
+  variantName?: VariantFor<"text">;
 }
 
 type TextProps<C extends ElementType = "p"> = PolymorphicComponentPropsWithRef<
