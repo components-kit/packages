@@ -11,7 +11,9 @@ function TextareaPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "400px" }}>
       <div>
-        <label htmlFor="ta-demo-1">Message: </label>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Message
+        </p>
         <Textarea
           id="ta-demo-1"
           placeholder="Type here..."
@@ -25,7 +27,9 @@ function TextareaPreview() {
         </p>
       </div>
       <div>
-        <label htmlFor="ta-demo-2">Disabled: </label>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Disabled
+        </p>
         <Textarea
           id="ta-demo-2"
           disabled

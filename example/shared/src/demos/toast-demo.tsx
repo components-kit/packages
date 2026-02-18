@@ -17,13 +17,13 @@ function ToastPreview() {
       </p>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() => toast({ title: "Success", variantName: "default" })}
         >
           Basic Toast
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               description: "Your changes have been saved successfully.",
@@ -35,7 +35,7 @@ function ToastPreview() {
           With Description
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               button: {
@@ -51,7 +51,19 @@ function ToastPreview() {
           With Action
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
+          onClick={() =>
+            toast({
+              description: "Your changes have been saved successfully.",
+              title: "Success",
+              variantName: "success",
+            })
+          }
+        >
+          Success
+        </Button>
+        <Button
+          variantName="outline"
           onClick={() =>
             toast({
               description: "This is an informational message.",
@@ -63,31 +75,31 @@ function ToastPreview() {
           Info
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               description: "Please review your input.",
               title: "Warning",
-              variantName: "default",
+              variantName: "warning",
             })
           }
         >
           Warning
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               description: "An error occurred.",
               title: "Error",
-              variantName: "default",
+              variantName: "destructive",
             })
           }
         >
           Error
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               description: "This toast appears at the top right.",
@@ -100,7 +112,7 @@ function ToastPreview() {
           Top Right
         </Button>
         <Button
-          variantName="primary"
+          variantName="outline"
           onClick={() =>
             toast({
               title: "Quick notification",
@@ -119,7 +131,7 @@ export const toastDemo: ComponentDemo = {
   code: `import { toast } from "@components-kit/react";
 // Add <Toaster /> from "sonner" in your root layout
 
-toast({ title: "Success", variantName: "default" });
+toast({ title: "Basic toast", variantName: "default" });
 
 toast({
   description: "Your changes have been saved.",
@@ -134,11 +146,10 @@ toast({
   variantName: "default",
 });
 
-toast({
-  position: "top-right",
-  title: "Top Right",
-  variantName: "default",
-});`,
+{/* Semantic variants */}
+toast({ title: "Success", description: "Saved successfully.", variantName: "success" });
+toast({ title: "Warning", description: "Please review.", variantName: "warning" });
+toast({ title: "Error", description: "An error occurred.", variantName: "destructive" });`,
   id: "toast",
   name: "Toast",
   preview: <ToastPreview />,

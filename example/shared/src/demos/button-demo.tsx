@@ -8,6 +8,10 @@ function ButtonPreview() {
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
         <Button variantName="primary">Primary</Button>
+        <Button variantName="secondary">Secondary</Button>
+        <Button variantName="destructive">Destructive</Button>
+        <Button variantName="outline">Outline</Button>
+        <Button variantName="ghost">Ghost</Button>
       </div>
       <div
         style={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: "8px" }}
@@ -51,7 +55,12 @@ function ButtonPreview() {
 export const buttonDemo: ComponentDemo = {
   code: `import { Button } from "@components-kit/react";
 
+{/* Variants */}
 <Button variantName="primary">Primary</Button>
+<Button variantName="secondary">Secondary</Button>
+<Button variantName="destructive">Destructive</Button>
+<Button variantName="outline">Outline</Button>
+<Button variantName="ghost">Ghost</Button>
 
 {/* Sizes */}
 <Button size="sm" variantName="primary">Small</Button>

@@ -80,8 +80,8 @@ CSS and fonts are loaded at build time using Vite's `transformIndexHtml` hook to
   name: "inject-components-kit-assets",
   transformIndexHtml(html) {
     return html
-      .replace(/__BUNDLE_URL__/g, `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`)
-      .replace(/__FONTS_URL__/g, `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`);
+      .replace(/__BUNDLE_URL__/g, `${BASE_URL}/v1/public/bundle.min.css?key=${API_KEY}`)
+      .replace(/__FONTS_URL__/g, `${BASE_URL}/v1/public/fonts.css?key=${API_KEY}`);
   },
 }
 ```

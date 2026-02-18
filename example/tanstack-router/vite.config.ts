@@ -18,11 +18,11 @@ export default defineConfig(({ mode }) => {
           return html
             .replace(
               /__BUNDLE_URL__/g,
-              `${BASE_URL}/v1/public/bundle.css?key=${API_KEY}`,
+              `${BASE_URL}/v1/public/bundle.min.css?key=${API_KEY}`,
             )
             .replace(
               /__FONTS_URL__/g,
-              `${BASE_URL}/v1/public/fonts.txt?key=${API_KEY}`,
+              `${BASE_URL}/v1/public/fonts.css?key=${API_KEY}`,
             );
         },
       },

@@ -12,7 +12,12 @@ function SliderPreview() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
       <div>
-        <label id="slider-demo-controlled">Volume: {value}</label>
+        <p
+          id="slider-demo-controlled"
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
+          Volume: {value}
+        </p>
         <Slider
           aria-labelledby="slider-demo-controlled"
           value={value}
