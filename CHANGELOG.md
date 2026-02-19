@@ -6,6 +6,50 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-02-19
+
+### Added
+
+- 7 new headless, accessible React components:
+  - **Combobox**: Autocomplete dropdown with keyboard navigation, async item loading, and custom rendering (requires `downshift` peer dependency)
+  - **MultiSelect**: Multi-value selection with token display, keyboard management, and custom rendering (requires `downshift` peer dependency)
+  - **Pagination**: Page navigation controls with first/previous/next/last buttons and page number display
+  - **Progress**: Determinate and indeterminate progress bar with customizable value range
+  - **Slider**: Range input with draggable thumb, keyboard support, and orientation variants
+  - **Tabs**: Tabbed content panels with keyboard navigation and controlled/uncontrolled modes
+  - **Toast**: Notification toasts with action buttons via Sonner integration (requires `sonner` peer dependency)
+- Type-safe `variantName` via register pattern — extend `ComponentsKitVariants` interface via module augmentation for IDE autocomplete, with `VariantFor<T>` conditional type utility
+- `useExitTransition` hook for CSS exit animations on dropdown components
+- Exported hooks: `useDebouncedCallback`, `useExitTransition`, `useFloating`, `useFloatingSelect`
+- Select, Combobox, MultiSelect form integration: `name`, `required`, hidden `<input>`, `serializeValue`
+- Select, Combobox, MultiSelect props: `clearable`, `readOnly`, `error`, `openOnFocus`, `placement`, `maxDropdownHeight`
+- MultiSelect props: `fixedValues`, `tokenSeparators`, `maxDisplayedTags`
+- Icon `size` prop with `sm`, `md`, `lg` variants (default `md`)
+- Select icon slot and `placement` prop
+- Table footer row support
+- New optional peer dependencies: `@floating-ui/react`, `sonner`
+- `@components-kit/cli` package — CLI tool (`ck`) for generating TypeScript variant types from the design system API
+- LLM-friendly documentation: `llms.txt` and `llms-full.txt`
+
+### Changed
+
+- Icon restructured — no longer polymorphic, always renders `<span>`, default size `md`
+- Alert icon now applied via CSS variant instead of `icon` prop
+- Table built-in pagination removed in favor of standalone Pagination component
+- Select API refactored for consistency with Combobox and MultiSelect
+- Slider DOM restructured to sibling pattern for improved accessibility
+
+### Removed
+
+- `AsyncSelect` component — functionality merged into Combobox via async support
+- Polymorphic `as` prop removed from Button and Icon
+
+### Fixed
+
+- Component audit: accessibility improvements, correct `data-*` attributes, and memory leak fixes across all components
+- Slider thumb drag behavior, added `orientation` and `onValueCommit` props
+- Button `asChild` composition no longer loses nested icon children
+
 ## [0.1.1] - 2026-01-26
 
 ### Fixed
@@ -64,6 +108,7 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/components-kit/packages/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/components-kit/packages/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/components-kit/packages/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/components-kit/packages/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/components-kit/packages/releases/tag/v0.1.0
