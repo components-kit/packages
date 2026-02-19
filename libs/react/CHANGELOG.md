@@ -2,10 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.1] - 2025-01-26
+## [Unreleased]
+
+## [1.0.0] - 2026-02-19
+
+### Added
+
+- 7 new headless, accessible React components:
+  - **Combobox** - Autocomplete dropdown with async item loading (requires `downshift`)
+  - **MultiSelect** - Multi-value selection with token display (requires `downshift`)
+  - **Pagination** - Page navigation with first/previous/next/last buttons
+  - **Progress** - Determinate and indeterminate progress bar
+  - **Slider** - Range input with draggable thumb and orientation variants
+  - **Tabs** - Tabbed content panels with keyboard navigation
+  - **Toast** - Notification toasts via Sonner integration (requires `sonner`)
+- Type-safe `variantName` via register pattern (`ComponentsKitVariants`, `VariantFor<T>`)
+- `useExitTransition` hook for CSS exit animations
+- Exported hooks: `useDebouncedCallback`, `useExitTransition`, `useFloating`, `useFloatingSelect`
+- Select, Combobox, MultiSelect: form integration, `clearable`, `readOnly`, `error`, `openOnFocus`, `placement`, `maxDropdownHeight`
+- MultiSelect: `fixedValues`, `tokenSeparators`, `maxDisplayedTags`
+- Icon `size` prop (`sm`, `md`, `lg`)
+- Select icon slot and `placement` prop
+- Table footer row support
+- New optional peer dependencies: `@floating-ui/react`, `sonner`
+
+### Changed
+
+- Icon restructured — no longer polymorphic, always renders `<span>`
+- Alert icon now applied via CSS variant instead of `icon` prop
+- Table built-in pagination removed in favor of standalone Pagination component
+- Select API refactored for consistency with Combobox and MultiSelect
+- Slider DOM restructured to sibling pattern for accessibility
+
+### Removed
+
+- `AsyncSelect` — functionality merged into Combobox
+- Polymorphic `as` prop removed from Button and Icon
+
+### Fixed
+
+- Component audit: accessibility, `data-*` attributes, and memory leak fixes
+- Slider thumb drag behavior, added `orientation` and `onValueCommit`
+- Button `asChild` no longer loses nested icon children
+
+## [0.1.1] - 2026-01-26
 
 ### Fixed
 
