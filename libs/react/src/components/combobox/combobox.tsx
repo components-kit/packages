@@ -611,7 +611,7 @@ function ComboboxInner<T = string>(
   });
   const side = floatingProps.placement.split("-")[0];
 
-  // Delay unmount for CSS exit animations
+  // Delay data-state transition for CSS exit animations
   const contentRef = useRef<HTMLDivElement>(null);
   const { dataState: contentState, isMounted } = useExitTransition({
     isOpen,
@@ -712,7 +712,15 @@ function ComboboxInner<T = string>(
       </div>
 
       {/* Input area */}
-      <div data-ck="combobox-input-wrapper" ref={inputWrapperRef_}>
+      <div
+        data-ck="combobox-input-wrapper"
+        onClick={(e) => {
+          if (e.target === e.currentTarget && isInteractive) {
+            inputRef.current?.focus();
+          }
+        }}
+        ref={inputWrapperRef_}
+      >
         <input
           {...getInputProps({
             autoFocus,
@@ -754,70 +762,77 @@ function ComboboxInner<T = string>(
         </button>
       </div>
 
-      {/* Dropdown content - Rendered in portal */}
+      {/* Dropdown content - Always rendered in portal so Downshift's getMenuProps
+           ref is never unmounted (required for click-outside detection and SSR). */}
       <FloatingPortal>
-        {isMounted && (
+        <div
+          style={{
+            ...floatingProps.style,
+            ...(!isMounted && { visibility: "hidden" }),
+            ...(!isOpen && { pointerEvents: "none" }),
+          }}
+          data-ck="combobox-positioner"
+          data-state={isOpen ? "open" : "closed"}
+          data-unmounted={!isMounted || undefined}
+          ref={floatingProps.ref}
+        >
           <div
-            style={{
-              ...floatingProps.style,
-              ...(!isOpen && { pointerEvents: "none" }),
-            }}
-            ref={floatingProps.ref}
+            {...getMenuProps({ id: menuId, ref: menuRef }, { suppressRefError: true })}
+            aria-labelledby={inputId}
+            aria-orientation="vertical"
+            data-ck="combobox-content"
+            data-empty={(!loading && !error && filteredRenderItems.length === 0) || undefined}
+            data-side={side}
+            data-state={contentState}
           >
-            <div
-              {...getMenuProps({ id: menuId, ref: menuRef })}
-              aria-labelledby={inputId}
-              aria-orientation="vertical"
-              data-ck="combobox-content"
-              data-empty={(!loading && !error && filteredRenderItems.length === 0) || undefined}
-              data-side={side}
-              data-state={contentState}
-            >
-              {/* Loading state */}
-              {loading && (
-                <div
-                  aria-label="Loading results"
-                  aria-live="polite"
-                  data-ck="combobox-loading"
-                  role="status"
-                >
-                  {loadingContent}
-                </div>
-              )}
+            {isMounted && (
+              <>
+                {/* Loading state */}
+                {loading && (
+                  <div
+                    aria-label="Loading results"
+                    aria-live="polite"
+                    data-ck="combobox-loading"
+                    role="status"
+                  >
+                    {loadingContent}
+                  </div>
+                )}
 
-              {/* Error state */}
-              {!loading && error && (
-                <div aria-live="assertive" data-ck="combobox-error" role="alert">
-                  {errorContent}
-                </div>
-              )}
+                {/* Error state */}
+                {!loading && error && (
+                  <div aria-live="assertive" data-ck="combobox-error" role="alert">
+                    {errorContent}
+                  </div>
+                )}
 
-              {/* Empty state */}
-              {!loading && !error && filteredRenderItems.length === 0 && (
-                <div aria-live="polite" data-ck="combobox-empty" role="status">
-                  {emptyContent}
-                </div>
-              )}
+                {/* Empty state */}
+                {!loading && !error && filteredRenderItems.length === 0 && (
+                  <div aria-live="polite" data-ck="combobox-empty" role="status">
+                    {emptyContent}
+                  </div>
+                )}
 
-              {!loading &&
-                !error &&
-                renderDropdownItems({
-                  getItemProps,
-                  highlightedIndex,
-                  isItemSelected: (item) =>
-                    selectedItem
-                      ? areValuesEqual(
-                          selectedItem.value,
-                          item.value,
-                          getOptionValue,
-                        )
-                      : false,
-                  prefix: "combobox",
-                  renderItems: filteredRenderItems,
-                })}
-            </div>
+                {!loading &&
+                  !error &&
+                  renderDropdownItems({
+                    getItemProps,
+                    highlightedIndex,
+                    isItemSelected: (item) =>
+                      selectedItem
+                        ? areValuesEqual(
+                            selectedItem.value,
+                            item.value,
+                            getOptionValue,
+                          )
+                        : false,
+                    prefix: "combobox",
+                    renderItems: filteredRenderItems,
+                  })}
+              </>
+            )}
           </div>
-        )}
+        </div>
       </FloatingPortal>
     </div>
   );

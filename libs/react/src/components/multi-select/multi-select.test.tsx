@@ -1265,10 +1265,9 @@ describe("MultiSelect Component", () => {
 
       expect(root).toHaveAttribute("data-state", "closed");
       expect(trigger).toHaveAttribute("data-state", "closed");
-      // content is not rendered in the DOM when closed (portal only renders when open)
-      expect(
-        document.querySelector('[data-ck="multi-select-content"]'),
-      ).toBeNull();
+      // Content is always in DOM; positioner is marked unmounted when closed
+      const positioner = document.querySelector('[data-ck="multi-select-positioner"]');
+      expect(positioner).toHaveAttribute("data-unmounted");
 
       await user.click(screen.getByRole("combobox"));
 
@@ -2636,7 +2635,7 @@ describe("MultiSelect Component", () => {
       expect(content).toHaveAttribute("data-state", "closed");
     });
 
-    it("removes content from DOM after exit duration", async () => {
+    it("hides positioner after exit duration", async () => {
       const user = userEvent.setup();
       render(<MultiSelect options={["apple", "banana"]} />);
 
@@ -2647,9 +2646,9 @@ describe("MultiSelect Component", () => {
         vi.advanceTimersByTime(150);
       });
 
-      expect(
-        document.querySelector('[data-ck="multi-select-content"]'),
-      ).not.toBeInTheDocument();
+      // Content stays in DOM but positioner is marked unmounted
+      const positioner = document.querySelector('[data-ck="multi-select-positioner"]');
+      expect(positioner).toHaveAttribute("data-unmounted");
     });
 
     it("disables pointer events during exit animation", async () => {
@@ -2662,8 +2661,9 @@ describe("MultiSelect Component", () => {
       const content = document.querySelector(
         '[data-ck="multi-select-content"]',
       ) as HTMLElement;
-      // pointerEvents is on the outer positioning wrapper, not the inner content div
-      expect(content.parentElement!.style.pointerEvents).toBe("none");
+      // Positioner wrapper uses data attributes instead of inline styles
+      expect(content.parentElement!).toHaveAttribute("data-ck", "multi-select-positioner");
+      expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });
 });

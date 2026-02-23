@@ -160,6 +160,7 @@ Also accepts all standard `div` HTML attributes.
 | `data-ck="combobox-input"` | Input | - | Text input element |
 | `data-ck="combobox-trigger"` | Button | - | Toggle button to open/close menu |
 | `data-ck="combobox-clear"` | Button | - | Clear button to reset selection (when `clearable` is true) |
+| `data-ck="combobox-positioner"` | Div (portal) | - | Always-rendered positioning wrapper around dropdown content |
 | `data-ck="combobox-content"` | Menu | - | Dropdown menu container |
 | `data-ck="combobox-item"` | Item | - | Individual option item |
 | `data-slot="icon"` | Div (inside item) | - | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
@@ -170,8 +171,9 @@ Also accepts all standard `div` HTML attributes.
 | `data-ck="combobox-loading"` | Div | - | Loading state indicator (async mode) |
 | `data-ck="combobox-error"` | Div | - | Error state indicator (async mode) |
 | `data-ck="combobox-live"` | Div | - | Live region for selection announcements |
-| `data-state` | Root, Trigger, Content | `"open"`, `"closed"` | Dropdown state (on root, trigger, and content) |
+| `data-state` | Root, Trigger, Positioner, Content | `"open"`, `"closed"` | Dropdown state (on root, trigger, positioner, and content) |
 | `data-side` | Content | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI) |
+| `data-unmounted` | Positioner | `true` | Present when the positioner content is unmounted |
 | `data-state` | Item | `"checked"`, `"unchecked"` | Whether the item is currently selected |
 | `data-disabled` | Root, Item | `true` | Present when disabled (on root and items) |
 | `data-highlighted` | Item | `true` | Present on the currently highlighted item |

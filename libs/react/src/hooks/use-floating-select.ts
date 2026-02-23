@@ -11,7 +11,7 @@ import {
   type Strategy,
   useFloating as useFloatingUI,
 } from "@floating-ui/react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 /**
  * Configuration options for the Select-specific Floating UI hook.
@@ -97,7 +97,6 @@ export interface UseFloatingSelectReturn {
  * **Select-specific features:**
  * - **Width matching:** Dropdown min-width matches trigger width
  * - **Dynamic height:** Max-height adapts to available viewport space
- * - **Auto-scroll:** Adds `overflow-y: auto` when content exceeds max-height
  *
  * **Universal middleware (inherited):**
  * - `offset` - Gap between trigger and dropdown
@@ -118,24 +117,35 @@ export interface UseFloatingSelectReturn {
  *
  * @example
  * ```tsx
- * // Basic usage with Downshift
+ * // Basic usage with Downshift (always-rendered positioner)
  * const { isOpen, getMenuProps, getToggleButtonProps } = useSelect(...);
  * const { referenceProps, floatingProps } = useFloatingSelect({ isOpen });
+ * const { isMounted, contentState } = useExitTransition(isOpen, 150);
  *
  * <button {...getToggleButtonProps()} ref={referenceProps.ref}>
  *   Select
  * </button>
  *
  * <FloatingPortal>
- *   {isOpen && (
+ *   <div
+ *     style={{
+ *       ...floatingProps.style,
+ *       ...(!isMounted && { visibility: "hidden" }),
+ *       ...(!isOpen && { pointerEvents: "none" }),
+ *     }}
+ *     data-ck="select-positioner"
+ *     data-state={isOpen ? "open" : "closed"}
+ *     data-unmounted={!isMounted || undefined}
+ *     ref={floatingProps.ref}
+ *   >
  *     <div
- *       {...getMenuProps()}
- *       ref={floatingProps.ref}
- *       style={floatingProps.style}
+ *       {...getMenuProps({}, { suppressRefError: true })}
+ *       data-ck="select-content"
+ *       data-state={contentState}
  *     >
- *       Dropdown content
+ *       {isMounted && <>Dropdown content</>}
  *     </div>
- *   )}
+ *   </div>
  * </FloatingPortal>
  * ```
  *
@@ -195,7 +205,6 @@ export function useFloatingSelect(
           Object.assign(elements.floating.style, {
             maxHeight: `${effectiveMaxHeight}px`,
             minWidth: `${rects.reference.width}px`,
-            overflowY: "auto",
           });
         },
         padding: viewportPadding,
@@ -210,15 +219,23 @@ export function useFloatingSelect(
     open: isOpen,
     placement,
     strategy,
-    whileElementsMounted: autoUpdate,
   });
+
+  // The floating element is always mounted (never conditionally rendered),
+  // so we use an effect-based autoUpdate instead of whileElementsMounted.
+  // See: https://floating-ui.com/docs/autoUpdate
+  useEffect(() => {
+    const { floating: floatingEl, reference } = floating.refs;
+    if (!reference.current || !floatingEl.current) return undefined;
+    return autoUpdate(reference.current, floatingEl.current, floating.update);
+  }, [floating.refs, floating.update]);
 
   return {
     context: floating,
     floatingProps: {
       placement: floating.placement,
       ref: floating.refs.setFloating,
-      style: floating.floatingStyles,
+      style: { ...floating.floatingStyles, zIndex: 9999 },
     },
     referenceProps: {
       ref: floating.refs.setReference,

@@ -914,7 +914,15 @@ function MultiSelectInner<T = string>(
       </div>
 
       {/* Tags + Input area */}
-      <div data-ck="multi-select-input-wrapper" ref={inputWrapperRef_}>
+      <div
+        data-ck="multi-select-input-wrapper"
+        onClick={(e) => {
+          if (e.target === e.currentTarget && isInteractive) {
+            inputRef.current?.focus();
+          }
+        }}
+        ref={inputWrapperRef_}
+      >
         <div data-ck="multi-select-tags">
           {displayedTags.map((selectedItem, index) => {
             const isFixed = isFixedValue(selectedItem.value);
@@ -1000,47 +1008,54 @@ function MultiSelectInner<T = string>(
         </button>
       </div>
 
-      {/* Dropdown content - Rendered in portal */}
+      {/* Dropdown content - Always rendered in portal so Downshift's getMenuProps
+           ref is never unmounted (required for click-outside detection and SSR). */}
       <FloatingPortal>
-        {isMounted && (
+        <div
+          style={{
+            ...floatingProps.style,
+            ...(!isMounted && { visibility: "hidden" }),
+            ...(!isOpen && { pointerEvents: "none" }),
+          }}
+          data-ck="multi-select-positioner"
+          data-state={isOpen ? "open" : "closed"}
+          data-unmounted={!isMounted || undefined}
+          ref={floatingProps.ref}
+        >
           <div
-            style={{
-              ...floatingProps.style,
-              ...(!isOpen && { pointerEvents: "none" }),
-            }}
-            ref={floatingProps.ref}
+            {...getMenuProps({ id: menuId, ref: menuRef }, { suppressRefError: true })}
+            aria-labelledby={inputId}
+            aria-multiselectable="true"
+            aria-orientation="vertical"
+            data-ck="multi-select-content"
+            data-empty={isEmpty || undefined}
+            data-side={side}
+            data-state={contentState}
           >
-            <div
-              {...getMenuProps({ id: menuId, ref: menuRef })}
-              aria-labelledby={inputId}
-              aria-multiselectable="true"
-              aria-orientation="vertical"
-              data-ck="multi-select-content"
-              data-empty={isEmpty || undefined}
-              data-side={side}
-              data-state={contentState}
-            >
-              {isEmpty && (
-                <div
-                  aria-live="polite"
-                  data-ck="multi-select-empty"
-                  role="status"
-                >
-                  {isAtMaxSelected ? maxReachedContent : emptyContent}
-                </div>
-              )}
+            {isMounted && (
+              <>
+                {isEmpty && (
+                  <div
+                    aria-live="polite"
+                    data-ck="multi-select-empty"
+                    role="status"
+                  >
+                    {isAtMaxSelected ? maxReachedContent : emptyContent}
+                  </div>
+                )}
 
-              {renderDropdownItems({
-                getItemProps,
-                highlightedIndex,
-                isItemDisabled: effectiveIsItemDisabled,
-                isItemSelected,
-                prefix: "multi-select",
-                renderItems: filteredRenderItems,
-              })}
-            </div>
+                {renderDropdownItems({
+                  getItemProps,
+                  highlightedIndex,
+                  isItemDisabled: effectiveIsItemDisabled,
+                  isItemSelected,
+                  prefix: "multi-select",
+                  renderItems: filteredRenderItems,
+                })}
+              </>
+            )}
           </div>
-        )}
+        </div>
       </FloatingPortal>
     </div>
   );

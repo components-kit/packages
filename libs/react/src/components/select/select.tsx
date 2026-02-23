@@ -340,7 +340,8 @@ function SelectInner<T = string>(
   const announcementTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => {
     return () => {
-      if (announcementTimerRef.current) clearTimeout(announcementTimerRef.current);
+      if (announcementTimerRef.current)
+        clearTimeout(announcementTimerRef.current);
     };
   }, []);
 
@@ -389,8 +390,12 @@ function SelectInner<T = string>(
       if (newItem) {
         setAnnouncement(`${newItem.label} selected`);
         // Clear announcement after screen reader has had time to announce
-        if (announcementTimerRef.current) clearTimeout(announcementTimerRef.current);
-        announcementTimerRef.current = setTimeout(() => setAnnouncement(""), 1000);
+        if (announcementTimerRef.current)
+          clearTimeout(announcementTimerRef.current);
+        announcementTimerRef.current = setTimeout(
+          () => setAnnouncement(""),
+          1000,
+        );
       }
     },
     selectedItem: controlledItem,
@@ -516,6 +521,7 @@ function SelectInner<T = string>(
           disabled: disabled || readOnly,
           id: triggerId,
           onClick: handleTriggerClick,
+          ref: triggerRef,
           ...(ariaLabel !== undefined && { "aria-label": ariaLabel }),
         })}
         // Override Downshift's auto-generated aria-labelledby (which points at
@@ -529,7 +535,6 @@ function SelectInner<T = string>(
         type="button"
         onFocus={handleTriggerFocus}
         onPointerDown={handleTriggerPointerDown}
-        ref={triggerRef}
       >
         <span
           data-ck="select-value"
@@ -540,48 +545,58 @@ function SelectInner<T = string>(
         <div aria-hidden="true" data-slot="icon" />
       </button>
 
-      {/* Content - Rendered in portal */}
+      {/* Content - Always rendered in portal so Downshift's getMenuProps
+           ref is never unmounted (required for click-outside detection and SSR). */}
       <FloatingPortal>
-        {isMounted && (
+        <div
+          style={{
+            ...floatingProps.style,
+            ...(!isMounted && { visibility: "hidden" }),
+            ...(!isOpen && { pointerEvents: "none" }),
+          }}
+          data-ck="select-positioner"
+          data-state={isOpen ? "open" : "closed"}
+          data-unmounted={!isMounted || undefined}
+          ref={floatingProps.ref}
+        >
           <div
-            style={{
-              ...floatingProps.style,
-              ...(!isOpen && { pointerEvents: "none" }),
-            }}
-            ref={floatingProps.ref}
+            {...getMenuProps(
+              { id: menuId, ref: menuRef },
+              { suppressRefError: true },
+            )}
+            aria-labelledby={triggerId}
+            aria-orientation="vertical"
+            data-ck="select-content"
+            data-empty={isEmpty || undefined}
+            data-side={side}
+            data-state={contentState}
           >
-            <div
-              {...getMenuProps({ id: menuId, ref: menuRef })}
-              aria-labelledby={triggerId}
-              aria-orientation="vertical"
-              data-ck="select-content"
-              data-empty={isEmpty || undefined}
-              data-side={side}
-              data-state={contentState}
-            >
-              {isEmpty && (
-                <div aria-live="polite" data-ck="select-empty" role="status">
-                  {emptyContent}
-                </div>
-              )}
+            {isMounted && (
+              <>
+                {isEmpty && (
+                  <div aria-live="polite" data-ck="select-empty" role="status">
+                    {emptyContent}
+                  </div>
+                )}
 
-              {renderDropdownItems({
-                getItemProps,
-                highlightedIndex,
-                isItemSelected: (item) =>
-                  selectedItem
-                    ? areValuesEqual(
-                        selectedItem.value,
-                        item.value,
-                        getOptionValue,
-                      )
-                    : false,
-                prefix: "select",
-                renderItems,
-              })}
-            </div>
+                {renderDropdownItems({
+                  getItemProps,
+                  highlightedIndex,
+                  isItemSelected: (item) =>
+                    selectedItem
+                      ? areValuesEqual(
+                          selectedItem.value,
+                          item.value,
+                          getOptionValue,
+                        )
+                      : false,
+                  prefix: "select",
+                  renderItems,
+                })}
+              </>
+            )}
           </div>
-        )}
+        </div>
       </FloatingPortal>
     </div>
   );
