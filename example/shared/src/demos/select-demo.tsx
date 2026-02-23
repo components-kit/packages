@@ -151,6 +151,17 @@ function SelectPreview() {
       </div>
       <div>
         <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Default Open
+        </p>
+        <Select
+          defaultOpen
+          options={["Apple", "Banana", "Cherry", "Date"]}
+          placeholder="Starts open..."
+          variantName="default"
+        />
+      </div>
+      <div>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
           Read-only
         </p>
         <Select
@@ -304,6 +315,14 @@ export const selectDemo: ComponentDemo = {
   openOnFocus={false}
   options={["Apple", "Banana", "Cherry", "Date"]}
   placeholder="Click to open (not on focus)..."
+  variantName="default"
+/>
+
+{/* Default Open */}
+<Select
+  defaultOpen
+  options={["Apple", "Banana", "Cherry", "Date"]}
+  placeholder="Starts open..."
   variantName="default"
 />
 

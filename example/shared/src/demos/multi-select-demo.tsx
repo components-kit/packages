@@ -166,6 +166,17 @@ function MultiSelectPreview() {
       </div>
       <div>
         <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Default Open
+        </p>
+        <MultiSelect
+          defaultOpen
+          options={["React", "Vue", "Angular", "Svelte"]}
+          placeholder="Starts open..."
+          variantName="default"
+        />
+      </div>
+      <div>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
           Read-only
         </p>
         <MultiSelect
@@ -345,6 +356,14 @@ export const multiSelectDemo: ComponentDemo = {
   options={["React", "Vue", "Angular", "Svelte"]}
   tokenSeparators={[",", ";"]}
   placeholder="Paste comma-separated..."
+  variantName="default"
+/>
+
+{/* Default Open */}
+<MultiSelect
+  defaultOpen
+  options={["React", "Vue", "Angular", "Svelte"]}
+  placeholder="Starts open..."
   variantName="default"
 />
 
