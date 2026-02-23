@@ -107,7 +107,9 @@ function AsyncSearch() {
 | `autoFocus` | `boolean` | `false` | Auto-focus the input on mount |
 | `clearable` | `boolean` | `false` | Show a clear button when a value is selected |
 | `defaultInputValue` | `string` | - | Default input value (uncontrolled) |
+| `defaultOpen` | `boolean` | `false` | Whether the dropdown is open by default on mount |
 | `defaultValue` | `T` | - | Default value (uncontrolled) |
+| `disableFlip` | `boolean` | `false` | Disable auto-flip to the opposite side when the dropdown overflows the viewport |
 | `disabled` | `boolean` | `false` | Disables the combobox |
 | `emptyContent` | `string` | `"No results found"` | Custom content displayed when no options match the filter |
 | `error` | `boolean` | `false` | Whether the combobox has an error (for async search) |

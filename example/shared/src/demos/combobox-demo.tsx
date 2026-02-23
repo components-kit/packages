@@ -202,6 +202,28 @@ function ComboboxPreview() {
       </div>
       <div>
         <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Default Open
+        </p>
+        <Combobox
+          defaultOpen
+          options={["Apple", "Banana", "Cherry", "Date"]}
+          placeholder="Starts open..."
+          variantName="default"
+        />
+      </div>
+      <div>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          Disable Flip
+        </p>
+        <Combobox
+          disableFlip
+          options={["Apple", "Banana", "Cherry", "Date"]}
+          placeholder="Won't flip upward..."
+          variantName="default"
+        />
+      </div>
+      <div>
+        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
           Read-only
         </p>
         <Combobox
@@ -386,6 +408,22 @@ export const comboboxDemo: ComponentDemo = {
   openOnFocus={false}
   options={["Apple", "Banana", "Cherry", "Date"]}
   placeholder="Type or click arrow to open..."
+  variantName="default"
+/>
+
+{/* Default Open */}
+<Combobox
+  defaultOpen
+  options={["Apple", "Banana", "Cherry", "Date"]}
+  placeholder="Starts open..."
+  variantName="default"
+/>
+
+{/* Disable Flip */}
+<Combobox
+  disableFlip
+  options={["Apple", "Banana", "Cherry", "Date"]}
+  placeholder="Won't flip upward..."
   variantName="default"
 />
 
