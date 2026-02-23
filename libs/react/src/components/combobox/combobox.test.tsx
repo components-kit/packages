@@ -2192,7 +2192,7 @@ describe("Combobox Component", () => {
       expect(content).toHaveAttribute("data-state", "closed");
     });
 
-    it("removes content from DOM after exit duration", async () => {
+    it("hides positioner after exit duration", async () => {
       const user = userEvent.setup();
       render(<Combobox options={["apple", "banana"]} />);
 
@@ -2203,9 +2203,9 @@ describe("Combobox Component", () => {
         vi.advanceTimersByTime(150);
       });
 
-      expect(
-        document.querySelector('[data-ck="combobox-content"]'),
-      ).not.toBeInTheDocument();
+      // Content stays in DOM but positioner is marked unmounted
+      const positioner = document.querySelector('[data-ck="combobox-positioner"]');
+      expect(positioner).toHaveAttribute("data-unmounted");
     });
 
     it("disables pointer events during exit animation", async () => {
@@ -2218,8 +2218,9 @@ describe("Combobox Component", () => {
       const content = document.querySelector(
         '[data-ck="combobox-content"]',
       ) as HTMLElement;
-      // pointerEvents is on the outer positioning wrapper, not the inner content div
-      expect(content.parentElement!.style.pointerEvents).toBe("none");
+      // Positioner wrapper uses data attributes instead of inline styles
+      expect(content.parentElement!).toHaveAttribute("data-ck", "combobox-positioner");
+      expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });
 });

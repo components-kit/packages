@@ -254,6 +254,7 @@ function MultiSelectForm() {
 | `data-ck="multi-select-tag-remove"`    | Button                 | -                    | Remove button inside a tag                  |
 | `data-ck="multi-select-input"`         | Input                  | -                    | Text input for filtering                    |
 | `data-ck="multi-select-trigger"`       | Button                 | -                    | Toggle button for dropdown                  |
+| `data-ck="multi-select-positioner"`    | Div (portal)           | -                    | Always-rendered positioning wrapper around dropdown content |
 | `data-ck="multi-select-content"`       | Menu                   | -                    | Dropdown menu container                     |
 | `data-ck="multi-select-item"`          | Item                   | -                    | Individual dropdown item                    |
 | `data-slot="icon"`                     | Div (inside item)      | -                    | Trailing icon slot for CSS-injected indicator (`aria-hidden`) |
@@ -264,8 +265,9 @@ function MultiSelectForm() {
 | `data-ck="multi-select-clear"`         | Button                 | -                    | Clear-all button (when `clearable` is true) |
 | `data-ck="multi-select-live"`          | Div                    | -                    | Live region for screen reader announcements (must be styled sr-only) |
 | `data-ck="multi-select-tag-overflow"`  | Span                   | -                    | "+N more" overflow indicator (`aria-label` describes hidden count) |
-| `data-state`                           | Root, Trigger, Content | `"open"`, `"closed"` | Dropdown open/close state                   |
+| `data-state`                           | Root, Trigger, Positioner, Content | `"open"`, `"closed"` | Dropdown open/close state             |
 | `data-side`                            | Content                | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI) |
+| `data-unmounted`                       | Positioner             | `true`               | Present when the positioner content is unmounted |
 | `data-state`                           | Item                   | `"checked"`, `"unchecked"` | Whether the item is currently selected |
 | `data-active`                          | Tag                    | `true`               | Present on the currently focused tag        |
 | `data-disabled`                        | Root, Item             | `true`               | Present when disabled                       |

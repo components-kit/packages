@@ -155,6 +155,7 @@ function SelectForm() {
 | `data-ck="select-trigger"`     | Button                       | -                                                | Trigger button                                                       |
 | `data-ck="select-value"`       | Span                         | -                                                | Value display area                                                   |
 | `data-slot="icon"`             | Div (inside trigger)         | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)         |
+| `data-ck="select-positioner"`  | Div (portal)                 | -                                                | Always-rendered positioning wrapper around dropdown content           |
 | `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
 | `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
 | `data-slot="icon"`             | Div (inside item)            | -                                                | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
@@ -163,8 +164,9 @@ function SelectForm() {
 | `data-ck="select-group-label"` | Div                          | -                                                | Group heading label (`role="presentation"`)                          |
 | `data-ck="select-live"`        | Div                          | -                                                | Live region for screen reader announcements (must be styled sr-only) |
 | `data-ck="select-empty"`       | Div                          | -                                                | Empty state message when no options available                        |
-| `data-state`                   | Root, Trigger, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/content; checked/unchecked on items |
+| `data-state`                   | Root, Trigger, Positioner, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/positioner/content; checked/unchecked on items |
 | `data-side`                    | Content                      | `"bottom"`, `"top"`, `"left"`, `"right"`         | Current placement side of the dropdown (from Floating UI)            |
+| `data-unmounted`               | Positioner                   | `true`                                           | Present when the positioner content is unmounted                     |
 | `data-disabled`                | Root, Item                   | `true`                                           | Present when disabled                                                |
 | `data-empty`                   | Content                      | `true`                                           | Present on menu when no options are visible                          |
 | `data-error`                   | Root                         | `true`                                           | Present when `error` prop is true                                    |

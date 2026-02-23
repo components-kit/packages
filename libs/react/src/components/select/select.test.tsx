@@ -739,7 +739,9 @@ describe("Select Component", () => {
       const trigger = container.querySelector('[data-ck="select-trigger"]');
 
       expect(trigger).toHaveAttribute("data-state", "closed");
-      expect(document.querySelector('[data-ck="select-content"]')).toBeNull();
+      // Content is always in DOM; positioner is marked unmounted when closed
+      const positioner = document.querySelector('[data-ck="select-positioner"]');
+      expect(positioner).toHaveAttribute("data-unmounted");
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1412,7 +1414,7 @@ describe("Select Component", () => {
       expect(content).toHaveAttribute("data-state", "closed");
     });
 
-    it("removes content from DOM after exit duration", async () => {
+    it("hides positioner after exit duration", async () => {
       const user = userEvent.setup();
       render(<Select options={["apple", "banana"]} />);
 
@@ -1424,9 +1426,9 @@ describe("Select Component", () => {
         vi.advanceTimersByTime(150);
       });
 
-      expect(
-        document.querySelector('[data-ck="select-content"]'),
-      ).not.toBeInTheDocument();
+      // Content stays in DOM but positioner is marked unmounted
+      const positioner = document.querySelector('[data-ck="select-positioner"]');
+      expect(positioner).toHaveAttribute("data-unmounted");
     });
 
     it("disables pointer events during exit animation", async () => {
@@ -1439,8 +1441,9 @@ describe("Select Component", () => {
       const content = document.querySelector(
         '[data-ck="select-content"]',
       ) as HTMLElement;
-      // pointerEvents is on the outer positioning wrapper, not the inner content div
-      expect(content.parentElement!.style.pointerEvents).toBe("none");
+      // Positioner wrapper uses data attributes instead of inline styles
+      expect(content.parentElement!).toHaveAttribute("data-ck", "select-positioner");
+      expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });
 });
