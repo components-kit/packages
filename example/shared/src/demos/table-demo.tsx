@@ -52,6 +52,11 @@ const columns: ColumnDef<User>[] = [
   { accessorKey: "role", header: "Role" },
 ];
 
+const users: User[] = [
+  { id: 1, name: "Jane Doe", email: "jane@example.com", role: "Admin" },
+  { id: 2, name: "John Smith", email: "john@example.com", role: "Editor" },
+];
+
 const PAGE_SIZE = 2;
 
 function MyTable() {

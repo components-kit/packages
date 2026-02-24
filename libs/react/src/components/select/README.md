@@ -7,7 +7,12 @@ A dropdown select component with keyboard navigation, powered by Downshift.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Select } from '@components-kit/react';
+
+const setFruit = (value: string | undefined) => {
+  console.log('Selected fruit:', value);
+};
 
 // Simple string options
 <Select
@@ -45,29 +50,29 @@ import { Select } from '@components-kit/react';
 
 ## Props
 
-| Prop             | Type                              | Default          | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `aria-label`     | `string`                          | -                | Accessible label for the trigger button. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                              |
-| `autoFocus`      | `boolean`                         | `false`          | Auto-focus the trigger on mount                                                                                                                                          |
-| `options`        | `SelectOption<T>[]`               | **required**     | Array of options to display                                                                                                                                              |
-| `placement`      | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
-| `value`          | `T`                               | -                | Controlled value                                                                                                                                                         |
-| `defaultOpen`    | `boolean`                         | `false`          | Whether the dropdown is open by default on mount                                                                                                                         |
-| `defaultValue`   | `T`                               | -                | Default value (uncontrolled)                                                                                                                                             |
-| `onValueChange`  | `(value: T \| undefined) => void` | -                | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Select..."`    | Placeholder text                                                                                                                                                         |
-| `disabled`       | `boolean`                         | `false`          | Disables the select                                                                                                                                                      |
-| `emptyContent`   | `string`                          | `"No options"`   | Text displayed when there are no options                                                                                                                                 |
-| `error`          | `boolean`                         | `false`          | Marks the select as invalid (adds `data-error`)                                                                                                                          |
-| `maxDropdownHeight` | `number`                       | -                | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
-| `menuPortal`     | `HTMLElement \| null`             | -                | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
-| `name`           | `string`                          | -                | Form field name. When set, renders a hidden input for native form submission                                                                                             |
-| `onOpenChange`   | `(open: boolean) => void`         | -                | Callback when the dropdown opens or closes                                                                                                                               |
-| `openOnFocus`    | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |
-| `readOnly`       | `boolean`                         | `false`          | Read-only mode — visually normal but prevents interaction                                                                                                                |
-| `required`       | `boolean`                         | `false`          | Marks the select as required (`aria-required` + `data-required`)                                                                                                         |
-| `variantName`    | `VariantFor<"select">`            | -                | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| Prop                | Type                              | Default          | Description                                                                                                                                                              |
+| ------------------- | --------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aria-label`        | `string`                          | -                | Accessible label for the trigger button. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                              |
+| `autoFocus`         | `boolean`                         | `false`          | Auto-focus the trigger on mount                                                                                                                                          |
+| `options`           | `SelectOption<T>[]`               | **required**     | Array of options to display                                                                                                                                              |
+| `placement`         | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
+| `value`             | `T`                               | -                | Controlled value                                                                                                                                                         |
+| `defaultOpen`       | `boolean`                         | `false`          | Whether the dropdown is open by default on mount                                                                                                                         |
+| `defaultValue`      | `T`                               | -                | Default value (uncontrolled)                                                                                                                                             |
+| `onValueChange`     | `(value: T \| undefined) => void` | -                | Callback when selection changes                                                                                                                                          |
+| `placeholder`       | `string`                          | `"Select..."`    | Placeholder text                                                                                                                                                         |
+| `disabled`          | `boolean`                         | `false`          | Disables the select                                                                                                                                                      |
+| `emptyContent`      | `string`                          | `"No options"`   | Text displayed when there are no options                                                                                                                                 |
+| `error`             | `boolean`                         | `false`          | Marks the select as invalid (adds `data-error`)                                                                                                                          |
+| `maxDropdownHeight` | `number`                          | -                | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
+| `menuPortal`        | `HTMLElement \| null`             | -                | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
+| `name`              | `string`                          | -                | Form field name. When set, renders a hidden input for native form submission                                                                                             |
+| `onOpenChange`      | `(open: boolean) => void`         | -                | Callback when the dropdown opens or closes                                                                                                                               |
+| `openOnFocus`       | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |
+| `readOnly`          | `boolean`                         | `false`          | Read-only mode — visually normal but prevents interaction                                                                                                                |
+| `required`          | `boolean`                         | `false`          | Marks the select as required (`aria-required` + `data-required`)                                                                                                         |
+| `variantName`       | `VariantFor<"select">`            | -                | Variant name for styling                                                                                                                                                 |
+| `getOptionValue`    | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
 ## Option Types
 
@@ -102,12 +107,19 @@ const users: User[] = [
   { id: 3, name: "Charlie", email: "charlie@example.com" },
 ];
 
-<Select<User>
-  options={users.map((u) => ({ value: u, label: u.name }))}
-  getOptionValue={(user) => user.id}
-  onValueChange={setSelectedUser}
-  placeholder="Select a user..."
-/>;
+function UserSelect() {
+  const [selectedUser, setSelectedUser] = useState<User | undefined>();
+
+  return (
+    <Select<User>
+      options={users.map((u) => ({ value: u, label: u.name }))}
+      value={selectedUser}
+      onValueChange={setSelectedUser}
+      getOptionValue={(user) => user.id}
+      placeholder="Select a user..."
+    />
+  );
+}
 ```
 
 The `getOptionValue` function is required for object values because React uses reference equality by default, which won't work when options are recreated. By extracting a unique primitive key (like an `id`), the component can correctly identify which option is selected even when the object references change.
@@ -151,33 +163,33 @@ function SelectForm() {
 
 ## Data Attributes
 
-| Attribute                      | Element                      | Values                                           | Description                                                          |
-| ------------------------------ | ---------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| `data-ck="select"`             | Root                         | -                                                | Component identifier                                                 |
-| `data-ck="select-trigger"`     | Button                       | -                                                | Trigger button                                                       |
-| `data-ck="select-value"`       | Span                         | -                                                | Value display area                                                   |
-| `data-slot="icon"`             | Div (inside trigger)         | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)         |
-| `data-ck="select-positioner"`  | Div (portal)                 | -                                                | Always-rendered positioning wrapper around dropdown content           |
-| `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
-| `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
-| `data-slot="icon"`             | Div (inside item)            | -                                                | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
-| `data-ck="select-separator"`   | Div                          | -                                                | Visual separator between groups                                      |
-| `data-ck="select-group"`       | Div                          | -                                                | Group container (`role="group"` with `aria-labelledby`)              |
-| `data-ck="select-group-label"` | Div                          | -                                                | Group heading label (`role="presentation"`)                          |
-| `data-ck="select-live"`        | Div                          | -                                                | Live region for screen reader announcements (must be styled sr-only) |
-| `data-ck="select-empty"`       | Div                          | -                                                | Empty state message when no options available                        |
+| Attribute                      | Element                                  | Values                                           | Description                                                                     |
+| ------------------------------ | ---------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `data-ck="select"`             | Root                                     | -                                                | Component identifier                                                            |
+| `data-ck="select-trigger"`     | Button                                   | -                                                | Trigger button                                                                  |
+| `data-ck="select-value"`       | Span                                     | -                                                | Value display area                                                              |
+| `data-slot="icon"`             | Div (inside trigger)                     | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)                    |
+| `data-ck="select-positioner"`  | Div (portal)                             | -                                                | Always-rendered positioning wrapper around dropdown content                     |
+| `data-ck="select-content"`     | Menu                                     | -                                                | Dropdown menu container                                                         |
+| `data-ck="select-item"`        | Item                                     | -                                                | Individual option item                                                          |
+| `data-slot="icon"`             | Div (inside item)                        | -                                                | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`)  |
+| `data-ck="select-separator"`   | Div                                      | -                                                | Visual separator between groups                                                 |
+| `data-ck="select-group"`       | Div                                      | -                                                | Group container (`role="group"` with `aria-labelledby`)                         |
+| `data-ck="select-group-label"` | Div                                      | -                                                | Group heading label (`role="presentation"`)                                     |
+| `data-ck="select-live"`        | Div                                      | -                                                | Live region for screen reader announcements (must be styled sr-only)            |
+| `data-ck="select-empty"`       | Div                                      | -                                                | Empty state message when no options available                                   |
 | `data-state`                   | Root, Trigger, Positioner, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/positioner/content; checked/unchecked on items |
-| `data-side`                    | Content                      | `"bottom"`, `"top"`, `"left"`, `"right"`         | Current placement side of the dropdown (from Floating UI)            |
-| `data-unmounted`               | Positioner                   | `true`                                           | Present when the positioner content is unmounted                     |
-| `data-disabled`                | Root, Item                   | `true`                                           | Present when disabled                                                |
-| `data-empty`                   | Content                      | `true`                                           | Present on menu when no options are visible                          |
-| `data-error`                   | Root                         | `true`                                           | Present when `error` prop is true                                    |
-| `data-has-value`               | Root                         | `true`                                           | Present when an item is selected                                     |
-| `data-highlighted`             | Item                         | `true`                                           | Present on the currently highlighted item                            |
-| `data-placeholder`             | Value                        | `""`                                             | Present when showing placeholder text                                |
-| `data-readonly`                | Root                         | `true`                                           | Present when `readOnly` prop is true                                 |
-| `data-required`                | Root                         | `true`                                           | Present when `required` prop is true                                 |
-| `data-variant`                 | Root                         | string                                           | Variant name for styling                                             |
+| `data-side`                    | Content                                  | `"bottom"`, `"top"`, `"left"`, `"right"`         | Current placement side of the dropdown (from Floating UI)                       |
+| `data-unmounted`               | Positioner                               | `true`                                           | Present when the positioner content is unmounted                                |
+| `data-disabled`                | Root, Item                               | `true`                                           | Present when disabled                                                           |
+| `data-empty`                   | Content                                  | `true`                                           | Present on menu when no options are visible                                     |
+| `data-error`                   | Root                                     | `true`                                           | Present when `error` prop is true                                               |
+| `data-has-value`               | Root                                     | `true`                                           | Present when an item is selected                                                |
+| `data-highlighted`             | Item                                     | `true`                                           | Present on the currently highlighted item                                       |
+| `data-placeholder`             | Value                                    | `""`                                             | Present when showing placeholder text                                           |
+| `data-readonly`                | Root                                     | `true`                                           | Present when `readOnly` prop is true                                            |
+| `data-required`                | Root                                     | `true`                                           | Present when `required` prop is true                                            |
+| `data-variant`                 | Root                                     | string                                           | Variant name for styling                                                        |
 
 ## Accessibility
 

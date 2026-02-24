@@ -5,6 +5,7 @@ A small status indicator for highlighting information, counts, or labels.
 ## Usage
 
 ```tsx
+import { useEffect, useState } from 'react';
 import { Badge } from '@components-kit/react';
 
 // Basic badge
@@ -22,7 +23,7 @@ import { Badge } from '@components-kit/react';
 
 // Notification count
 <button aria-label="Messages, 5 unread">
-  <MailIcon />
+  <span aria-hidden="true">📨</span>
   <Badge size="sm" variantName="notification">5</Badge>
 </button>
 
@@ -30,24 +31,40 @@ import { Badge } from '@components-kit/react';
 <Badge asChild variantName="primary">
   <button type="button">Clickable Badge</button>
 </Badge>
+
+// Dynamic count updates (announced to screen readers)
+function PendingJobsBadge() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCount((c) => c + 1), 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div aria-live="polite" aria-atomic="true">
+      <Badge variantName="info">{count} pending</Badge>
+    </div>
+  );
+}
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the badge |
-| `variantName` | `VariantFor<"badge">` | - | Variant name for styling |
-| `asChild` | `boolean` | `false` | Merge props with child element instead of wrapping |
+| Prop          | Type                   | Default | Description                                        |
+| ------------- | ---------------------- | ------- | -------------------------------------------------- |
+| `size`        | `"sm" \| "md" \| "lg"` | `"md"`  | Size of the badge                                  |
+| `variantName` | `VariantFor<"badge">`  | -       | Variant name for styling                           |
+| `asChild`     | `boolean`              | `false` | Merge props with child element instead of wrapping |
 
 Also accepts all standard `span` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
-| `data-size` | `"sm"`, `"md"`, `"lg"` | The size variant |
+| Attribute      | Values                 | Description                  |
+| -------------- | ---------------------- | ---------------------------- |
+| `data-variant` | string                 | The variant name for styling |
+| `data-size`    | `"sm"`, `"md"`, `"lg"` | The size variant             |
 
 ## Accessibility
 

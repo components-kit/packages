@@ -40,42 +40,42 @@ import { Text } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"p"` | HTML element to render as (polymorphic) |
-| `variantName` | `VariantFor<"text">` | - | Variant name for styling |
+| Prop          | Type                 | Default | Description                             |
+| ------------- | -------------------- | ------- | --------------------------------------- |
+| `as`          | `ElementType`        | `"p"`   | HTML element to render as (polymorphic) |
+| `variantName` | `VariantFor<"text">` | -       | Variant name for styling                |
 
 Also accepts all HTML attributes for the rendered element.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Common Elements
 
-| Element | Use Case |
-|---------|----------|
-| `p` | Paragraphs of text (default) |
-| `span` | Inline text without semantic meaning |
-| `strong` | Important text (not just bold styling) |
-| `em` | Emphasized text (not just italic styling) |
-| `small` | Side comments, disclaimers, fine print |
-| `label` | Form input labels (use with `htmlFor`) |
-| `div` | Block-level text container |
+| Element  | Use Case                                  |
+| -------- | ----------------------------------------- |
+| `p`      | Paragraphs of text (default)              |
+| `span`   | Inline text without semantic meaning      |
+| `strong` | Important text (not just bold styling)    |
+| `em`     | Emphasized text (not just italic styling) |
+| `small`  | Side comments, disclaimers, fine print    |
+| `label`  | Form input labels (use with `htmlFor`)    |
+| `div`    | Block-level text container                |
 
 ## Accessibility
 
 Choose elements based on semantic meaning:
 
-| Element | Meaning |
-|---------|---------|
-| `<p>` | Paragraph of content |
-| `<strong>` | Important text (announced by screen readers) |
-| `<em>` | Emphasized text (announced by screen readers) |
-| `<small>` | Side comments or fine print |
-| `<label>` | Form input labels (use `htmlFor` for association) |
+| Element    | Meaning                                           |
+| ---------- | ------------------------------------------------- |
+| `<p>`      | Paragraph of content                              |
+| `<strong>` | Important text (announced by screen readers)      |
+| `<em>`     | Emphasized text (announced by screen readers)     |
+| `<small>`  | Side comments or fine print                       |
+| `<label>`  | Form input labels (use `htmlFor` for association) |
 
 ### Best Practices
 

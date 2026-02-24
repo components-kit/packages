@@ -97,12 +97,25 @@ function PaginationPreview() {
 
 export const paginationDemo: ComponentDemo = {
   code: `import { Pagination } from "@components-kit/react";
+import { useState } from "react";
+
+const fetchNext = () => {};
+const fetchPrevious = () => {};
+const fetchFirst = () => {};
+const fetchLast = () => {};
+const hasNext = true;
+const hasPrev = false;
+
+function ControlledPagination() {
+  const [page, setPage] = useState(1);
+  return <Pagination page={page} totalPages={10} variantName="default" onPageChange={setPage} />;
+}
 
 {/* Offset mode */}
 <Pagination defaultPage={1} totalPages={10} variantName="default" />
 
 {/* Controlled */}
-<Pagination page={page} totalPages={10} onPageChange={setPage} variantName="default" />
+<ControlledPagination />
 
 {/* With first/last buttons */}
 <Pagination defaultPage={5} showFirstLast totalPages={50} variantName="default" />
@@ -112,7 +125,9 @@ export const paginationDemo: ComponentDemo = {
   hasNextPage={hasNext}
   hasPreviousPage={hasPrev}
   onNext={() => fetchNext()}
-  onPrevious={() => fetchPrev()}
+  onPrevious={() => fetchPrevious()}
+  onFirst={() => fetchFirst()}
+  onLast={() => fetchLast()}
   variantName="default"
 />`,
   id: "pagination",

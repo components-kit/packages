@@ -55,22 +55,31 @@ export const radioGroupDemo: ComponentDemo = {
   code: `import { RadioGroup, RadioGroupItem } from "@components-kit/react";
 import { useState } from "react";
 
-const [value, setValue] = useState("option1");
+function ControlledPreferences() {
+  const [selected, setSelected] = useState("email");
 
-<RadioGroup aria-label="Select option" variantName="default">
-  <RadioGroupItem
-    checked={value === "option1"}
-    name="radio"
-    value="option1"
-    onChange={(e) => setValue(e.target.value)}
-  />
-  <RadioGroupItem
-    checked={value === "option2"}
-    name="radio"
-    value="option2"
-    onChange={(e) => setValue(e.target.value)}
-  />
-</RadioGroup>`,
+  return (
+    <RadioGroup aria-label="Notification preference" variantName="default">
+      <RadioGroupItem
+        checked={selected === "email"}
+        id="pref-email"
+        name="preference"
+        value="email"
+        onChange={(e) => setSelected(e.target.value)}
+      />
+      <label htmlFor="pref-email">Email</label>
+
+      <RadioGroupItem
+        checked={selected === "push"}
+        id="pref-push"
+        name="preference"
+        value="push"
+        onChange={(e) => setSelected(e.target.value)}
+      />
+      <label htmlFor="pref-push">Push</label>
+    </RadioGroup>
+  );
+}`,
   id: "radio-group",
   name: "RadioGroup",
   preview: <RadioGroupPreview />,

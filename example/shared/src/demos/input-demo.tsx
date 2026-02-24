@@ -9,9 +9,18 @@ function InputPreview() {
   const [value, setValue] = useState("");
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "12px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Text Input
         </p>
         <Input
@@ -26,7 +35,9 @@ function InputPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Email
         </p>
         <Input
@@ -37,7 +48,9 @@ function InputPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Input
@@ -55,14 +68,20 @@ export const inputDemo: ComponentDemo = {
   code: `import { Input } from "@components-kit/react";
 import { useState } from "react";
 
-const [value, setValue] = useState("");
+function SearchField() {
+  const [value, setValue] = useState("");
 
-<Input
-  placeholder="Enter text..."
-  value={value}
-  variantName="default"
-  onChange={(e) => setValue(e.target.value)}
-/>
+  return (
+    <Input
+      aria-label="Search"
+      inputMode="search"
+      placeholder="Search components..."
+      value={value}
+      variantName="default"
+      onChange={(e) => setValue(e.target.value)}
+    />
+  );
+}
 
 <Input placeholder="you@example.com" type="email" variantName="default" />
 <Input disabled placeholder="Disabled" variantName="default" />`,

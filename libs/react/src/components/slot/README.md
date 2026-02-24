@@ -5,7 +5,12 @@ A utility component enabling the "asChild" composition pattern for flexible comp
 ## Usage
 
 ```tsx
+import { useRef } from 'react';
 import { Slot } from '@components-kit/react';
+
+const handleClick = () => {
+  console.log('Slot clicked');
+};
 
 // Default rendering (with wrapper)
 <Slot as="div" className="wrapper">
@@ -34,11 +39,11 @@ const Button = ({ asChild, children, ...props }) => (
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"span"` | Fallback element when not using asChild |
-| `asChild` | `boolean` | `false` | Merge props with child element |
-| `children` | `ReactNode` | - | Content (must be single element when asChild) |
+| Prop       | Type          | Default  | Description                                   |
+| ---------- | ------------- | -------- | --------------------------------------------- |
+| `as`       | `ElementType` | `"span"` | Fallback element when not using asChild       |
+| `asChild`  | `boolean`     | `false`  | Merge props with child element                |
+| `children` | `ReactNode`   | -        | Content (must be single element when asChild) |
 
 Also accepts all HTML attributes for the rendered element.
 
@@ -46,12 +51,12 @@ Also accepts all HTML attributes for the rendered element.
 
 When `asChild` is true:
 
-| Prop Type | Merge Strategy |
-|-----------|----------------|
-| `ref` | Both refs are called (merged via callback) |
-| `className` | Concatenated with space (parent first, then child) |
-| Event handlers | Both called (child first, then parent) |
-| Other props | Child props override parent props |
+| Prop Type      | Merge Strategy                                     |
+| -------------- | -------------------------------------------------- |
+| `ref`          | Both refs are called (merged via callback)         |
+| `className`    | Concatenated with space (parent first, then child) |
+| Event handlers | Both called (child first, then parent)             |
+| Other props    | Child props override parent props                  |
 
 ### Merged Event Handlers
 
@@ -76,15 +81,15 @@ When `asChild` is true:
 const ref = useRef<HTMLAnchorElement>(null);
 <Slot asChild ref={ref}>
   <a href="/link">Link</a>
-</Slot>
+</Slot>;
 // ref.current points to the <a> element
 ```
 
 ### Event Handler Merging
 
 ```tsx
-<Slot asChild onClick={() => console.log('parent')}>
-  <button onClick={() => console.log('child')}>Click</button>
+<Slot asChild onClick={() => console.log("parent")}>
+  <button onClick={() => console.log("child")}>Click</button>
 </Slot>
 // Clicking logs: "child" then "parent"
 ```
@@ -96,11 +101,15 @@ const ref = useRef<HTMLAnchorElement>(null);
 const Badge = ({ asChild, children, ...props }) => {
   const sharedProps = {
     ...props,
-    'data-variant': props.variantName,
+    "data-variant": props.variantName,
   };
 
   if (asChild) {
-    return <Slot asChild {...sharedProps}>{children}</Slot>;
+    return (
+      <Slot asChild {...sharedProps}>
+        {children}
+      </Slot>
+    );
   }
 
   return <span {...sharedProps}>{children}</span>;
@@ -109,7 +118,7 @@ const Badge = ({ asChild, children, ...props }) => {
 // Usage
 <Badge asChild variantName="success">
   <button>Clickable Badge</button>
-</Badge>
+</Badge>;
 ```
 
 ## Best Practices

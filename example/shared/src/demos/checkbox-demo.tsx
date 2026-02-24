@@ -38,13 +38,17 @@ export const checkboxDemo: ComponentDemo = {
   code: `import { Checkbox } from "@components-kit/react";
 import { useState } from "react";
 
-const [checked, setChecked] = useState(false);
+function MarketingOptIn() {
+  const [checked, setChecked] = useState(false);
 
-<Checkbox
-  checked={checked}
-  variantName="default"
-  onChange={(e) => setChecked(e.target.checked)}
-/>
+  return (
+    <Checkbox
+      checked={checked}
+      variantName="default"
+      onChange={(e) => setChecked(e.target.checked)}
+    />
+  );
+}
 
 <Checkbox defaultChecked variantName="default" />
 <Checkbox disabled variantName="default" />`,

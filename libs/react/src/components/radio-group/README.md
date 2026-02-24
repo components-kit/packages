@@ -5,6 +5,7 @@ A container and radio input components for single selection from multiple option
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@components-kit/react';
 
 // Basic radio group
@@ -39,24 +40,41 @@ import { RadioGroup, RadioGroupItem } from '@components-kit/react';
 </fieldset>
 
 // Controlled
-const [selected, setSelected] = useState('option1');
-<RadioGroup aria-label="Preferences">
-  <RadioGroupItem
-    id="opt1"
-    name="preference"
-    value="option1"
-    checked={selected === 'option1'}
-    onChange={(e) => setSelected(e.target.value)}
-  />
-  <label htmlFor="opt1">Option 1</label>
-</RadioGroup>
+function ControlledPreferences() {
+  const [selected, setSelected] = useState('email');
+
+  return (
+    <RadioGroup aria-label="Notification preference">
+      <div>
+        <RadioGroupItem
+          id="pref-email"
+          name="preference"
+          value="email"
+          checked={selected === 'email'}
+          onChange={(e) => setSelected(e.target.value)}
+        />
+        <label htmlFor="pref-email">Email</label>
+      </div>
+      <div>
+        <RadioGroupItem
+          id="pref-push"
+          name="preference"
+          value="push"
+          checked={selected === 'push'}
+          onChange={(e) => setSelected(e.target.value)}
+        />
+        <label htmlFor="pref-push">Push</label>
+      </div>
+    </RadioGroup>
+  );
+}
 ```
 
 ## RadioGroup Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"radio_group">` | - | Variant name for styling |
+| Prop          | Type                        | Default | Description              |
+| ------------- | --------------------------- | ------- | ------------------------ |
+| `variantName` | `VariantFor<"radio_group">` | -       | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -66,8 +84,8 @@ Accepts all standard `input[type="radio"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                                    |
+| -------------- | ------ | ---------------------------------------------- |
 | `data-variant` | string | The variant name for styling (RadioGroup only) |
 
 ## Accessibility

@@ -20,6 +20,16 @@ import { Button } from '@components-kit/react';
   Saving...
 </Button>
 
+// Full-width call-to-action
+<Button fullWidth variantName="primary">
+  Continue
+</Button>
+
+// Disabled button
+<Button disabled variantName="secondary">
+  Unavailable
+</Button>
+
 // Icon-only button (requires aria-label)
 <Button aria-label="Search" leadingIcon={<SearchIcon />} variantName="ghost" />
 
@@ -36,29 +46,29 @@ import { Button } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"button"` | HTML element to render as (polymorphic) |
-| `asChild` | `boolean` | `false` | Merge props with child element |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the button |
-| `variantName` | `VariantFor<"button">` | - | Variant name for styling |
-| `isLoading` | `boolean` | `false` | Shows loading state, disables button |
-| `disabled` | `boolean` | - | Disables the button |
-| `fullWidth` | `boolean` | - | Makes button full width |
-| `leadingIcon` | `ReactNode` | - | Icon before button text |
-| `trailingIcon` | `ReactNode` | - | Icon after button text |
+| Prop           | Type                   | Default    | Description                             |
+| -------------- | ---------------------- | ---------- | --------------------------------------- |
+| `as`           | `ElementType`          | `"button"` | HTML element to render as (polymorphic) |
+| `asChild`      | `boolean`              | `false`    | Merge props with child element          |
+| `size`         | `"sm" \| "md" \| "lg"` | `"md"`     | Size of the button                      |
+| `variantName`  | `VariantFor<"button">` | -          | Variant name for styling                |
+| `isLoading`    | `boolean`              | `false`    | Shows loading state, disables button    |
+| `disabled`     | `boolean`              | -          | Disables the button                     |
+| `fullWidth`    | `boolean`              | -          | Makes button full width                 |
+| `leadingIcon`  | `ReactNode`            | -          | Icon before button text                 |
+| `trailingIcon` | `ReactNode`            | -          | Icon after button text                  |
 
 Also accepts all standard `button` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
-| `data-size` | `"sm"`, `"md"`, `"lg"` | The size variant |
-| `data-loading` | `true` | Present when loading |
-| `data-disabled` | `true` | Present when disabled |
-| `data-full-width` | `true` | Present when full width |
+| Attribute         | Values                 | Description                  |
+| ----------------- | ---------------------- | ---------------------------- |
+| `data-variant`    | string                 | The variant name for styling |
+| `data-size`       | `"sm"`, `"md"`, `"lg"` | The size variant             |
+| `data-loading`    | `true`                 | Present when loading         |
+| `data-disabled`   | `true`                 | Present when disabled        |
+| `data-full-width` | `true`                 | Present when full width      |
 
 ## Accessibility
 
@@ -77,7 +87,7 @@ When using only an icon without visible text, you **must** provide `aria-label`:
 
 ### Best Practices
 
-- Use `type="button"` for non-submit buttons (default)
+- Use `type="button"` for non-submit buttons (the default)
 - Provide loading feedback text when appropriate
 - Ensure sufficient color contrast
 - Keep button labels concise and action-oriented

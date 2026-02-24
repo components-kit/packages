@@ -10,7 +10,14 @@ function SliderPreview() {
   const [committed, setCommitted] = useState<number | null>(null);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "400px",
+      }}
+    >
       <div>
         <p
           id="slider-demo-controlled"
@@ -26,7 +33,9 @@ function SliderPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Uncontrolled (defaultValue)
         </p>
         <Slider
@@ -36,7 +45,9 @@ function SliderPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Range & Step
         </p>
         <Slider
@@ -49,8 +60,11 @@ function SliderPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
-          With onValueCommit{committed !== null ? `: committed ${committed}` : ""}
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
+          With onValueCommit
+          {committed !== null ? `: committed ${committed}` : ""}
         </p>
         <Slider
           aria-label="Commit example"
@@ -61,7 +75,13 @@ function SliderPreview() {
       </div>
       <div style={{ display: "flex", gap: "20px" }}>
         <div>
-          <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "0.875rem",
+              margin: "0 0 4px",
+            }}
+          >
             Vertical
           </p>
           <Slider
@@ -72,7 +92,13 @@ function SliderPreview() {
           />
         </div>
         <div>
-          <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "0.875rem",
+              margin: "0 0 4px",
+            }}
+          >
             Disabled
           </p>
           <Slider
@@ -91,14 +117,14 @@ export const sliderDemo: ComponentDemo = {
   code: `import { Slider } from "@components-kit/react";
 import { useState } from "react";
 
-const [value, setValue] = useState(50);
+const saveToServer = (value: number) => {
+  console.log("Committed slider value:", value);
+};
 
-<Slider
-  aria-label="Volume"
-  value={value}
-  variantName="default"
-  onValueChange={setValue}
-/>
+function VolumeSlider() {
+  const [volume, setVolume] = useState(50);
+  return <Slider aria-label="Volume" value={volume} variantName="default" onValueChange={setVolume} />;
+}
 
 <Slider aria-label="Brightness" defaultValue={75} variantName="default" />
 

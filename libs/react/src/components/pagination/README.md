@@ -5,14 +5,23 @@ An accessible pagination component supporting both numeric page navigation (offs
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Pagination } from '@components-kit/react';
+
+const fetchNext = () => {};
+const fetchPrevious = () => {};
+const fetchFirst = () => {};
+const fetchLast = () => {};
 
 // Basic offset mode (uncontrolled)
 <Pagination totalPages={10} defaultPage={1} />
 
 // Controlled offset mode
-const [page, setPage] = useState(1);
-<Pagination totalPages={10} page={page} onPageChange={setPage} />
+function ControlledPagination() {
+  const [page, setPage] = useState(1);
+
+  return <Pagination totalPages={10} page={page} onPageChange={setPage} />;
+}
 
 // With custom siblings
 <Pagination totalPages={20} defaultPage={10} siblings={2} />
@@ -48,44 +57,44 @@ const [page, setPage] = useState(1);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `totalPages` | `number` | - | Total pages. Enables offset mode when provided. |
-| `page` | `number` | - | Controlled current page (1-based) |
-| `defaultPage` | `number` | `1` | Initial page for uncontrolled mode |
-| `onPageChange` | `(page: number) => void` | - | Callback on page change (offset mode) |
-| `siblings` | `number` | `1` | Sibling pages on each side of current |
-| `disabled` | `boolean` | - | Disables all buttons |
-| `showFirstLast` | `boolean` | `false` | Show first/last navigation buttons |
-| `variantName` | `VariantFor<"pagination">` | - | Variant name for styling |
-| `hasNextPage` | `boolean` | - | Next page available (cursor mode) |
-| `hasPreviousPage` | `boolean` | - | Previous page available (cursor mode) |
-| `onNext` | `() => void` | - | Next callback (cursor mode) |
-| `onPrevious` | `() => void` | - | Previous callback (cursor mode) |
-| `onFirst` | `() => void` | - | First callback (both modes) |
-| `onLast` | `() => void` | - | Last callback (both modes) |
-| `hasFirstPage` | `boolean` | - | First page available (cursor mode, defaults to `hasPreviousPage`) |
-| `hasLastPage` | `boolean` | - | Last page available (cursor mode, defaults to `hasNextPage`) |
+| Prop              | Type                       | Default | Description                                                       |
+| ----------------- | -------------------------- | ------- | ----------------------------------------------------------------- |
+| `totalPages`      | `number`                   | -       | Total pages. Enables offset mode when provided.                   |
+| `page`            | `number`                   | -       | Controlled current page (1-based)                                 |
+| `defaultPage`     | `number`                   | `1`     | Initial page for uncontrolled mode                                |
+| `onPageChange`    | `(page: number) => void`   | -       | Callback on page change (offset mode)                             |
+| `siblings`        | `number`                   | `1`     | Sibling pages on each side of current                             |
+| `disabled`        | `boolean`                  | -       | Disables all buttons                                              |
+| `showFirstLast`   | `boolean`                  | `false` | Show first/last navigation buttons                                |
+| `variantName`     | `VariantFor<"pagination">` | -       | Variant name for styling                                          |
+| `hasNextPage`     | `boolean`                  | -       | Next page available (cursor mode)                                 |
+| `hasPreviousPage` | `boolean`                  | -       | Previous page available (cursor mode)                             |
+| `onNext`          | `() => void`               | -       | Next callback (cursor mode)                                       |
+| `onPrevious`      | `() => void`               | -       | Previous callback (cursor mode)                                   |
+| `onFirst`         | `() => void`               | -       | First callback (both modes)                                       |
+| `onLast`          | `() => void`               | -       | Last callback (both modes)                                        |
+| `hasFirstPage`    | `boolean`                  | -       | First page available (cursor mode, defaults to `hasPreviousPage`) |
+| `hasLastPage`     | `boolean`                  | -       | Last page available (cursor mode, defaults to `hasNextPage`)      |
 
 Also accepts all standard `nav` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Applied On | Values | Description |
-|-----------|-----------|--------|-------------|
-| `data-ck="pagination"` | Root | `"pagination"` | Component identifier |
-| `data-mode` | Root | `"offset"`, `"cursor"` | Current pagination mode |
-| `data-variant` | Root | string | Variant name for styling |
-| `data-disabled` | Root, buttons | `true` | Present when disabled |
-| `data-ck="pagination-list"` | List | `"pagination-list"` | Button list container |
-| `data-ck="pagination-page"` | Page button | `"pagination-page"` | Page number button |
-| `data-ck="pagination-previous"` | Prev button | `"pagination-previous"` | Previous navigation button |
-| `data-ck="pagination-next"` | Next button | `"pagination-next"` | Next navigation button |
-| `data-ck="pagination-first"` | First button | `"pagination-first"` | First navigation button |
-| `data-ck="pagination-last"` | Last button | `"pagination-last"` | Last navigation button |
-| `data-ck="pagination-ellipsis"` | Ellipsis | `"pagination-ellipsis"` | Truncation indicator |
-| `data-state` | Page button | `"active"`, `"inactive"` | Current page state |
-| `data-slot="page-item"` | List items | `"page-item"` | Structural slot |
+| Attribute                       | Applied On    | Values                   | Description                |
+| ------------------------------- | ------------- | ------------------------ | -------------------------- |
+| `data-ck="pagination"`          | Root          | `"pagination"`           | Component identifier       |
+| `data-mode`                     | Root          | `"offset"`, `"cursor"`   | Current pagination mode    |
+| `data-variant`                  | Root          | string                   | Variant name for styling   |
+| `data-disabled`                 | Root, buttons | `true`                   | Present when disabled      |
+| `data-ck="pagination-list"`     | List          | `"pagination-list"`      | Button list container      |
+| `data-ck="pagination-page"`     | Page button   | `"pagination-page"`      | Page number button         |
+| `data-ck="pagination-previous"` | Prev button   | `"pagination-previous"`  | Previous navigation button |
+| `data-ck="pagination-next"`     | Next button   | `"pagination-next"`      | Next navigation button     |
+| `data-ck="pagination-first"`    | First button  | `"pagination-first"`     | First navigation button    |
+| `data-ck="pagination-last"`     | Last button   | `"pagination-last"`      | Last navigation button     |
+| `data-ck="pagination-ellipsis"` | Ellipsis      | `"pagination-ellipsis"`  | Truncation indicator       |
+| `data-state`                    | Page button   | `"active"`, `"inactive"` | Current page state         |
+| `data-slot="page-item"`         | List items    | `"page-item"`            | Structural slot            |
 
 ## Accessibility
 
@@ -101,21 +110,21 @@ Uses `<nav>` landmark with `aria-label="Pagination"` following the WAI-ARIA navi
 
 ### Keyboard Support
 
-| Key | Action |
-|-----|--------|
+| Key                 | Action                                |
+| ------------------- | ------------------------------------- |
 | `Tab` / `Shift+Tab` | Move focus between pagination buttons |
-| `Enter` | Activate the focused button |
-| `Space` | Activate the focused button |
+| `Enter`             | Activate the focused button           |
+| `Space`             | Activate the focused button           |
 
 ### WCAG 2.2 AA Compliance
 
-| Criterion | Level | Requirement |
-|-----------|-------|-------------|
-| 2.1.1 Keyboard | A | All buttons keyboard-operable |
-| 2.4.3 Focus Order | A | Logical DOM focus sequence |
-| 2.5.8 Target Size | AA | Ensure minimum 24x24px button targets |
-| 1.4.3 Contrast | AA | Ensure 4.5:1 text contrast ratio |
-| 4.1.2 Name, Role, Value | A | All buttons have accessible names and roles |
+| Criterion               | Level | Requirement                                 |
+| ----------------------- | ----- | ------------------------------------------- |
+| 2.1.1 Keyboard          | A     | All buttons keyboard-operable               |
+| 2.4.3 Focus Order       | A     | Logical DOM focus sequence                  |
+| 2.5.8 Target Size       | AA    | Ensure minimum 24x24px button targets       |
+| 1.4.3 Contrast          | AA    | Ensure 4.5:1 text contrast ratio            |
+| 4.1.2 Name, Role, Value | A     | All buttons have accessible names and roles |
 
 ### Best Practices
 
