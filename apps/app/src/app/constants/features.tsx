@@ -26,13 +26,13 @@ export const FEATURES: Feature[] = [
   },
   {
     description:
-      "Sync design to code instantly. Our CLI transforms your designer-managed CSS bundle into precise TypeScript interfaces, giving developers 100% type-safety for every custom variant.",
-    title: "Automated Variant Sync",
+      "Design shifts, your code adapts. Our global CSS bundle delivers designer-managed styles and semantic tokens instantly, allowing you to update visual themes across your entire app without a single redeploy.",
+    title: "Automated Style Sync", // Changed "Variant" to "Style" to distinguish from the Props/Types
     visual: <VariantSyncVisual />,
   },
   {
     description:
-      "Keep types in lockstep with your design system. The CLI generates updated interfaces on the fly as variants evolve, ensuring every prop is discoverable and validated at build time.",
+      "Type safety, delivered from the cloud. Our CLI fetches your design system’s metadata directly from our servers to generate global Module Augmentations—instantly syncing your remote variants into first-class TypeScript interfaces for your IDE.",
     title: "Dynamic Type Generation",
     visual: <TypeGenVisual />,
   },
