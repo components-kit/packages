@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-24
+
+### Added
+
+- Select, Combobox, MultiSelect: `defaultOpen` prop to open dropdown on mount
+- Combobox: `disableFlip` prop to disable Floating UI flip middleware
+- LLM-friendly documentation: `llms.txt` and `llms-full.txt`
+
+### Changed
+
+- Select, Combobox, MultiSelect: positioner is now always rendered (hidden when closed) for SSR and Downshift compatibility
+
 ## [1.0.0] - 2026-02-19
 
 ### Added
@@ -108,7 +120,8 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/components-kit/packages/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/components-kit/packages/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/components-kit/packages/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/components-kit/packages/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/components-kit/packages/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/components-kit/packages/releases/tag/v0.1.0

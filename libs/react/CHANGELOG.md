@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-02-24
+
 ### Added
 
 - Select, Combobox, MultiSelect: `defaultOpen` prop to open dropdown on mount
 - Combobox: `disableFlip` prop to disable Floating UI flip middleware
+
+### Changed
+
+- Select, Combobox, MultiSelect: positioner is now always rendered (hidden when closed) for SSR and Downshift compatibility
 
 ## [1.0.0] - 2026-02-19
 
