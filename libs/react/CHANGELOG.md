@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-02-24
+
+### Added
+
+- Select, MultiSelect: `defaultOpen` prop implementation and tests
+- Combobox: `disableFlip` prop implementation and tests
+
+### Changed
+
+- All 23 component READMEs rewritten with copy-paste-ready examples, consistent table formatting, and complete prop documentation
+- 12 example demos improved with realistic data, accessibility attributes, and semantic naming
+- CONTRIBUTING.md: added README quality checklist
+- Example app READMEs updated with environment setup instructions and dependency info
+
 ## [1.1.1] - 2026-02-24
 
 ### Added

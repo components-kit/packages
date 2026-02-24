@@ -1,6 +1,6 @@
 {
   "name": "@components-kit/react",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Bi-directional Figma design system sync. CSS ships instantly—no code, no redeploy, no maintenance.",
   "keywords": [
     "react",

@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-02-24
+
+### Added
+
+- Select, MultiSelect: `defaultOpen` prop implementation and tests
+- Combobox: `disableFlip` prop implementation and tests
+
+### Changed
+
+- All 23 component READMEs rewritten with copy-paste-ready examples, consistent table formatting, and complete prop documentation
+- 12 example demos improved with realistic data, accessibility attributes, and semantic naming
+- CONTRIBUTING.md: added README quality checklist
+- Example app READMEs updated with environment setup instructions and dependency info
+
+## [1.1.1] - 2026-02-24
+
+### Added
+
+- `useFloatingViewportSync` hook for mobile viewport sync (iOS virtual keyboard repositioning)
+- Select, Combobox, MultiSelect: `menuPortal` prop for custom portal root element
+
 ## [1.1.0] - 2026-02-24
 
 ### Added
@@ -120,7 +141,9 @@ The format is based on [Keep a Changelog] and this project adheres to [Semantic 
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
-[Unreleased]: https://github.com/components-kit/packages/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/components-kit/packages/compare/v1.1.2...HEAD
+[1.1.2]: https://github.com/components-kit/packages/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/components-kit/packages/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/components-kit/packages/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/components-kit/packages/compare/v0.1.1...v1.0.0
 [0.1.1]: https://github.com/components-kit/packages/compare/v0.1.0...v0.1.1
