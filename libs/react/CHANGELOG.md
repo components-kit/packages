@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-02-24
+
+### Added
+
+- `useFloatingViewportSync` hook for mobile viewport sync (iOS virtual keyboard repositioning)
+- Select, Combobox, MultiSelect: `menuPortal` prop for custom portal root element
+
 ## [1.1.0] - 2026-02-24
 
 ### Added
