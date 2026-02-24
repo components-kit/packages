@@ -10,8 +10,6 @@ function SliderFullPreview() {
   return (
     <div className="flex w-full max-w-xs flex-col gap-4">
       <Slider aria-label="Volume" defaultValue={50} variantName="default" />
-      <Slider aria-label="Brightness" defaultValue={75} variantName="default" />
-      <Slider aria-label="Opacity" defaultValue={30} variantName="default" />
     </div>
   );
 }

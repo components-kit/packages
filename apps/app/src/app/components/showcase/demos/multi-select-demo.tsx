@@ -18,7 +18,7 @@ function MultiSelectFullPreview() {
     <div className="w-full max-w-xs">
       <p className="mb-1 text-sm text-neutral-500">Select frameworks</p>
       <MultiSelect
-        defaultValue={["React", "Vue", "Angular"]}
+        defaultValue={["React"]}
         options={["React", "Vue", "Angular", "Svelte"]}
         placeholder="Select frameworks..."
         variantName="default"
