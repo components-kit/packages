@@ -1,4 +1,3 @@
 {
-  "buildCommand": "pnpm -w run frontend:build",
-  "outputDirectory": "apps/app/.next"
+  "buildCommand": "pnpm -w run frontend:build"
 }
