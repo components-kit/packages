@@ -179,8 +179,8 @@ function ShikiCode({
   }, [code, lang]);
 
   return (
-    <div className="overflow-hidden rounded-lg border">
-      <div className="flex items-center justify-between border-b bg-surface px-4 py-2">
+    <div className="overflow-hidden rounded-lg border bg-neutral-100">
+      <div className="flex items-center justify-between border-b bg-neutral-200 px-4 py-2">
         <span className="select-none text-xs text-neutral-600">{label}</span>
         <CopyIconButton text={code} />
       </div>

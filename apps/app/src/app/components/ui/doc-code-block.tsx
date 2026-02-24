@@ -29,8 +29,8 @@ export function DocCodeBlock({ code, lang }: DocCodeBlockProps) {
   }, [code, lang]);
 
   return (
-    <div className="mt-3 overflow-hidden rounded-lg border">
-      <div className="flex items-center justify-between border-b bg-surface px-4 py-2">
+    <div className="mt-3 overflow-hidden rounded-lg border bg-neutral-100">
+      <div className="flex items-center justify-between border-b bg-neutral-200 px-4 py-2">
         <span className="select-none text-xs text-neutral-600">
           {lang || "text"}
         </span>

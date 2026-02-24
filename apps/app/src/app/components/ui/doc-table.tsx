@@ -58,7 +58,7 @@ export function DocTable({ align, header, rows }: DocTableProps) {
   });
 
   return (
-    <div className="mt-3 overflow-x-auto rounded-lg border">
+    <div className="mt-3 overflow-x-auto rounded-lg border bg-neutral-100">
       <table className="w-full text-sm">
         <thead>
           {table.getHeaderGroups().map((hg) => (
@@ -66,7 +66,7 @@ export function DocTable({ align, header, rows }: DocTableProps) {
               {hg.headers.map((h) => (
                 <th
                   key={h.id}
-                  className="whitespace-nowrap border-b bg-neutral-50 px-3 py-2 text-left text-sm font-semibold text-ink"
+                  className="whitespace-nowrap border-b bg-neutral-200 px-3 py-2 text-left text-sm font-semibold text-ink"
                   style={{
                     textAlign:
                       (h.column.columnDef.meta as { align?: TextAlign })?.align ??
