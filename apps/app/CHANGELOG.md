@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-02-24
+
+### Fixed
+
+- Add OG image, optimized title (57 chars) and description (129 chars) for social sharing
+- Default to light mode instead of system preference fallback for first-time visitors
+- Use neutral-100/200 backgrounds for code blocks, tables, and dialog preview areas
+
 ## [0.1.0] - 2026-02-24
 
 ### Added
