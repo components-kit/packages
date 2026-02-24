@@ -96,9 +96,11 @@ export function DocModal({
                 </div>
 
                 {/* Documentation */}
-                <div className="pb-16">
-                  <MarkdownRenderer tokens={tokens} />
-                </div>
+                {tokens.length > 0 && (
+                  <div className="pb-16">
+                    <MarkdownRenderer tokens={tokens} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
