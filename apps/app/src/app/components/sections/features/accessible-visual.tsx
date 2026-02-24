@@ -53,7 +53,7 @@ export function AccessibleVisual() {
   }, []);
 
   return (
-    <div className="relative h-104 sm:h-112 rounded-xl overflow-hidden">
+    <div className="relative h-104 sm:h-96 rounded-xl overflow-hidden">
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
@@ -70,7 +70,7 @@ export function AccessibleVisual() {
         gradient="linear-gradient(170deg, oklch(96.5% 0.004 258) 0%, oklch(93.5% 0.008 256) 50%, oklch(90.5% 0.012 254) 100%)"
       />
 
-      <div className="absolute inset-0 flex items-start justify-center px-6 pt-12 sm:pt-16 md:pt-18">
+      <div className="absolute inset-0 flex items-start justify-center px-6 pt-12 sm:pt-10 md:pt-12">
         <div className="w-72 sm:w-80">
           {/* Combobox input — uses Downshift directly for full keyboard + ARIA support */}
           <div data-ck="combobox" data-has-value={selected ? true : undefined} data-state="open" data-variant="default">
