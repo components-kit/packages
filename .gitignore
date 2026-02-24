@@ -45,3 +45,7 @@ coverage/
 
 # Vite
 .vite/
+
+# LLM docs copied into landing page public/ during build
+apps/app/public/llms.txt
+apps/app/public/llms-full.txt
