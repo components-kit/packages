@@ -120,6 +120,7 @@ function AsyncSearch() {
 | `loading` | `boolean` | `false` | Whether the combobox is in a loading state (for async search) |
 | `loadingContent` | `ReactNode` | `"Loading..."` | Custom content displayed while loading |
 | `maxDropdownHeight` | `number` | - | Maximum height of the dropdown in pixels |
+| `menuPortal` | `HTMLElement \| null` | - | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body` |
 | `name` | `string` | - | Form field name. Renders a hidden input for form submission |
 | `onBlur` | `(event: React.FocusEvent) => void` | - | Callback when the input loses focus |
 | `onFocus` | `(event: React.FocusEvent) => void` | - | Callback when the input receives focus |

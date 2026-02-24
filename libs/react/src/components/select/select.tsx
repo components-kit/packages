@@ -45,6 +45,7 @@ import {
  * - CSS-based styling via data attributes
  * - Icon slot (`data-slot="icon"`) for CSS-injected chevron indicator
  * - Configurable dropdown placement via Floating UI
+ * - Custom portal root via `menuPortal` prop
  * - Read-only mode for view-only contexts
  * - Form integration via `name` prop with hidden inputs
  *
@@ -52,8 +53,9 @@ import {
  * - Built on Downshift's `useSelect` hook for state management
  * - `processOptions` normalizes mixed option formats (strings, labeled, groups, separators)
  *   into flat selectable items and render items
- * - Dropdown is rendered inside a `FloatingPortal` and positioned via `useFloatingSelect`
- *   (Floating UI) with flip, shift, and size middleware
+ * - Dropdown is rendered inside a `FloatingPortal` (portal root customizable via
+ *   `menuPortal` prop) and positioned via `useFloatingSelect` (Floating UI) with
+ *   flip, shift, and size middleware
  * - `forwardRef` generic `<T>` is preserved via a type cast (TypeScript #30650 workaround)
  * - Uses `data-ck` attributes on root, trigger, value, content, items, separators, and
  *   group labels for CSS targeting
@@ -108,6 +110,7 @@ import {
  * @param {boolean} [openOnFocus=true] - Whether to open dropdown when trigger receives focus.
  * @param {boolean} [error=false] - Whether the select is in an error state.
  * @param {number} [maxDropdownHeight] - Maximum height of the dropdown in pixels.
+ * @param {HTMLElement | null} [menuPortal] - Explicit portal root for the dropdown. Defaults to `document.body`.
  * @param {boolean} [readOnly=false] - Whether the select is read-only.
  * @param {string} [name] - Form field name. When set, renders a hidden input for form submission.
  * @param {boolean} [required=false] - Whether the select is required.
@@ -240,6 +243,11 @@ interface SelectProps<T = string> extends Omit<
    */
   maxDropdownHeight?: number;
   /**
+   * Explicit portal root for the dropdown positioner.
+   * When provided, the menu is portaled into this element.
+   */
+  menuPortal?: HTMLElement | null;
+  /**
    * Form field name. When set, renders a hidden input for native form submission.
    */
   name?: string;
@@ -309,6 +317,7 @@ function SelectInner<T = string>(
     error = false,
     getOptionValue,
     maxDropdownHeight,
+    menuPortal,
     name,
     onOpenChange,
     onValueChange,
@@ -428,6 +437,8 @@ function SelectInner<T = string>(
     placement,
   });
   const side = floatingProps.placement.split("-")[0];
+  const menuPortalRoot =
+    menuPortal ?? (typeof document !== "undefined" ? document.body : null);
 
   // Delay unmount for CSS exit animations
   const contentRef = useRef<HTMLDivElement>(null);
@@ -547,7 +558,7 @@ function SelectInner<T = string>(
 
       {/* Content - Always rendered in portal so Downshift's getMenuProps
            ref is never unmounted (required for click-outside detection and SSR). */}
-      <FloatingPortal>
+      <FloatingPortal root={menuPortalRoot ?? undefined}>
         <div
           style={{
             ...floatingProps.style,
