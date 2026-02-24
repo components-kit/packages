@@ -32,6 +32,8 @@
   "scripts": {
     "build": "pnpm --filter @components-kit/react build",
     "dev": "pnpm --filter @components-kit/react dev",
+    "frontend:dev": "pnpm --filter @components-kit/landing dev",
+    "frontend:build": "pnpm generate:llms && pnpm --filter @components-kit/landing build",
     "lint": "pnpm --filter @components-kit/react lint",
     "prepare": "husky",
     "test": "vitest",

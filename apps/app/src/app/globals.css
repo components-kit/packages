@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Instrument Sans", "Inter", sans-serif;
+
+  /* ── Typography ── */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.02em;
+
+  /* ── Blue Scale ── */
+  --color-blue-50: oklch(97.05% 0.014 254.6);
+  --color-blue-100: oklch(93.22% 0.033 256.85);
+  --color-blue-200: oklch(88.27% 0.06 254.13);
+  --color-blue-300: oklch(80.9% 0.105 251.81);
+  --color-blue-400: oklch(70.69% 0.165 254.62);
+  --color-blue-500: oklch(62.31% 0.209 259.53);
+  --color-blue-600: oklch(54.61% 0.215 262.88);
+  --color-blue-700: oklch(48.82% 0.199 264.53);
+  --color-blue-800: oklch(42.44% 0.165 265.75);
+  --color-blue-900: oklch(37.91% 0.126 266.57);
+  --color-blue-950: oklch(28.24% 0.091 267.94);
+
+  /* ── Neutral Scale (Cool Slate · oklch) ── */
+  --color-neutral-0: oklch(100% 0 0);
+  --color-neutral-50: oklch(98.5% 0.005 258);
+  --color-neutral-100: oklch(96.5% 0.009 258);
+  --color-neutral-200: oklch(92.5% 0.013 256);
+  --color-neutral-300: oklch(87% 0.018 255);
+  --color-neutral-400: oklch(71% 0.03 257);
+  --color-neutral-500: oklch(55.5% 0.035 258);
+  --color-neutral-600: oklch(44.5% 0.032 258);
+  --color-neutral-700: oklch(37% 0.03 259);
+  --color-neutral-800: oklch(27.5% 0.025 260);
+  --color-neutral-900: oklch(21% 0.025 262);
+  --color-neutral-950: oklch(14% 0.025 264);
+
+  /* ── Brand Colors ── */
+  --color-brand: oklch(62.31% 0.209 259.53);
+  --color-brand-ring: oklch(80.9% 0.105 251.81);
+  --color-brand-red: #ff1010;
+}
+
+/* ── Semantic Surface Tokens (reference other theme vars) ── */
+@theme inline {
+  --color-studio: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-100);
+  --color-ink: var(--color-neutral-950);
+}
+
+/* ── Dark Mode Variable Overrides (Cool Slate inverted) ── */
+html.dark,
+html[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-neutral-0: oklch(8% 0.005 258);
+  --color-neutral-50: oklch(11% 0.005 258);
+  --color-neutral-100: oklch(15% 0.009 258);
+  --color-neutral-200: oklch(21% 0.013 256);
+  --color-neutral-300: oklch(30% 0.018 255);
+  --color-neutral-400: oklch(41% 0.03 257);
+  --color-neutral-500: oklch(55% 0.035 258);
+  --color-neutral-600: oklch(65% 0.032 258);
+  --color-neutral-700: oklch(74% 0.03 259);
+  --color-neutral-800: oklch(82% 0.025 260);
+  --color-neutral-900: oklch(89% 0.025 262);
+  --color-neutral-950: oklch(95% 0.025 264);
+
+  --color-studio: oklch(11% 0.005 258);
+  --color-surface: oklch(15% 0.009 258);
+  --color-ink: oklch(95% 0.025 264);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    scroll-behavior: smooth;
+    transition:
+      color 0.3s,
+      background-color 0.3s;
+  }
+
+  body {
+    @apply bg-studio text-neutral-600 font-sans antialiased font-[450];
+    font-feature-settings: "ss01", "cv11", "kern";
+  }
+
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+
+  *,
+  ::after,
+  ::before {
+    border-color: var(--color-neutral-200);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink font-semibold;
+    letter-spacing: -0.04em;
+  }
+
+  /* ── Shiki Dual Theme ── */
+  .shiki {
+    background-color: transparent !important;
+  }
+
+  .shiki span {
+    color: var(--shiki-light);
+
+    @variant dark {
+      color: var(--shiki-dark);
+    }
+  }
+}
+
+@layer components {
+  /* ── Changelog Prose ── */
+  .changelog-prose h2,
+  .changelog-prose h3 {
+    @apply mt-6 first:mt-0 mb-2 text-base font-semibold text-ink;
+  }
+
+  .changelog-prose ul {
+    @apply mt-2 ml-4 list-disc space-y-1;
+  }
+
+  .changelog-prose li {
+    @apply text-[15px] leading-7 text-neutral-600;
+  }
+
+  .changelog-prose p {
+    @apply mt-2 text-[15px] leading-7 text-neutral-600;
+  }
+
+  .changelog-prose strong {
+    @apply font-semibold text-ink;
+  }
+
+  .changelog-prose code {
+    @apply rounded bg-neutral-100 px-1.5 py-0.5 text-[13px] text-ink;
+  }
+
+  .changelog-prose a {
+    @apply underline hover:text-ink;
+  }
+
+  /* ── Documentation Prose ── */
+  .doc-prose h1 {
+    @apply mb-4 text-2xl font-bold text-ink;
+  }
+
+  .doc-prose h2 {
+    @apply mt-8 first:mt-0 mb-3 text-xl font-semibold text-ink;
+  }
+
+  .doc-prose h3 {
+    @apply mt-6 first:mt-0 mb-2 text-lg font-semibold text-ink;
+  }
+
+  .doc-prose p {
+    @apply mt-2 text-[15px] leading-7 text-neutral-600;
+  }
+
+  .doc-prose ul {
+    @apply mt-2 ml-4 list-disc space-y-1;
+  }
+
+  .doc-prose ol {
+    @apply mt-2 ml-4 list-decimal space-y-1;
+  }
+
+  .doc-prose li {
+    @apply text-[15px] leading-7 text-neutral-600;
+  }
+
+  .doc-prose code {
+    @apply rounded bg-neutral-100 px-1.5 py-0.5 text-[13px] text-ink font-mono;
+  }
+
+  .doc-prose a {
+    @apply underline hover:text-ink;
+  }
+
+  .doc-prose strong {
+    @apply font-semibold text-ink;
+  }
+
+  .doc-prose blockquote {
+    @apply mt-3 border-l-2 border-neutral-300 pl-4 italic text-neutral-600;
+  }
+
+  .doc-prose hr {
+    @apply my-6 border-neutral-200;
+  }
+
+  /* ── Showcase Dark Compatibility ── */
+  html[data-theme="dark"] [data-ck="progress"] [data-slot="label"] {
+    color: var(--color-neutral-900);
+  }
+
+  html[data-theme="dark"] [data-ck="progress"] [data-ck="progress-track"] {
+    background-color: var(--color-neutral-200);
+  }
+}
+
+/* ── Combobox Backgrounds (bundle sets transparent on input-wrapper) ── */
+[data-ck="combobox-input-wrapper"] {
+  background-color: var(--default-background, var(--color-neutral-0)) !important;
+}
