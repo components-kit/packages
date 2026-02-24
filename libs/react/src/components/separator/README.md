@@ -18,20 +18,28 @@ import { Separator } from '@components-kit/react';
 
 // Decorative separator (hidden from screen readers)
 <Separator aria-hidden="true" />
+
+// Toolbar divider (vertical)
+<div aria-label="Editor actions" role="toolbar" style={{ display: 'flex', gap: 8 }}>
+  <button type="button">Bold</button>
+  <button type="button">Italic</button>
+  <Separator orientation="vertical" />
+  <button type="button">Link</button>
+</div>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| Prop          | Type                         | Default        | Description                  |
+| ------------- | ---------------------------- | -------------- | ---------------------------- |
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Orientation of the separator |
 
 Also accepts all standard `hr` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute          | Values                       | Description     |
+| ------------------ | ---------------------------- | --------------- |
 | `data-orientation` | `"horizontal"`, `"vertical"` | The orientation |
 
 ## Accessibility

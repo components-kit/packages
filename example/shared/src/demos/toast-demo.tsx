@@ -3,6 +3,8 @@ import { Button, toast } from "@components-kit/react";
 import { type ComponentDemo } from "../types";
 
 function ToastPreview() {
+  const restoreItem = () => {};
+
   return (
     <div>
       <p
@@ -40,11 +42,11 @@ function ToastPreview() {
             toast({
               button: {
                 label: "Undo",
-                onClick: () => alert("Undo action clicked"),
+                onClick: () => restoreItem(),
               },
               description: "The item has been removed from your list.",
               title: "Item deleted",
-              variantName: "default",
+              variantName: "info",
             })
           }
         >
@@ -68,7 +70,7 @@ function ToastPreview() {
             toast({
               description: "This is an informational message.",
               title: "Information",
-              variantName: "default",
+              variantName: "info",
             })
           }
         >
@@ -92,7 +94,7 @@ function ToastPreview() {
             toast({
               description: "An error occurred.",
               title: "Error",
-              variantName: "destructive",
+              variantName: "error",
             })
           }
         >
@@ -105,7 +107,7 @@ function ToastPreview() {
               description: "This toast appears at the top right.",
               position: "top-right",
               title: "Top Right",
-              variantName: "default",
+              variantName: "info",
             })
           }
         >
@@ -131,25 +133,30 @@ export const toastDemo: ComponentDemo = {
   code: `import { toast } from "@components-kit/react";
 // Add <Toaster /> from "sonner" in your root layout
 
-toast({ title: "Basic toast", variantName: "default" });
+const restoreItem = () => {};
+const openChangelog = () => {};
+const saveAgain = () => {};
+const saveChanges = () => {};
+
+toast({ title: "Basic toast", variantName: "success" });
 
 toast({
   description: "Your changes have been saved.",
   title: "Settings saved",
-  variantName: "default",
+  variantName: "info",
 });
 
 toast({
-  button: { label: "Undo", onClick: () => {} },
+  button: { label: "Undo", onClick: () => restoreItem() },
   description: "Item removed.",
   title: "Deleted",
-  variantName: "default",
+  variantName: "info",
 });
 
 {/* Semantic variants */}
 toast({ title: "Success", description: "Saved successfully.", variantName: "success" });
 toast({ title: "Warning", description: "Please review.", variantName: "warning" });
-toast({ title: "Error", description: "An error occurred.", variantName: "destructive" });`,
+toast({ title: "Error", description: "An error occurred.", variantName: "error" });`,
   id: "toast",
   name: "Toast",
   preview: <ToastPreview />,

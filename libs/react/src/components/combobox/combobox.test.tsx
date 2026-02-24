@@ -83,6 +83,30 @@ describe("Combobox Component", () => {
         "Combobox",
       );
     });
+
+    it("supports defaultOpen", () => {
+      const { container } = render(
+        <Combobox defaultOpen options={["apple", "banana", "cherry"]} />,
+      );
+
+      const root = container.querySelector('[data-ck="combobox"]');
+      expect(root).toHaveAttribute("data-state", "open");
+      expect(screen.getByRole("option", { name: "apple" })).toBeInTheDocument();
+    });
+
+    it("accepts disableFlip with placement", () => {
+      render(
+        <Combobox
+          defaultOpen
+          disableFlip
+          options={["apple", "banana", "cherry"]}
+          placement="top-start"
+        />,
+      );
+
+      const content = document.querySelector('[data-ck="combobox-content"]');
+      expect(content).toHaveAttribute("data-side", "top");
+    });
   });
 
   describe("Labeled Options", () => {
@@ -406,7 +430,10 @@ describe("Combobox Component", () => {
     it("shows all options and preserves input when reopening via toggle button", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <Combobox openOnFocus={false} options={["apple", "banana", "cherry"]} />,
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
       );
 
       const input = screen.getByRole("combobox");
@@ -428,7 +455,12 @@ describe("Combobox Component", () => {
 
     it("shows all options and preserves input when reopening via input click", async () => {
       const user = userEvent.setup();
-      render(<Combobox openOnFocus={false} options={["apple", "banana", "cherry"]} />);
+      render(
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
+      );
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -447,7 +479,12 @@ describe("Combobox Component", () => {
 
     it("shows all options and preserves input when reopening via arrow down", async () => {
       const user = userEvent.setup();
-      render(<Combobox openOnFocus={false} options={["apple", "banana", "cherry"]} />);
+      render(
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
+      );
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -468,7 +505,10 @@ describe("Combobox Component", () => {
     it("input is editable after selection — can clear and retype to filter", async () => {
       const user = userEvent.setup();
       render(
-        <Combobox openOnFocus={false} options={["apple", "banana", "cherry"]} />,
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
       );
 
       const input = screen.getByRole("combobox");
@@ -488,7 +528,12 @@ describe("Combobox Component", () => {
 
     it("filters normally once user types after reopening", async () => {
       const user = userEvent.setup();
-      render(<Combobox openOnFocus={false} options={["apple", "banana", "cherry"]} />);
+      render(
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
+      );
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -496,7 +541,9 @@ describe("Combobox Component", () => {
 
       // Reopen — all options should be visible
       await user.click(input);
-      expect(document.querySelectorAll('[data-ck="combobox-item"]')).toHaveLength(3);
+      expect(
+        document.querySelectorAll('[data-ck="combobox-item"]'),
+      ).toHaveLength(3);
 
       // User clears and types "ch" — should filter to only "cherry"
       await user.clear(input);
@@ -829,7 +876,9 @@ describe("Combobox Component", () => {
 
     it("closes menu with Escape key", async () => {
       const user = userEvent.setup();
-      const { container } = render(<Combobox openOnFocus={false} options={["apple", "banana"]} />);
+      const { container } = render(
+        <Combobox openOnFocus={false} options={["apple", "banana"]} />,
+      );
 
       await user.click(screen.getByRole("combobox"));
       expect(container.querySelector('[data-ck="combobox"]')).toHaveAttribute(
@@ -1031,10 +1080,7 @@ describe("Combobox Component", () => {
   describe("aria-label", () => {
     it("applies aria-label to input element", () => {
       render(
-        <Combobox
-          aria-label="Search fruits"
-          options={["apple", "banana"]}
-        />,
+        <Combobox aria-label="Search fruits" options={["apple", "banana"]} />,
       );
 
       const input = screen.getByRole("combobox");
@@ -1059,7 +1105,9 @@ describe("Combobox Component", () => {
   describe("Data Attributes", () => {
     it("has data-state on root, trigger, and content", async () => {
       const user = userEvent.setup();
-      const { container } = render(<Combobox openOnFocus={false} options={["apple"]} />);
+      const { container } = render(
+        <Combobox openOnFocus={false} options={["apple"]} />,
+      );
 
       const root = container.querySelector('[data-ck="combobox"]');
       const trigger = container.querySelector('[data-ck="combobox-trigger"]');
@@ -1198,9 +1246,7 @@ describe("Combobox Component", () => {
   describe("Loading State", () => {
     it("shows loading content when loading prop is true", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={["apple"]} />,
-      );
+      render(<Combobox loading options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1211,9 +1257,7 @@ describe("Combobox Component", () => {
 
     it("renders data-ck='combobox-loading' element", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={["apple"]} />,
-      );
+      render(<Combobox loading options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1222,18 +1266,14 @@ describe("Combobox Component", () => {
     });
 
     it("sets data-loading on root during loading", () => {
-      const { container } = render(
-        <Combobox loading options={[]} />,
-      );
+      const { container } = render(<Combobox loading options={[]} />);
 
       const root = container.querySelector('[data-ck="combobox"]');
       expect(root).toHaveAttribute("data-loading", "true");
     });
 
     it("sets aria-busy on root during loading", () => {
-      const { container } = render(
-        <Combobox loading options={[]} />,
-      );
+      const { container } = render(<Combobox loading options={[]} />);
 
       const root = container.querySelector('[data-ck="combobox"]');
       expect(root).toHaveAttribute("aria-busy", "true");
@@ -1242,7 +1282,11 @@ describe("Combobox Component", () => {
     it("displays custom loadingContent", async () => {
       const user = userEvent.setup();
       render(
-        <Combobox loading loadingContent="Fetching data..." options={["apple"]} />,
+        <Combobox
+          loading
+          loadingContent="Fetching data..."
+          options={["apple"]}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -1252,9 +1296,7 @@ describe("Combobox Component", () => {
 
     it("hides items while loading", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={["apple", "banana"]} />,
-      );
+      render(<Combobox loading options={["apple", "banana"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1265,9 +1307,7 @@ describe("Combobox Component", () => {
 
     it("hides empty state while loading", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={["apple"]} />,
-      );
+      render(<Combobox loading options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1278,9 +1318,7 @@ describe("Combobox Component", () => {
 
     it("does not set data-empty on content while loading", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={[]} />,
-      );
+      render(<Combobox loading options={[]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1289,9 +1327,7 @@ describe("Combobox Component", () => {
     });
 
     it("does not set data-loading when not loading", () => {
-      const { container } = render(
-        <Combobox options={["apple"]} />,
-      );
+      const { container } = render(<Combobox options={["apple"]} />);
 
       const root = container.querySelector('[data-ck="combobox"]');
       expect(root).not.toHaveAttribute("data-loading");
@@ -1302,9 +1338,7 @@ describe("Combobox Component", () => {
   describe("Error State", () => {
     it("shows error content when error prop is true", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error options={["apple"]} />,
-      );
+      render(<Combobox error options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1315,9 +1349,7 @@ describe("Combobox Component", () => {
 
     it("renders data-ck='combobox-error' element", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error options={["apple"]} />,
-      );
+      render(<Combobox error options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1326,9 +1358,7 @@ describe("Combobox Component", () => {
     });
 
     it("sets data-error on root when error", () => {
-      const { container } = render(
-        <Combobox error options={[]} />,
-      );
+      const { container } = render(<Combobox error options={[]} />);
 
       const root = container.querySelector('[data-ck="combobox"]');
       expect(root).toHaveAttribute("data-error", "true");
@@ -1337,7 +1367,11 @@ describe("Combobox Component", () => {
     it("displays custom errorContent", async () => {
       const user = userEvent.setup();
       render(
-        <Combobox error errorContent="Something went wrong!" options={["apple"]} />,
+        <Combobox
+          error
+          errorContent="Something went wrong!"
+          options={["apple"]}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -1347,9 +1381,7 @@ describe("Combobox Component", () => {
 
     it("hides items while error", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error options={["apple", "banana"]} />,
-      );
+      render(<Combobox error options={["apple", "banana"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1360,9 +1392,7 @@ describe("Combobox Component", () => {
 
     it("hides empty state while error", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error options={["apple"]} />,
-      );
+      render(<Combobox error options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1373,9 +1403,7 @@ describe("Combobox Component", () => {
 
     it("loading takes precedence over error", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error loading options={["apple"]} />,
-      );
+      render(<Combobox error loading options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1388,9 +1416,7 @@ describe("Combobox Component", () => {
     });
 
     it("does not set data-error when no error", () => {
-      const { container } = render(
-        <Combobox options={["apple"]} />,
-      );
+      const { container } = render(<Combobox options={["apple"]} />);
 
       const root = container.querySelector('[data-ck="combobox"]');
       expect(root).not.toHaveAttribute("data-error");
@@ -1400,9 +1426,7 @@ describe("Combobox Component", () => {
   describe("Loading/Error Accessibility", () => {
     it("loading state has role status and aria-live polite", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox loading options={["apple"]} />,
-      );
+      render(<Combobox loading options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1413,9 +1437,7 @@ describe("Combobox Component", () => {
 
     it("error state has role alert and aria-live assertive", async () => {
       const user = userEvent.setup();
-      render(
-        <Combobox error options={["apple"]} />,
-      );
+      render(<Combobox error options={["apple"]} />);
 
       await user.click(screen.getByRole("combobox"));
 
@@ -1448,9 +1470,7 @@ describe("Combobox Component", () => {
     });
 
     it("disables input interaction (disabled attribute on input)", () => {
-      render(
-        <Combobox options={["apple", "banana"]} readOnly />,
-      );
+      render(<Combobox options={["apple", "banana"]} readOnly />);
 
       const input = screen.getByRole("combobox");
       expect(input).toBeDisabled();
@@ -1469,7 +1489,11 @@ describe("Combobox Component", () => {
       const onOpenChange = vi.fn();
       const user = userEvent.setup();
       render(
-        <Combobox options={["apple", "banana"]} readOnly onOpenChange={onOpenChange} />,
+        <Combobox
+          options={["apple", "banana"]}
+          readOnly
+          onOpenChange={onOpenChange}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -1526,7 +1550,11 @@ describe("Combobox Component", () => {
       const onOpenChange = vi.fn();
       const user = userEvent.setup();
       render(
-        <Combobox openOnFocus={false} options={["apple", "banana"]} onOpenChange={onOpenChange} />,
+        <Combobox
+          openOnFocus={false}
+          options={["apple", "banana"]}
+          onOpenChange={onOpenChange}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -1628,9 +1656,7 @@ describe("Combobox Component", () => {
     });
 
     it("does not render hidden input when name not set", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const hiddenInput = container.querySelector('input[type="hidden"]');
       expect(hiddenInput).not.toBeInTheDocument();
@@ -1657,18 +1683,14 @@ describe("Combobox Component", () => {
     });
 
     it("applies aria-required on input (combobox role element)", () => {
-      render(
-        <Combobox options={["apple", "banana"]} required />,
-      );
+      render(<Combobox options={["apple", "banana"]} required />);
 
       const input = screen.getByRole("combobox");
       expect(input).toHaveAttribute("aria-required", "true");
     });
 
     it("does not apply data-required when not required", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const combobox = container.querySelector('[data-ck="combobox"]');
       expect(combobox).not.toHaveAttribute("data-required");
@@ -1677,18 +1699,14 @@ describe("Combobox Component", () => {
 
   describe("Live Region", () => {
     it("renders live region element with data-ck='combobox-live'", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const liveRegion = container.querySelector('[data-ck="combobox-live"]');
       expect(liveRegion).toBeInTheDocument();
     });
 
     it("live region has aria-live='polite' and role='status'", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const liveRegion = container.querySelector('[data-ck="combobox-live"]');
       expect(liveRegion).toHaveAttribute("aria-live", "polite");
@@ -1744,9 +1762,7 @@ describe("Combobox Component", () => {
 
   describe("Icon Slot", () => {
     it("renders icon slot with data-slot='icon' inside trigger", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const trigger = container.querySelector('[data-ck="combobox-trigger"]');
       const icon = trigger?.querySelector('[data-slot="icon"]');
@@ -1754,9 +1770,7 @@ describe("Combobox Component", () => {
     });
 
     it("icon slot has aria-hidden='true'", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const trigger = container.querySelector('[data-ck="combobox-trigger"]');
       const icon = trigger?.querySelector('[data-slot="icon"]');
@@ -1807,9 +1821,7 @@ describe("Combobox Component", () => {
 
   describe("data-has-value", () => {
     it("not present when no value selected", () => {
-      const { container } = render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Combobox options={["apple", "banana"]} />);
 
       const combobox = container.querySelector('[data-ck="combobox"]');
       expect(combobox).not.toHaveAttribute("data-has-value");
@@ -2108,9 +2120,7 @@ describe("Combobox Component", () => {
       const onFocus = vi.fn();
       const user = userEvent.setup();
 
-      render(
-        <Combobox options={["apple", "banana"]} onFocus={onFocus} />,
-      );
+      render(<Combobox options={["apple", "banana"]} onFocus={onFocus} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -2139,18 +2149,14 @@ describe("Combobox Component", () => {
 
   describe("autoFocus", () => {
     it("focuses the input on mount when autoFocus is true", () => {
-      render(
-        <Combobox autoFocus options={["apple", "banana"]} />,
-      );
+      render(<Combobox autoFocus options={["apple", "banana"]} />);
 
       const input = screen.getByRole("combobox");
       expect(input).toHaveFocus();
     });
 
     it("does not focus input on mount when autoFocus is false", () => {
-      render(
-        <Combobox options={["apple", "banana"]} />,
-      );
+      render(<Combobox options={["apple", "banana"]} />);
 
       const input = screen.getByRole("combobox");
       expect(input).not.toHaveFocus();
@@ -2204,7 +2210,9 @@ describe("Combobox Component", () => {
       });
 
       // Content stays in DOM but positioner is marked unmounted
-      const positioner = document.querySelector('[data-ck="combobox-positioner"]');
+      const positioner = document.querySelector(
+        '[data-ck="combobox-positioner"]',
+      );
       expect(positioner).toHaveAttribute("data-unmounted");
     });
 
@@ -2219,7 +2227,10 @@ describe("Combobox Component", () => {
         '[data-ck="combobox-content"]',
       ) as HTMLElement;
       // Positioner wrapper uses data attributes instead of inline styles
-      expect(content.parentElement!).toHaveAttribute("data-ck", "combobox-positioner");
+      expect(content.parentElement!).toHaveAttribute(
+        "data-ck",
+        "combobox-positioner",
+      );
       expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });

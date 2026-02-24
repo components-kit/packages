@@ -13,9 +13,18 @@ function SelectPreview() {
   const [submitted, setSubmitted] = useState<string>();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Basic
         </p>
         <Select
@@ -30,7 +39,9 @@ function SelectPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With aria-label (no visible label)
         </p>
         <Select
@@ -44,7 +55,9 @@ function SelectPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Labeled Options
         </p>
         <Select
@@ -59,7 +72,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled Items
         </p>
         <Select
@@ -73,7 +88,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Grouped Options
         </p>
         <Select
@@ -95,7 +112,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Object Values
         </p>
         <Select<User>
@@ -106,7 +125,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Select
@@ -117,7 +138,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Empty Options
         </p>
         <Select
@@ -128,7 +151,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Placement (Top)
         </p>
         <Select
@@ -139,7 +164,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Open on Click Only
         </p>
         <Select
@@ -150,7 +177,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Default Open
         </p>
         <Select
@@ -161,7 +190,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Read-only
         </p>
         <Select
@@ -172,7 +203,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Error State
         </p>
         <Select
@@ -183,7 +216,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Form Integration
         </p>
         <Select
@@ -195,7 +230,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Max Dropdown Height
         </p>
         <Select
@@ -214,7 +251,9 @@ function SelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           React Hook Form
         </p>
         <form
@@ -252,6 +291,12 @@ function SelectPreview() {
 
 export const selectDemo: ComponentDemo = {
   code: `import { Select } from "@components-kit/react";
+import { useState } from "react";
+
+const value: string | undefined = undefined;
+const setValue = (value: string | undefined) => {
+  console.log("Selected value:", value);
+};
 
 {/* Basic */}
 <Select

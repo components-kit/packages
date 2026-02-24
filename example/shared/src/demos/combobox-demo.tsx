@@ -71,9 +71,18 @@ function ComboboxPreview() {
   const [submitted, setSubmitted] = useState<string>();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Basic
         </p>
         <Combobox
@@ -88,7 +97,9 @@ function ComboboxPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With aria-label (no visible label)
         </p>
         <Combobox
@@ -102,7 +113,9 @@ function ComboboxPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With Labeled Options
         </p>
         <Combobox
@@ -118,7 +131,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Grouped
         </p>
         <Combobox
@@ -139,7 +154,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Object Values
         </p>
         <Combobox<User>
@@ -150,13 +167,17 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Async Search
         </p>
         <AsyncComboboxExample />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Error Content
         </p>
         <Combobox
@@ -168,7 +189,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Clearable
         </p>
         <Combobox
@@ -179,7 +202,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Open on Type/Click Only
         </p>
         <Combobox
@@ -190,7 +215,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Combobox
@@ -201,7 +228,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Default Open
         </p>
         <Combobox
@@ -212,7 +241,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disable Flip
         </p>
         <Combobox
@@ -223,7 +254,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Read-only
         </p>
         <Combobox
@@ -234,7 +267,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Error State
         </p>
         <Combobox
@@ -245,7 +280,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Placement (Top)
         </p>
         <Combobox
@@ -256,7 +293,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Empty Content
         </p>
         <Combobox
@@ -267,7 +306,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Filter (Prefix Match)
         </p>
         <Combobox
@@ -280,7 +321,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Max Dropdown Height
         </p>
         <Combobox
@@ -299,7 +342,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Form Integration
         </p>
         <Combobox
@@ -311,7 +356,9 @@ function ComboboxPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           React Hook Form
         </p>
         <form
@@ -349,6 +396,18 @@ function ComboboxPreview() {
 
 export const comboboxDemo: ComponentDemo = {
   code: `import { Combobox } from "@components-kit/react";
+
+const value: string | undefined = undefined;
+const setValue = (value: string | undefined) => {
+  console.log("Selected value:", value);
+};
+
+const loading = false;
+const error = false;
+const results: string[] = [];
+const handleSearch = (query: string) => {
+  console.log(query);
+};
 
 <Combobox
   options={["Apple", "Banana", "Cherry", "Date", "Elderberry"]}

@@ -15,9 +15,18 @@ function MultiSelectPreview() {
   const [submitted, setSubmitted] = useState<string[]>();
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "320px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        maxWidth: "320px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Basic
         </p>
         <MultiSelect
@@ -32,7 +41,9 @@ function MultiSelectPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With aria-label (no visible label)
         </p>
         <MultiSelect
@@ -46,7 +57,9 @@ function MultiSelectPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Labeled Options
         </p>
         <MultiSelect
@@ -61,7 +74,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           With Max Selection (3)
         </p>
         <MultiSelect
@@ -72,7 +87,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Empty & Max Reached Content
         </p>
         <MultiSelect
@@ -86,7 +103,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Grouped
         </p>
         <MultiSelect
@@ -107,7 +126,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Object Values
         </p>
         <MultiSelect<User>
@@ -118,7 +139,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <MultiSelect
@@ -129,7 +152,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Clearable
         </p>
         <MultiSelect
@@ -141,7 +166,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Fixed Values
         </p>
         <MultiSelect
@@ -154,7 +181,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Token Separators
         </p>
         <MultiSelect
@@ -165,7 +194,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Default Open
         </p>
         <MultiSelect
@@ -176,7 +207,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Read-only
         </p>
         <MultiSelect
@@ -187,7 +220,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Error State
         </p>
         <MultiSelect
@@ -198,7 +233,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Custom Filter (Prefix Match)
         </p>
         <MultiSelect
@@ -211,7 +248,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Placement (Top)
         </p>
         <MultiSelect
@@ -222,7 +261,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Max Displayed Tags
         </p>
         <MultiSelect
@@ -234,7 +275,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Form Integration
         </p>
         <MultiSelect
@@ -246,7 +289,9 @@ function MultiSelectPreview() {
         />
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           React Hook Form
         </p>
         <form
@@ -284,6 +329,11 @@ function MultiSelectPreview() {
 
 export const multiSelectDemo: ComponentDemo = {
   code: `import { MultiSelect } from "@components-kit/react";
+
+const value: string[] = [];
+const setValue = (values: string[]) => {
+  console.log("Selected values:", values);
+};
 
 <MultiSelect
   options={["React", "Vue", "Angular", "Svelte", "Solid"]}

@@ -31,6 +31,7 @@ describe("useFloatingSelect", () => {
   it("should accept custom configuration", () => {
     const { result } = renderHook(() =>
       useFloatingSelect({
+        disableFlip: true,
         isOpen: true,
         offsetDistance: 16,
         placement: "top-start",

@@ -5,7 +5,12 @@ An accessible slider input component for selecting a numeric value within a rang
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Slider } from '@components-kit/react';
+
+const saveToServer = (value: number) => {
+  console.log('Committed slider value:', value);
+};
 
 // Basic slider with external label
 <label id="volume-label">Volume</label>
@@ -15,8 +20,11 @@ import { Slider } from '@components-kit/react';
 <Slider aria-label="Volume" defaultValue={50} />
 
 // Controlled slider
-const [volume, setVolume] = useState(50);
-<Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
+function VolumeSlider() {
+  const [volume, setVolume] = useState(50);
+
+  return <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />;
+}
 
 // With onValueCommit (fires only when drag ends)
 <Slider aria-label="Volume" defaultValue={50} onValueCommit={(v) => saveToServer(v)} />
@@ -46,32 +54,32 @@ const [volume, setVolume] = useState(50);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `number` | - | Controlled value |
-| `defaultValue` | `number` | `min` | Initial value for uncontrolled mode |
-| `min` | `number` | `0` | Minimum value |
-| `max` | `number` | `100` | Maximum value |
-| `step` | `number` | `1` | Step increment between values |
-| `disabled` | `boolean` | - | Disables the slider |
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider |
-| `onValueChange` | `(value: number) => void` | - | Callback fired when the value changes (on every move) |
-| `onValueCommit` | `(value: number) => void` | - | Callback fired when the user finishes a pointer interaction (on pointer up) |
-| `variantName` | `VariantFor<"slider">` | - | Variant name for styling |
+| Prop            | Type                         | Default        | Description                                                                 |
+| --------------- | ---------------------------- | -------------- | --------------------------------------------------------------------------- |
+| `value`         | `number`                     | -              | Controlled value                                                            |
+| `defaultValue`  | `number`                     | `min`          | Initial value for uncontrolled mode                                         |
+| `min`           | `number`                     | `0`            | Minimum value                                                               |
+| `max`           | `number`                     | `100`          | Maximum value                                                               |
+| `step`          | `number`                     | `1`            | Step increment between values                                               |
+| `disabled`      | `boolean`                    | -              | Disables the slider                                                         |
+| `orientation`   | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider                                              |
+| `onValueChange` | `(value: number) => void`    | -              | Callback fired when the value changes (on every move)                       |
+| `onValueCommit` | `(value: number) => void`    | -              | Callback fired when the user finishes a pointer interaction (on pointer up) |
+| `variantName`   | `VariantFor<"slider">`       | -              | Variant name for styling                                                    |
 
 Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Applied On | Values | Description |
-|-----------|-----------|--------|-------------|
-| `data-ck="slider"` | Root | `"slider"` | Component identifier |
-| `data-disabled` | Root | `true` | Present when disabled |
-| `data-orientation` | Root | `"horizontal"` \| `"vertical"` | The slider orientation |
-| `data-variant` | Root | string | The variant name for styling |
-| `data-ck="slider-track"` | Track | `"slider-track"` | The track (bar background) element |
-| `data-ck="slider-range"` | Range | `"slider-range"` | The filled portion of the track |
-| `data-ck="slider-thumb"` | Thumb | `"slider-thumb"` | The draggable thumb element |
+| Attribute                | Applied On | Values                         | Description                        |
+| ------------------------ | ---------- | ------------------------------ | ---------------------------------- |
+| `data-ck="slider"`       | Root       | `"slider"`                     | Component identifier               |
+| `data-disabled`          | Root       | `true`                         | Present when disabled              |
+| `data-orientation`       | Root       | `"horizontal"` \| `"vertical"` | The slider orientation             |
+| `data-variant`           | Root       | string                         | The variant name for styling       |
+| `data-ck="slider-track"` | Track      | `"slider-track"`               | The track (bar background) element |
+| `data-ck="slider-range"` | Range      | `"slider-range"`               | The filled portion of the track    |
+| `data-ck="slider-thumb"` | Thumb      | `"slider-thumb"`               | The draggable thumb element        |
 
 ## Accessibility
 
@@ -84,14 +92,14 @@ Also accepts all standard `div` HTML attributes.
 
 ### Keyboard Support
 
-| Key | Action |
-|-----|--------|
-| `ArrowRight` / `ArrowUp` | Increase value by one step |
+| Key                       | Action                     |
+| ------------------------- | -------------------------- |
+| `ArrowRight` / `ArrowUp`  | Increase value by one step |
 | `ArrowLeft` / `ArrowDown` | Decrease value by one step |
-| `Home` | Set value to minimum |
-| `End` | Set value to maximum |
-| `PageUp` | Increase value by 10× step |
-| `PageDown` | Decrease value by 10× step |
+| `Home`                    | Set value to minimum       |
+| `End`                     | Set value to maximum       |
+| `PageUp`                  | Increase value by 10× step |
+| `PageDown`                | Decrease value by 10× step |
 
 ### Best Practices
 

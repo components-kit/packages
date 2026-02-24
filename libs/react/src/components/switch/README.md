@@ -5,19 +5,34 @@ A toggle switch component for binary on/off choices with immediate effect.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Switch } from '@components-kit/react';
+
+const saveAutoSavePreference = (enabled: boolean) => {
+  console.log('Auto-save:', enabled);
+};
 
 // Basic switch with label
 <Switch id="notifications" variantName="default" />
 <label htmlFor="notifications">Enable notifications</label>
 
-// Controlled switch
-const [enabled, setEnabled] = useState(false);
-<Switch
-  checked={enabled}
-  onChange={(e) => setEnabled(e.target.checked)}
-  variantName="default"
-/>
+// Controlled switch with immediate effect
+function AutoSaveSetting() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <Switch
+      checked={enabled}
+      onChange={(e) => {
+        const nextValue = e.target.checked;
+        setEnabled(nextValue);
+        saveAutoSavePreference(nextValue);
+      }}
+      aria-label="Enable auto-save"
+      variantName="default"
+    />
+  );
+}
 
 // With aria-label (no visible label)
 <Switch
@@ -47,26 +62,30 @@ const [enabled, setEnabled] = useState(false);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"switch">` | - | Variant name for styling |
+| Prop          | Type                   | Default | Description              |
+| ------------- | ---------------------- | ------- | ------------------------ |
+| `variantName` | `VariantFor<"switch">` | -       | Variant name for styling |
 
 Also accepts all standard `input[type="checkbox"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
+| Attribute       | Values                     | Description                  |
+| --------------- | -------------------------- | ---------------------------- |
+| `data-state`    | `"checked"`, `"unchecked"` | Current checked state        |
+| `data-disabled` | `true`                     | Present when disabled        |
+| `data-variant`  | string                     | The variant name for styling |
 
 ## Switch vs Checkbox
 
 Use a **Switch** when:
+
 - The action takes immediate effect (no form submission)
 - It's a simple on/off choice (like a light switch)
 - Used in settings panels or preference screens
 
 Use a **Checkbox** when:
+
 - Part of a form that will be submitted
 - Multiple options can be selected
 - There's an indeterminate/mixed state

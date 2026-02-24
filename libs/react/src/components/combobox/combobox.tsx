@@ -123,6 +123,8 @@ import {
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
  * @param {T} [defaultValue] - Default value for uncontrolled mode.
+ * @param {boolean} [defaultOpen=false] - Whether the dropdown is open by default on mount.
+ * @param {boolean} [disableFlip=false] - Disable auto-flip when the dropdown overflows the viewport.
  * @param {(value: T | undefined) => void} [onValueChange] - Callback when selection changes.
  * @param {string} [inputValue] - Controlled input text value.
  * @param {string} [defaultInputValue] - Default input value for uncontrolled input mode.
@@ -318,6 +320,11 @@ interface ComboboxProps<T = string> extends Omit<
    */
   defaultInputValue?: string;
   /**
+   * Whether the dropdown is open by default on mount.
+   * @default false
+   */
+  defaultOpen?: boolean;
+  /**
    * Default selected value for uncontrolled mode.
    */
   defaultValue?: T;
@@ -325,6 +332,11 @@ interface ComboboxProps<T = string> extends Omit<
    * Whether the combobox is disabled.
    */
   disabled?: boolean;
+  /**
+   * Disable auto-flip to the opposite side when the dropdown overflows the viewport.
+   * @default false
+   */
+  disableFlip?: boolean;
   /**
    * Custom content to display when no options match the filter.
    * @default "No results found"
@@ -458,8 +470,10 @@ function ComboboxInner<T = string>(
     className,
     clearable = false,
     defaultInputValue,
+    defaultOpen = false,
     defaultValue,
     disabled = false,
+    disableFlip = false,
     emptyContent = "No results found",
     error = false,
     errorContent = "An error occurred",
@@ -569,6 +583,7 @@ function ComboboxInner<T = string>(
   } = useCombobox<NormalizedItem<T>>({
     id: inputId,
     initialInputValue: defaultInputValue,
+    initialIsOpen: defaultOpen,
     initialSelectedItem: initialItem,
     ...(controlledInputValue !== undefined && {
       inputValue: controlledInputValue,
@@ -635,6 +650,7 @@ function ComboboxInner<T = string>(
     floatingProps,
     referenceProps,
   } = useFloatingSelect({
+    disableFlip,
     isOpen,
     maxDropdownHeight,
     placement,

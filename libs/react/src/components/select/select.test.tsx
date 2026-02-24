@@ -32,10 +32,7 @@ describe("Select Component", () => {
     it("removes data-placeholder after selection", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <Select
-          options={["apple", "banana"]}
-          placeholder="Select..."
-        />,
+        <Select options={["apple", "banana"]} placeholder="Select..." />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -92,6 +89,16 @@ describe("Select Component", () => {
 
     it("has displayName", () => {
       expect((Select as { displayName?: string }).displayName).toBe("Select");
+    });
+
+    it("supports defaultOpen", () => {
+      const { container } = render(
+        <Select defaultOpen options={["apple", "banana", "cherry"]} />,
+      );
+
+      const select = container.querySelector('[data-ck="select"]');
+      expect(select).toHaveAttribute("data-state", "open");
+      expect(screen.getByRole("option", { name: "apple" })).toBeInTheDocument();
     });
   });
 
@@ -516,9 +523,7 @@ describe("Select Component", () => {
 
     it("returns focus to trigger after selecting with Enter", async () => {
       const user = userEvent.setup();
-      render(
-        <Select options={["apple", "banana"]} />,
-      );
+      render(<Select options={["apple", "banana"]} />);
 
       const trigger = screen.getByRole("combobox");
       await user.click(trigger);
@@ -570,7 +575,10 @@ describe("Select Component", () => {
       await user.keyboard("{End}");
 
       const items = document.querySelectorAll('[data-ck="select-item"]');
-      expect(items[items.length - 1]).toHaveAttribute("data-highlighted", "true");
+      expect(items[items.length - 1]).toHaveAttribute(
+        "data-highlighted",
+        "true",
+      );
     });
 
     it("supports type-ahead character search", async () => {
@@ -706,10 +714,7 @@ describe("Select Component", () => {
   describe("aria-label", () => {
     it("applies aria-label to trigger button", () => {
       render(
-        <Select
-          aria-label="Choose a fruit"
-          options={["apple", "banana"]}
-        />,
+        <Select aria-label="Choose a fruit" options={["apple", "banana"]} />,
       );
 
       const trigger = screen.getByRole("combobox");
@@ -740,7 +745,9 @@ describe("Select Component", () => {
 
       expect(trigger).toHaveAttribute("data-state", "closed");
       // Content is always in DOM; positioner is marked unmounted when closed
-      const positioner = document.querySelector('[data-ck="select-positioner"]');
+      const positioner = document.querySelector(
+        '[data-ck="select-positioner"]',
+      );
       expect(positioner).toHaveAttribute("data-unmounted");
 
       await user.click(screen.getByRole("combobox"));
@@ -948,7 +955,9 @@ describe("Select Component", () => {
   describe("maxDropdownHeight", () => {
     it("renders without error when maxDropdownHeight is provided", () => {
       expect(() =>
-        render(<Select maxDropdownHeight={300} options={["apple", "banana"]} />),
+        render(
+          <Select maxDropdownHeight={300} options={["apple", "banana"]} />,
+        ),
       ).not.toThrow();
     });
   });
@@ -959,10 +968,7 @@ describe("Select Component", () => {
       const user = userEvent.setup();
 
       render(
-        <Select
-          options={["apple", "banana"]}
-          onOpenChange={onOpenChange}
-        />,
+        <Select options={["apple", "banana"]} onOpenChange={onOpenChange} />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -975,10 +981,7 @@ describe("Select Component", () => {
       const user = userEvent.setup();
 
       render(
-        <Select
-          options={["apple", "banana"]}
-          onOpenChange={onOpenChange}
-        />,
+        <Select options={["apple", "banana"]} onOpenChange={onOpenChange} />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -1177,11 +1180,7 @@ describe("Select Component", () => {
 
     it("hidden input has the selected value when an item is selected", () => {
       const { container } = render(
-        <Select
-          name="fruit"
-          options={["apple", "banana"]}
-          value="apple"
-        />,
+        <Select name="fruit" options={["apple", "banana"]} value="apple" />,
       );
 
       const hiddenInput = container.querySelector('input[type="hidden"]');
@@ -1191,10 +1190,7 @@ describe("Select Component", () => {
     it("updates hidden input value after user selects an item", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <Select
-          name="fruit"
-          options={["apple", "banana"]}
-        />,
+        <Select name="fruit" options={["apple", "banana"]} />,
       );
 
       const hiddenInput = container.querySelector('input[type="hidden"]');
@@ -1207,9 +1203,7 @@ describe("Select Component", () => {
     });
 
     it("does not render hidden input when name is not set", () => {
-      const { container } = render(
-        <Select options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Select options={["apple", "banana"]} />);
 
       const hiddenInput = container.querySelector('input[type="hidden"]');
       expect(hiddenInput).not.toBeInTheDocument();
@@ -1234,9 +1228,7 @@ describe("Select Component", () => {
     });
 
     it("does not have data-required when required is false", () => {
-      const { container } = render(
-        <Select options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Select options={["apple", "banana"]} />);
 
       const select = container.querySelector('[data-ck="select"]');
       expect(select).not.toHaveAttribute("data-required");
@@ -1274,9 +1266,7 @@ describe("Select Component", () => {
     });
 
     it("is not present when error is false", () => {
-      const { container } = render(
-        <Select options={["apple", "banana"]} />,
-      );
+      const { container } = render(<Select options={["apple", "banana"]} />);
 
       const select = container.querySelector('[data-ck="select"]');
       expect(select).not.toHaveAttribute("data-error");
@@ -1427,7 +1417,9 @@ describe("Select Component", () => {
       });
 
       // Content stays in DOM but positioner is marked unmounted
-      const positioner = document.querySelector('[data-ck="select-positioner"]');
+      const positioner = document.querySelector(
+        '[data-ck="select-positioner"]',
+      );
       expect(positioner).toHaveAttribute("data-unmounted");
     });
 
@@ -1442,7 +1434,10 @@ describe("Select Component", () => {
         '[data-ck="select-content"]',
       ) as HTMLElement;
       // Positioner wrapper uses data attributes instead of inline styles
-      expect(content.parentElement!).toHaveAttribute("data-ck", "select-positioner");
+      expect(content.parentElement!).toHaveAttribute(
+        "data-ck",
+        "select-positioner",
+      );
       expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });

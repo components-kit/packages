@@ -17,23 +17,29 @@ yarn add sonner
 ## Usage
 
 ```tsx
-import { toast } from '@components-kit/react';  // Import toast from components-kit
-import { Toaster } from 'sonner';                // Import Toaster from sonner
+import { toast } from "@components-kit/react";
+import { Toaster } from "sonner";
 
-// Add Toaster to your app root (in layout.tsx or _app.tsx)
-<Toaster />
+const restoreItem = () => {};
+const openChangelog = () => {};
+const saveAgain = () => {};
+const saveChanges = () => {};
+const processPayment = async () => {};
+
+// Add Toaster to your app root (layout.tsx or _app.tsx)
+<Toaster />;
 
 // Basic toast with title
 toast({
   title: "Settings saved",
-  variantName: "success"
+  variantName: "success",
 });
 
 // Toast with title and description
 toast({
   title: "Update available",
   description: "A new version of the app is ready to install.",
-  variantName: "info"
+  variantName: "info",
 });
 
 // Toast with action button
@@ -42,9 +48,9 @@ toast({
   description: "The item has been removed from your list.",
   button: {
     label: "Undo",
-    onClick: () => restoreItem()
+    onClick: () => restoreItem(),
   },
-  variantName: "info"
+  variantName: "info",
 });
 
 // Toast with custom duration
@@ -52,13 +58,13 @@ toast({
   title: "Session expiring soon",
   description: "Your session will expire in 5 minutes.",
   duration: 10000, // 10 seconds
-  variantName: "warning"
+  variantName: "warning",
 });
 
 // Title only (minimal)
 toast({
   title: "Quick notification",
-  variantName: "success"
+  variantName: "success",
 });
 
 // With rich content (ReactNode)
@@ -76,45 +82,45 @@ toast({
   ),
   button: {
     label: "View changelog",
-    onClick: () => openChangelog()
+    onClick: () => openChangelog(),
   },
-  variantName: "success"
+  variantName: "success",
 });
 
 // Different positions
 toast({
   title: "Top center notification",
   position: "top-center",
-  variantName: "info"
+  variantName: "info",
 });
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string \| ReactNode` | **Required** | Main title of the toast |
-| `description` | `string \| ReactNode` | - | Body content of the toast |
-| `button` | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }` | - | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
-| `variantName` | `VariantFor<"toast">` | - | Variant name for styling |
-| `duration` | `number` | `4000` | Time in ms before auto-dismiss |
-| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen |
-| `dismissible` | `boolean` | `true` | Whether toast can be dismissed by user (swipe) |
+| Prop          | Type                                                                                              | Default          | Description                                                                                                                                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | `string \| ReactNode`                                                                             | **Required**     | Main title of the toast                                                                                                                                                                                                                                                                     |
+| `description` | `string \| ReactNode`                                                                             | -                | Body content of the toast                                                                                                                                                                                                                                                                   |
+| `button`      | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }`       | -                | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
+| `variantName` | `VariantFor<"toast">`                                                                             | -                | Variant name for styling                                                                                                                                                                                                                                                                    |
+| `duration`    | `number`                                                                                          | `4000`           | Time in ms before auto-dismiss                                                                                                                                                                                                                                                              |
+| `position`    | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen                                                                                                                                                                                                                                                                    |
+| `dismissible` | `boolean`                                                                                         | `true`           | Whether toast can be dismissed by user (swipe)                                                                                                                                                                                                                                              |
 
 Inherits additional props from Sonner's `ExternalToast` type (className, style, id, etc.).
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-ck` | `"toast"` | Toast container identifier |
-| `data-ck` | `"button"` | Button element identifier (set by Button component) |
-| `data-size` | `"sm"` | Button size (always `"sm"` in toast) |
-| `data-variant` | `string` | The variant name for styling |
-| `data-has-title` | `true` \| `undefined` | Present when title is provided |
-| `data-has-description` | `true` \| `undefined` | Present when description is provided |
-| `data-has-action` | `true` \| `undefined` | Present when button is provided |
-| `data-slot` | `"icon"`, `"content"`, `"title"`, `"description"`, `"actions"`, `"action"` | Identifies internal slots for targeted styling |
+| Attribute              | Values                                                                     | Description                                         |
+| ---------------------- | -------------------------------------------------------------------------- | --------------------------------------------------- |
+| `data-ck`              | `"toast"`                                                                  | Toast container identifier                          |
+| `data-ck`              | `"button"`                                                                 | Button element identifier (set by Button component) |
+| `data-size`            | `"sm"`                                                                     | Button size (always `"sm"` in toast)                |
+| `data-variant`         | `string`                                                                   | The variant name for styling                        |
+| `data-has-title`       | `true` \| `undefined`                                                      | Present when title is provided                      |
+| `data-has-description` | `true` \| `undefined`                                                      | Present when description is provided                |
+| `data-has-action`      | `true` \| `undefined`                                                      | Present when button is provided                     |
+| `data-slot`            | `"icon"`, `"content"`, `"title"`, `"description"`, `"actions"`, `"action"` | Identifies internal slots for targeted styling      |
 
 ## Accessibility
 
@@ -136,7 +142,7 @@ Inherits additional props from Sonner's `ExternalToast` type (className, style, 
 - Keep toast messages concise and scannable (1-2 short sentences)
 - Use appropriate variant to match message severity (success, error, warning, info)
 - Provide action button only when immediate user response is needed
-- Don't use toasts for critical information - use alerts or dialogs instead
+- Don't use toasts for critical information — use alerts or dialogs instead
 - Consider toast frequency - avoid overwhelming users with notifications
 - Test with screen readers to ensure announcements are clear
 - Remember reduced motion preferences are handled by Sonner automatically
@@ -148,7 +154,7 @@ This component uses Sonner for toast management. You must include the `<Toaster 
 **Important:** Import `<Toaster />` directly from `sonner`, not from `@components-kit/react`. This prevents "use client" boundary issues in Next.js server components.
 
 ```tsx
-import { Toaster } from 'sonner'; // Import from sonner, not @components-kit/react
+import { Toaster } from "sonner"; // Import from sonner, not @components-kit/react
 
 export default function App() {
   return (
@@ -164,7 +170,7 @@ export default function App() {
 
 ```tsx
 // app/layout.tsx
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 export default function RootLayout({ children }) {
   return (
@@ -179,6 +185,7 @@ export default function RootLayout({ children }) {
 ```
 
 **Why import `<Toaster />` from sonner directly?**
+
 - Keeps your layout as a server component (Next.js optimization)
 - Avoids forcing client-side rendering where not needed
 - Reduces bundle size by not re-exporting third-party components
@@ -190,13 +197,13 @@ export default function RootLayout({ children }) {
 The toast function returns an ID that can be used for manual dismissal:
 
 ```tsx
-import { toast } from '@components-kit/react';
-import { toast as sonnerToast } from 'sonner';
+import { toast } from "@components-kit/react";
+import { toast as sonnerToast } from "sonner";
 
 const toastId = toast({
   title: "Processing...",
   description: "Please wait while we complete your request.",
-  duration: Infinity // Won't auto-dismiss
+  duration: Infinity, // Won't auto-dismiss
 });
 
 // Later, dismiss manually using Sonner's dismiss method
@@ -214,7 +221,7 @@ sonnerToast.dismiss();
 toast({
   title: "Changes saved",
   description: "Your settings have been updated successfully.",
-  variantName: "success"
+  variantName: "success",
 });
 ```
 
@@ -226,10 +233,10 @@ toast({
   description: "An error occurred while saving your changes.",
   button: {
     label: "Retry",
-    onClick: () => saveAgain()
+    onClick: () => saveAgain(),
   },
   variantName: "error",
-  duration: 8000 // Longer duration for errors
+  duration: 8000, // Longer duration for errors
 });
 ```
 
@@ -241,9 +248,9 @@ toast({
   description: "You have unsaved changes that will be lost.",
   button: {
     label: "Save now",
-    onClick: () => saveChanges()
+    onClick: () => saveChanges(),
   },
-  variantName: "warning"
+  variantName: "warning",
 });
 ```
 
@@ -257,20 +264,20 @@ toast({
       Check out our <a href="/features">new features page</a>.
     </span>
   ),
-  variantName: "info"
+  variantName: "info",
 });
 ```
 
 ### Processing with Manual Dismiss
 
 ```tsx
-import { toast as sonnerToast } from 'sonner';
+import { toast as sonnerToast } from "sonner";
 
 const toastId = toast({
   title: "Processing payment...",
   description: "Please do not close this window.",
   duration: Infinity,
-  variantName: "info"
+  variantName: "info",
 });
 
 // When processing completes
@@ -280,7 +287,7 @@ processPayment()
     toast({
       title: "Payment successful",
       description: "Your payment has been processed.",
-      variantName: "success"
+      variantName: "success",
     });
   })
   .catch(() => {
@@ -288,7 +295,7 @@ processPayment()
     toast({
       title: "Payment failed",
       description: "There was an error processing your payment.",
-      variantName: "error"
+      variantName: "error",
     });
   });
 ```

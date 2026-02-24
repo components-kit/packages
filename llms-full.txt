@@ -133,6 +133,10 @@ Displays contextual feedback messages with heading, description, and action butt
 ```tsx
 import { Alert } from '@components-kit/react';
 
+const handleExtend = () => {
+  console.log('Session extended');
+};
+
 // Basic alert
 <Alert
   heading="Information"
@@ -184,7 +188,7 @@ Also accepts all standard `div` HTML attributes.
 - Keep alert messages concise and actionable
 - Use appropriate variant to match message severity
 - Provide a clear action when user response is needed
-- Don't overuse alerts - they should convey important information
+- Don't overuse alerts — they should convey important information
 
 ---
 
@@ -195,6 +199,7 @@ A small status indicator for highlighting information, counts, or labels.
 ## Usage
 
 ```tsx
+import { useEffect, useState } from 'react';
 import { Badge } from '@components-kit/react';
 
 // Basic badge
@@ -212,7 +217,7 @@ import { Badge } from '@components-kit/react';
 
 // Notification count
 <button aria-label="Messages, 5 unread">
-  <MailIcon />
+  <span aria-hidden="true">📨</span>
   <Badge size="sm" variantName="notification">5</Badge>
 </button>
 
@@ -220,24 +225,40 @@ import { Badge } from '@components-kit/react';
 <Badge asChild variantName="primary">
   <button type="button">Clickable Badge</button>
 </Badge>
+
+// Dynamic count updates (announced to screen readers)
+function PendingJobsBadge() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => setCount((c) => c + 1), 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div aria-live="polite" aria-atomic="true">
+      <Badge variantName="info">{count} pending</Badge>
+    </div>
+  );
+}
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the badge |
-| `variantName` | `VariantFor<"badge">` | - | Variant name for styling |
-| `asChild` | `boolean` | `false` | Merge props with child element instead of wrapping |
+| Prop          | Type                   | Default | Description                                        |
+| ------------- | ---------------------- | ------- | -------------------------------------------------- |
+| `size`        | `"sm" \| "md" \| "lg"` | `"md"`  | Size of the badge                                  |
+| `variantName` | `VariantFor<"badge">`  | -       | Variant name for styling                           |
+| `asChild`     | `boolean`              | `false` | Merge props with child element instead of wrapping |
 
 Also accepts all standard `span` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
-| `data-size` | `"sm"`, `"md"`, `"lg"` | The size variant |
+| Attribute      | Values                 | Description                  |
+| -------------- | ---------------------- | ---------------------------- |
+| `data-variant` | string                 | The variant name for styling |
+| `data-size`    | `"sm"`, `"md"`, `"lg"` | The size variant             |
 
 ## Accessibility
 
@@ -278,6 +299,16 @@ import { Button } from '@components-kit/react';
   Saving...
 </Button>
 
+// Full-width call-to-action
+<Button fullWidth variantName="primary">
+  Continue
+</Button>
+
+// Disabled button
+<Button disabled variantName="secondary">
+  Unavailable
+</Button>
+
 // Icon-only button (requires aria-label)
 <Button aria-label="Search" leadingIcon={<SearchIcon />} variantName="ghost" />
 
@@ -294,29 +325,29 @@ import { Button } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"button"` | HTML element to render as (polymorphic) |
-| `asChild` | `boolean` | `false` | Merge props with child element |
-| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Size of the button |
-| `variantName` | `VariantFor<"button">` | - | Variant name for styling |
-| `isLoading` | `boolean` | `false` | Shows loading state, disables button |
-| `disabled` | `boolean` | - | Disables the button |
-| `fullWidth` | `boolean` | - | Makes button full width |
-| `leadingIcon` | `ReactNode` | - | Icon before button text |
-| `trailingIcon` | `ReactNode` | - | Icon after button text |
+| Prop           | Type                   | Default    | Description                             |
+| -------------- | ---------------------- | ---------- | --------------------------------------- |
+| `as`           | `ElementType`          | `"button"` | HTML element to render as (polymorphic) |
+| `asChild`      | `boolean`              | `false`    | Merge props with child element          |
+| `size`         | `"sm" \| "md" \| "lg"` | `"md"`     | Size of the button                      |
+| `variantName`  | `VariantFor<"button">` | -          | Variant name for styling                |
+| `isLoading`    | `boolean`              | `false`    | Shows loading state, disables button    |
+| `disabled`     | `boolean`              | -          | Disables the button                     |
+| `fullWidth`    | `boolean`              | -          | Makes button full width                 |
+| `leadingIcon`  | `ReactNode`            | -          | Icon before button text                 |
+| `trailingIcon` | `ReactNode`            | -          | Icon after button text                  |
 
 Also accepts all standard `button` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
-| `data-size` | `"sm"`, `"md"`, `"lg"` | The size variant |
-| `data-loading` | `true` | Present when loading |
-| `data-disabled` | `true` | Present when disabled |
-| `data-full-width` | `true` | Present when full width |
+| Attribute         | Values                 | Description                  |
+| ----------------- | ---------------------- | ---------------------------- |
+| `data-variant`    | string                 | The variant name for styling |
+| `data-size`       | `"sm"`, `"md"`, `"lg"` | The size variant             |
+| `data-loading`    | `true`                 | Present when loading         |
+| `data-disabled`   | `true`                 | Present when disabled        |
+| `data-full-width` | `true`                 | Present when full width      |
 
 ## Accessibility
 
@@ -335,7 +366,7 @@ When using only an icon without visible text, you **must** provide `aria-label`:
 
 ### Best Practices
 
-- Use `type="button"` for non-submit buttons (default)
+- Use `type="button"` for non-submit buttons (the default)
 - Provide loading feedback text when appropriate
 - Ensure sufficient color contrast
 - Keep button labels concise and action-oriented
@@ -349,6 +380,7 @@ A checkbox input component for boolean selections with indeterminate state suppo
 ## Usage
 
 ```tsx
+import { useEffect, useRef, useState } from 'react';
 import { Checkbox } from '@components-kit/react';
 
 // Basic checkbox with label
@@ -356,12 +388,17 @@ import { Checkbox } from '@components-kit/react';
 <label htmlFor="terms">I accept the terms</label>
 
 // Controlled checkbox
-const [checked, setChecked] = useState(false);
-<Checkbox
-  checked={checked}
-  onChange={(e) => setChecked(e.target.checked)}
-  variantName="default"
-/>
+function MarketingOptIn() {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <Checkbox
+      checked={checked}
+      onChange={(e) => setChecked(e.target.checked)}
+      variantName="default"
+    />
+  );
+}
 
 // Disabled state
 <Checkbox id="disabled" disabled variantName="default" />
@@ -377,28 +414,47 @@ const [checked, setChecked] = useState(false);
 <span id="accept-error">You must accept the terms</span>
 
 // Indeterminate state (select all pattern)
-const checkboxRef = useRef<HTMLInputElement>(null);
-useEffect(() => {
-  if (checkboxRef.current) {
-    checkboxRef.current.indeterminate = someChecked && !allChecked;
-  }
-}, [someChecked, allChecked]);
-<Checkbox ref={checkboxRef} checked={allChecked} onChange={handleSelectAll} />
+function SelectAllCheckbox() {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+  const [items, setItems] = useState({ apple: true, banana: false, cherry: true });
+
+  const values = Object.values(items);
+  const allChecked = values.every(Boolean);
+  const someChecked = values.some(Boolean);
+
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = someChecked && !allChecked;
+    }
+  }, [someChecked, allChecked]);
+
+  return (
+    <Checkbox
+      ref={checkboxRef}
+      checked={allChecked}
+      onChange={(e) => {
+        const next = e.target.checked;
+        setItems({ apple: next, banana: next, cherry: next });
+      }}
+    />
+  );
+}
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"checkbox">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description              |
+| ------------- | ------------------------ | ------- | ------------------------ |
+| `variantName` | `VariantFor<"checkbox">` | -       | Variant name for styling |
 
 Also accepts all standard `input[type="checkbox"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
+| Attribute      | Values       | Description                  |
+| -------------- | ------------ | ---------------------------- |
+| `data-ck`      | `"checkbox"` | Component identifier         |
+| `data-variant` | string       | The variant name for styling |
 
 ## Accessibility
 
@@ -439,7 +495,12 @@ A searchable select component with type-ahead filtering, keyboard navigation, an
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Combobox } from '@components-kit/react';
+
+const setFruit = (value: string | undefined) => {
+  console.log('Selected fruit:', value);
+};
 
 // Simple string options
 <Combobox
@@ -468,19 +529,31 @@ import { Combobox } from '@components-kit/react';
 />
 
 // Controlled value
-<Combobox
-  options={['apple', 'banana', 'cherry']}
-  value={selectedFruit}
-  onValueChange={setSelectedFruit}
-/>
+function ControlledValueExample() {
+  const [selectedFruit, setSelectedFruit] = useState<string | undefined>();
+
+  return (
+    <Combobox
+      options={['apple', 'banana', 'cherry']}
+      value={selectedFruit}
+      onValueChange={setSelectedFruit}
+    />
+  );
+}
 
 // Controlled input value
-<Combobox
-  options={['apple', 'banana', 'cherry']}
-  inputValue={query}
-  onInputValueChange={setQuery}
-  onValueChange={setFruit}
-/>
+function ControlledInputExample() {
+  const [query, setQuery] = useState('');
+
+  return (
+    <Combobox
+      options={['apple', 'banana', 'cherry']}
+      inputValue={query}
+      onInputValueChange={setQuery}
+      onValueChange={setFruit}
+    />
+  );
+}
 
 // Custom filter function
 <Combobox
@@ -497,8 +570,8 @@ import { Combobox } from '@components-kit/react';
 Combobox supports async search via controlled `options`, `loading`, and `error` props. You manage fetch logic externally; Combobox renders the appropriate UI states.
 
 ```tsx
-import { Combobox } from '@components-kit/react';
-import { useCallback, useRef, useState } from 'react';
+import { Combobox } from "@components-kit/react";
+import { useCallback, useState } from "react";
 
 function AsyncSearch() {
   const [options, setOptions] = useState<string[]>([]);
@@ -506,7 +579,10 @@ function AsyncSearch() {
   const [error, setError] = useState(false);
 
   const handleSearch = useCallback(async (query: string) => {
-    if (!query) { setOptions([]); return; }
+    if (!query) {
+      setOptions([]);
+      return;
+    }
     setLoading(true);
     setError(false);
     try {
@@ -533,40 +609,40 @@ function AsyncSearch() {
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `aria-label` | `string` | - | Accessible label for the combobox input. Required when there is no visible label element. Prefer a visible `<label>` element when possible. |
-| `autoFocus` | `boolean` | `false` | Auto-focus the input on mount |
-| `clearable` | `boolean` | `false` | Show a clear button when a value is selected |
-| `defaultInputValue` | `string` | - | Default input value (uncontrolled) |
-| `defaultOpen` | `boolean` | `false` | Whether the dropdown is open by default on mount |
-| `defaultValue` | `T` | - | Default value (uncontrolled) |
-| `disableFlip` | `boolean` | `false` | Disable auto-flip to the opposite side when the dropdown overflows the viewport |
-| `disabled` | `boolean` | `false` | Disables the combobox |
-| `emptyContent` | `string` | `"No results found"` | Custom content displayed when no options match the filter |
-| `error` | `boolean` | `false` | Whether the combobox has an error (for async search) |
-| `errorContent` | `ReactNode` | `"An error occurred"` | Custom content displayed when an error occurs |
-| `filterFn` | `(option, inputValue) => boolean` | - | Custom filter function (default: case-insensitive includes) |
-| `getOptionValue` | `(option: T) => string \| number` | - | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
-| `inputValue` | `string` | - | Controlled input text value |
-| `loading` | `boolean` | `false` | Whether the combobox is in a loading state (for async search) |
-| `loadingContent` | `ReactNode` | `"Loading..."` | Custom content displayed while loading |
-| `maxDropdownHeight` | `number` | - | Maximum height of the dropdown in pixels |
-| `menuPortal` | `HTMLElement \| null` | - | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body` |
-| `name` | `string` | - | Form field name. Renders a hidden input for form submission |
-| `onBlur` | `(event: React.FocusEvent) => void` | - | Callback when the input loses focus |
-| `onFocus` | `(event: React.FocusEvent) => void` | - | Callback when the input receives focus |
-| `onInputValueChange` | `(value: string) => void` | - | Callback when input text changes |
-| `onOpenChange` | `(open: boolean) => void` | - | Callback when dropdown opens or closes |
-| `onValueChange` | `(value: T \| undefined) => void` | - | Callback when selection changes |
-| `openOnFocus` | `boolean` | `true` | Open dropdown when input receives focus |
-| `options` | `SelectOption<T>[]` | **required** | Array of options to display |
-| `placeholder` | `string` | `"Search..."` | Placeholder text for the input |
-| `placement` | `Placement` | `"bottom-start"` | Dropdown placement relative to trigger |
-| `readOnly` | `boolean` | `false` | Read-only mode (prevents interaction) |
-| `required` | `boolean` | `false` | Required field (adds `aria-required` and `data-required`) |
-| `value` | `T` | - | Controlled selected value |
-| `variantName` | `VariantFor<"combobox">` | - | Variant name for styling |
+| Prop                 | Type                                | Default               | Description                                                                                                                                                              |
+| -------------------- | ----------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aria-label`         | `string`                            | -                     | Accessible label for the combobox input. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                              |
+| `autoFocus`          | `boolean`                           | `false`               | Auto-focus the input on mount                                                                                                                                            |
+| `clearable`          | `boolean`                           | `false`               | Show a clear button when a value is selected                                                                                                                             |
+| `defaultInputValue`  | `string`                            | -                     | Default input value (uncontrolled)                                                                                                                                       |
+| `defaultOpen`        | `boolean`                           | `false`               | Whether the dropdown is open by default on mount                                                                                                                         |
+| `defaultValue`       | `T`                                 | -                     | Default value (uncontrolled)                                                                                                                                             |
+| `disableFlip`        | `boolean`                           | `false`               | Disable auto-flip to the opposite side when the dropdown overflows the viewport                                                                                          |
+| `disabled`           | `boolean`                           | `false`               | Disables the combobox                                                                                                                                                    |
+| `emptyContent`       | `string`                            | `"No results found"`  | Custom content displayed when no options match the filter                                                                                                                |
+| `error`              | `boolean`                           | `false`               | Whether the combobox has an error (for async search)                                                                                                                     |
+| `errorContent`       | `ReactNode`                         | `"An error occurred"` | Custom content displayed when an error occurs                                                                                                                            |
+| `filterFn`           | `(option, inputValue) => boolean`   | -                     | Custom filter function (default: case-insensitive includes)                                                                                                              |
+| `getOptionValue`     | `(option: T) => string \| number`   | -                     | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| `inputValue`         | `string`                            | -                     | Controlled input text value                                                                                                                                              |
+| `loading`            | `boolean`                           | `false`               | Whether the combobox is in a loading state (for async search)                                                                                                            |
+| `loadingContent`     | `ReactNode`                         | `"Loading..."`        | Custom content displayed while loading                                                                                                                                   |
+| `maxDropdownHeight`  | `number`                            | -                     | Maximum height of the dropdown in pixels                                                                                                                                 |
+| `menuPortal`         | `HTMLElement \| null`               | -                     | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
+| `name`               | `string`                            | -                     | Form field name. Renders a hidden input for form submission                                                                                                              |
+| `onBlur`             | `(event: React.FocusEvent) => void` | -                     | Callback when the input loses focus                                                                                                                                      |
+| `onFocus`            | `(event: React.FocusEvent) => void` | -                     | Callback when the input receives focus                                                                                                                                   |
+| `onInputValueChange` | `(value: string) => void`           | -                     | Callback when input text changes                                                                                                                                         |
+| `onOpenChange`       | `(open: boolean) => void`           | -                     | Callback when dropdown opens or closes                                                                                                                                   |
+| `onValueChange`      | `(value: T \| undefined) => void`   | -                     | Callback when selection changes                                                                                                                                          |
+| `openOnFocus`        | `boolean`                           | `true`                | Open dropdown when input receives focus                                                                                                                                  |
+| `options`            | `SelectOption<T>[]`                 | **required**          | Array of options to display                                                                                                                                              |
+| `placeholder`        | `string`                            | `"Search..."`         | Placeholder text for the input                                                                                                                                           |
+| `placement`          | `Placement`                         | `"bottom-start"`      | Dropdown placement relative to trigger                                                                                                                                   |
+| `readOnly`           | `boolean`                           | `false`               | Read-only mode (prevents interaction)                                                                                                                                    |
+| `required`           | `boolean`                           | `false`               | Required field (adds `aria-required` and `data-required`)                                                                                                                |
+| `value`              | `T`                                 | -                     | Controlled selected value                                                                                                                                                |
+| `variantName`        | `VariantFor<"combobox">`            | -                     | Variant name for styling                                                                                                                                                 |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -588,39 +664,39 @@ Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Element | Values | Description |
-| --- | --- | --- | --- |
-| `data-ck="combobox"` | Root | - | Root combobox container |
-| `data-ck="combobox-input-wrapper"` | Wrapper | - | Wrapper around input and toggle button |
-| `data-ck="combobox-input"` | Input | - | Text input element |
-| `data-ck="combobox-trigger"` | Button | - | Toggle button to open/close menu |
-| `data-ck="combobox-clear"` | Button | - | Clear button to reset selection (when `clearable` is true) |
-| `data-ck="combobox-positioner"` | Div (portal) | - | Always-rendered positioning wrapper around dropdown content |
-| `data-ck="combobox-content"` | Menu | - | Dropdown menu container |
-| `data-ck="combobox-item"` | Item | - | Individual option item |
-| `data-slot="icon"` | Div (inside item) | - | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
-| `data-ck="combobox-separator"` | Div | - | Visual separator between groups |
-| `data-ck="combobox-group"` | Div | - | Group container (`role="group"` with `aria-labelledby`) |
-| `data-ck="combobox-group-label"` | Div | - | Group heading label (`role="presentation"`) |
-| `data-ck="combobox-empty"` | Div | - | Empty state ("No results found") |
-| `data-ck="combobox-loading"` | Div | - | Loading state indicator (async mode) |
-| `data-ck="combobox-error"` | Div | - | Error state indicator (async mode) |
-| `data-ck="combobox-live"` | Div | - | Live region for selection announcements |
-| `data-state` | Root, Trigger, Positioner, Content | `"open"`, `"closed"` | Dropdown state (on root, trigger, positioner, and content) |
-| `data-side` | Content | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI) |
-| `data-unmounted` | Positioner | `true` | Present when the positioner content is unmounted |
-| `data-state` | Item | `"checked"`, `"unchecked"` | Whether the item is currently selected |
-| `data-disabled` | Root, Item | `true` | Present when disabled (on root and items) |
-| `data-highlighted` | Item | `true` | Present on the currently highlighted item |
-| `data-variant` | Root | string | Variant name for styling |
-| `data-loading` | Root | `true` | Present while loading (async mode) |
-| `data-error` | Root | `true` | Present when error (async mode) |
-| `data-has-value` | Root | `true` | Present when a value is selected |
-| `data-readonly` | Root | `true` | Present when read-only |
-| `data-required` | Root | `true` | Present when required |
-| `data-empty` | Content | `true` | Present when dropdown has no matching items |
-| `data-slot="icon"` | Div | - | Icon slot inside trigger (for CSS-injected icons) |
-| `aria-busy` | Root | `true` | Present while loading (a11y, async mode) |
+| Attribute                          | Element                            | Values                                   | Description                                                                    |
+| ---------------------------------- | ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| `data-ck="combobox"`               | Root                               | -                                        | Root combobox container                                                        |
+| `data-ck="combobox-input-wrapper"` | Wrapper                            | -                                        | Wrapper around input and toggle button                                         |
+| `data-ck="combobox-input"`         | Input                              | -                                        | Text input element                                                             |
+| `data-ck="combobox-trigger"`       | Button                             | -                                        | Toggle button to open/close menu                                               |
+| `data-ck="combobox-clear"`         | Button                             | -                                        | Clear button to reset selection (when `clearable` is true)                     |
+| `data-ck="combobox-positioner"`    | Div (portal)                       | -                                        | Always-rendered positioning wrapper around dropdown content                    |
+| `data-ck="combobox-content"`       | Menu                               | -                                        | Dropdown menu container                                                        |
+| `data-ck="combobox-item"`          | Item                               | -                                        | Individual option item                                                         |
+| `data-slot="icon"`                 | Div (inside item)                  | -                                        | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
+| `data-ck="combobox-separator"`     | Div                                | -                                        | Visual separator between groups                                                |
+| `data-ck="combobox-group"`         | Div                                | -                                        | Group container (`role="group"` with `aria-labelledby`)                        |
+| `data-ck="combobox-group-label"`   | Div                                | -                                        | Group heading label (`role="presentation"`)                                    |
+| `data-ck="combobox-empty"`         | Div                                | -                                        | Empty state ("No results found")                                               |
+| `data-ck="combobox-loading"`       | Div                                | -                                        | Loading state indicator (async mode)                                           |
+| `data-ck="combobox-error"`         | Div                                | -                                        | Error state indicator (async mode)                                             |
+| `data-ck="combobox-live"`          | Div                                | -                                        | Live region for selection announcements                                        |
+| `data-state`                       | Root, Trigger, Positioner, Content | `"open"`, `"closed"`                     | Dropdown state (on root, trigger, positioner, and content)                     |
+| `data-side`                        | Content                            | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI)                      |
+| `data-unmounted`                   | Positioner                         | `true`                                   | Present when the positioner content is unmounted                               |
+| `data-state`                       | Item                               | `"checked"`, `"unchecked"`               | Whether the item is currently selected                                         |
+| `data-disabled`                    | Root, Item                         | `true`                                   | Present when disabled (on root and items)                                      |
+| `data-highlighted`                 | Item                               | `true`                                   | Present on the currently highlighted item                                      |
+| `data-variant`                     | Root                               | string                                   | Variant name for styling                                                       |
+| `data-loading`                     | Root                               | `true`                                   | Present while loading (async mode)                                             |
+| `data-error`                       | Root                               | `true`                                   | Present when error (async mode)                                                |
+| `data-has-value`                   | Root                               | `true`                                   | Present when a value is selected                                               |
+| `data-readonly`                    | Root                               | `true`                                   | Present when read-only                                                         |
+| `data-required`                    | Root                               | `true`                                   | Present when required                                                          |
+| `data-empty`                       | Content                            | `true`                                   | Present when dropdown has no matching items                                    |
+| `data-slot="icon"`                 | Div                                | -                                        | Icon slot inside trigger (for CSS-injected icons)                              |
+| `aria-busy`                        | Root                               | `true`                                   | Present while loading (a11y, async mode)                                       |
 
 ## Accessibility
 
@@ -628,15 +704,15 @@ Follows WAI-ARIA Combobox Pattern with Listbox Popup.
 
 ### Keyboard Support
 
-| Key | Action |
-| --- | --- |
-| `ArrowDown` | Open menu / move to next item |
-| `ArrowUp` | Move to previous item |
-| `Enter` | Select highlighted item and close |
-| `Escape` | Close menu |
-| `Home` | Jump to first item |
-| `End` | Jump to last item |
-| Characters | Filter options by typing |
+| Key         | Action                            |
+| ----------- | --------------------------------- |
+| `ArrowDown` | Open menu / move to next item     |
+| `ArrowUp`   | Move to previous item             |
+| `Enter`     | Select highlighted item and close |
+| `Escape`    | Close menu                        |
+| `Home`      | Jump to first item                |
+| `End`       | Jump to last item                 |
+| Characters  | Filter options by typing          |
 
 - ARIA attributes:
   - `role="combobox"` on the input element
@@ -701,6 +777,7 @@ Follows WAI-ARIA Combobox Pattern with Listbox Popup.
 When working with object values, use `getOptionValue` to extract a unique primitive key for proper selection comparison:
 
 ```tsx
+import { useState } from "react";
 import { Combobox } from "@components-kit/react";
 
 interface User {
@@ -750,7 +827,7 @@ The `getOptionValue` function is essential for object values because:
 
 ```tsx
 <Combobox
-  options={['apple', 'banana', 'cherry']}
+  options={["apple", "banana", "cherry"]}
   defaultValue="banana"
   readOnly
 />
@@ -760,7 +837,7 @@ The `getOptionValue` function is essential for object values because:
 
 ```tsx
 <Combobox
-  options={['apple', 'banana', 'cherry']}
+  options={["apple", "banana", "cherry"]}
   placement="top-start"
   placeholder="Opens upward..."
 />
@@ -770,7 +847,7 @@ The `getOptionValue` function is essential for object values because:
 
 ```tsx
 <Combobox
-  options={['apple', 'banana', 'cherry']}
+  options={["apple", "banana", "cherry"]}
   name="fruit"
   required
   placeholder="Select a fruit..."
@@ -782,7 +859,7 @@ The `getOptionValue` function is essential for object values because:
 ```tsx
 <Combobox
   clearable
-  options={['apple', 'banana', 'cherry']}
+  options={["apple", "banana", "cherry"]}
   placeholder="Search fruits..."
   variantName="default"
 />
@@ -866,17 +943,17 @@ import { Heading } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"h1"` | HTML element to render as (polymorphic) |
-| `variantName` | `VariantFor<"heading">` | - | Variant name for styling |
+| Prop          | Type                    | Default | Description                             |
+| ------------- | ----------------------- | ------- | --------------------------------------- |
+| `as`          | `ElementType`           | `"h1"`  | HTML element to render as (polymorphic) |
+| `variantName` | `VariantFor<"heading">` | -       | Variant name for styling                |
 
 Also accepts all HTML attributes for the rendered element.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
@@ -893,12 +970,7 @@ Proper heading hierarchy is essential for screen reader navigation:
 For headings that look like headings but shouldn't affect document structure:
 
 ```tsx
-<Heading
-  as="div"
-  role="heading"
-  aria-level={2}
-  variantName="h2"
->
+<Heading as="div" role="heading" aria-level={2} variantName="h2">
   Visual Heading Only
 </Heading>
 ```
@@ -1027,6 +1099,7 @@ A text input component for single-line user input with support for various input
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Input } from '@components-kit/react';
 
 // Basic text input with label
@@ -1043,12 +1116,20 @@ import { Input } from '@components-kit/react';
 />
 
 // Controlled input
-const [value, setValue] = useState('');
-<Input
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  variantName="default"
-/>
+function SearchField() {
+  const [value, setValue] = useState('');
+
+  return (
+    <Input
+      aria-label="Search"
+      inputMode="search"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      placeholder="Search components..."
+      variantName="default"
+    />
+  );
+}
 
 // With validation error
 <label htmlFor="email">Email</label>
@@ -1071,21 +1152,33 @@ const [value, setValue] = useState('');
   step="1"
   variantName="default"
 />
+
+// Form integration
+<form onSubmit={(e) => e.preventDefault()}>
+  <label htmlFor="username">Username</label>
+  <Input
+    id="username"
+    name="username"
+    autoComplete="username"
+    required
+    variantName="default"
+  />
+</form>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `string` | `"text"` | Input type (text, email, password, number, etc.) |
-| `variantName` | `VariantFor<"input">` | - | Variant name for styling |
+| Prop          | Type                  | Default  | Description                                      |
+| ------------- | --------------------- | -------- | ------------------------------------------------ |
+| `type`        | `string`              | `"text"` | Input type (text, email, password, number, etc.) |
+| `variantName` | `VariantFor<"input">` | -        | Variant name for styling                         |
 
 Also accepts all standard `input` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
@@ -1115,7 +1208,16 @@ A multi-select component with tag chips, type-ahead filtering, and keyboard navi
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { MultiSelect } from '@components-kit/react';
+
+const setFruits = (values: string[]) => {
+  console.log('Selected fruits:', values);
+};
+
+const setFrameworks = (values: string[]) => {
+  console.log('Selected frameworks:', values);
+};
 
 // Simple string options
 <MultiSelect
@@ -1143,12 +1245,17 @@ import { MultiSelect } from '@components-kit/react';
 />
 
 // Controlled mode
-const [selected, setSelected] = useState<string[]>(['apple']);
-<MultiSelect
-  options={['apple', 'banana', 'cherry']}
-  value={selected}
-  onValueChange={setSelected}
-/>
+function ControlledMultiSelect() {
+  const [selected, setSelected] = useState<string[]>(['apple']);
+
+  return (
+    <MultiSelect
+      options={['apple', 'banana', 'cherry']}
+      value={selected}
+      onValueChange={setSelected}
+    />
+  );
+}
 
 // Max selected limit
 <MultiSelect
@@ -1219,41 +1326,41 @@ const [selected, setSelected] = useState<string[]>(['apple']);
 
 ## Props
 
-| Prop             | Type                              | Default       | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `aria-label`     | `string`                          | -             | Accessible label for the multi-select input. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                          |
-| `autoFocus`      | `boolean`                         | `false`       | Auto-focus the input on mount                                                                                                                                            |
-| `onBlur`         | `(event: React.FocusEvent) => void` | -          | Callback when the input loses focus                                                                                                                                      |
-| `onFocus`        | `(event: React.FocusEvent) => void` | -          | Callback when the input receives focus                                                                                                                                   |
-| `options`        | `SelectOption<T>[]`               | **required**  | Array of options to display                                                                                                                                              |
-| `value`          | `T[]`                             | -             | Controlled selected values                                                                                                                                               |
-| `defaultOpen`    | `boolean`                         | `false`       | Whether the dropdown is open by default on mount                                                                                                                         |
-| `defaultValue`   | `T[]`                             | -             | Default selected values (uncontrolled)                                                                                                                                   |
-| `onValueChange`  | `(values: T[]) => void`           | -             | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Search..."` | Placeholder text shown when no items selected                                                                                                                            |
-| `disabled`       | `boolean`                         | `false`       | Disables the multi-select                                                                                                                                                |
-| `variantName`    | `VariantFor<"multi_select">`      | -             | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -             | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
-| `filterFn`       | `(option, inputValue) => boolean` | -             | Custom filter function (default: case-insensitive includes)                                                                                                              |
-| `maxSelected`    | `number`                          | -             | Maximum number of items that can be selected                                                                                                                             |
-| `clearable`      | `boolean`                         | `false`       | Show a clear-all button when items are selected                                                                                                                          |
-| `emptyContent`   | `string`                          | `"No results found"` | Text displayed when no options match the filter                                                                                                                    |
-| `error`          | `boolean`                         | `false`       | Marks the multi-select as invalid (adds `data-error`)                                                                                                                    |
-| `fixedValues`    | `T[]`                             | -             | Values that cannot be removed (tags rendered without remove button)                                                                                                      |
-| `maxDisplayedTags` | `number`                        | -             | Maximum tags to display before showing "+N more"                                                                                                                         |
-| `maxDropdownHeight` | `number`                       | -             | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
-| `maxReachedContent` | `string`                       | `"Maximum selections reached"` | Text displayed when maximum selections reached                                                                                                          |
-| `menuPortal`     | `HTMLElement \| null`             | -             | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
-| `name`           | `string`                          | -             | Form field name. When set, renders hidden inputs for native form submission                                                                                              |
-| `onOpenChange`   | `(open: boolean) => void`         | -             | Callback when the dropdown opens or closes                                                                                                                               |
-| `openOnFocus`    | `boolean`                         | `true`        | Open the dropdown when the input receives focus                                                                                                                          |
-| `placement`      | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                 |
-| `readOnly`       | `boolean`                         | `false`       | Read-only mode — visually normal but prevents interaction                                                                                                                |
-| `required`       | `boolean`                         | `false`       | Marks the multi-select as required (`aria-required` + `data-required`)                                                                                                   |
-| `tokenSeparators` | `string[]`                       | -             | Characters that trigger token creation on type/paste (e.g., `[",", ";"]`)                                                                                                |
-| `inputValue`     | `string`                          | -             | Controlled input text value                                                                                                                                              |
-| `defaultInputValue` | `string`                       | -             | Default input value (uncontrolled)                                                                                                                                       |
-| `onInputValueChange` | `(value: string) => void`     | -             | Callback when input text changes                                                                                                                                         |
+| Prop                 | Type                                | Default                        | Description                                                                                                                                                              |
+| -------------------- | ----------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aria-label`         | `string`                            | -                              | Accessible label for the multi-select input. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                          |
+| `autoFocus`          | `boolean`                           | `false`                        | Auto-focus the input on mount                                                                                                                                            |
+| `onBlur`             | `(event: React.FocusEvent) => void` | -                              | Callback when the input loses focus                                                                                                                                      |
+| `onFocus`            | `(event: React.FocusEvent) => void` | -                              | Callback when the input receives focus                                                                                                                                   |
+| `options`            | `SelectOption<T>[]`                 | **required**                   | Array of options to display                                                                                                                                              |
+| `value`              | `T[]`                               | -                              | Controlled selected values                                                                                                                                               |
+| `defaultOpen`        | `boolean`                           | `false`                        | Whether the dropdown is open by default on mount                                                                                                                         |
+| `defaultValue`       | `T[]`                               | -                              | Default selected values (uncontrolled)                                                                                                                                   |
+| `onValueChange`      | `(values: T[]) => void`             | -                              | Callback when selection changes                                                                                                                                          |
+| `placeholder`        | `string`                            | `"Search..."`                  | Placeholder text shown when no items selected                                                                                                                            |
+| `disabled`           | `boolean`                           | `false`                        | Disables the multi-select                                                                                                                                                |
+| `variantName`        | `VariantFor<"multi_select">`        | -                              | Variant name for styling                                                                                                                                                 |
+| `getOptionValue`     | `(option: T) => string \| number`   | -                              | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| `filterFn`           | `(option, inputValue) => boolean`   | -                              | Custom filter function (default: case-insensitive includes)                                                                                                              |
+| `maxSelected`        | `number`                            | -                              | Maximum number of items that can be selected                                                                                                                             |
+| `clearable`          | `boolean`                           | `false`                        | Show a clear-all button when items are selected                                                                                                                          |
+| `emptyContent`       | `string`                            | `"No results found"`           | Text displayed when no options match the filter                                                                                                                          |
+| `error`              | `boolean`                           | `false`                        | Marks the multi-select as invalid (adds `data-error`)                                                                                                                    |
+| `fixedValues`        | `T[]`                               | -                              | Values that cannot be removed (tags rendered without remove button)                                                                                                      |
+| `maxDisplayedTags`   | `number`                            | -                              | Maximum tags to display before showing "+N more"                                                                                                                         |
+| `maxDropdownHeight`  | `number`                            | -                              | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
+| `maxReachedContent`  | `string`                            | `"Maximum selections reached"` | Text displayed when maximum selections reached                                                                                                                           |
+| `menuPortal`         | `HTMLElement \| null`               | -                              | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
+| `name`               | `string`                            | -                              | Form field name. When set, renders hidden inputs for native form submission                                                                                              |
+| `onOpenChange`       | `(open: boolean) => void`           | -                              | Callback when the dropdown opens or closes                                                                                                                               |
+| `openOnFocus`        | `boolean`                           | `true`                         | Open the dropdown when the input receives focus                                                                                                                          |
+| `placement`          | `Placement`                         | `"bottom-start"`               | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
+| `readOnly`           | `boolean`                           | `false`                        | Read-only mode — visually normal but prevents interaction                                                                                                                |
+| `required`           | `boolean`                           | `false`                        | Marks the multi-select as required (`aria-required` + `data-required`)                                                                                                   |
+| `tokenSeparators`    | `string[]`                          | -                              | Characters that trigger token creation on type/paste (e.g., `[",", ";"]`)                                                                                                |
+| `inputValue`         | `string`                            | -                              | Controlled input text value                                                                                                                                              |
+| `defaultInputValue`  | `string`                            | -                              | Default input value (uncontrolled)                                                                                                                                       |
+| `onInputValueChange` | `(value: string) => void`           | -                              | Callback when input text changes                                                                                                                                         |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -1278,6 +1385,8 @@ Also accepts all standard `div` HTML attributes.
 When working with object values, you need to provide a `getOptionValue` function to extract a unique primitive identifier:
 
 ```tsx
+import { useState } from "react";
+
 interface User {
   id: number;
   name: string;
@@ -1355,41 +1464,41 @@ function MultiSelectForm() {
 
 ## Data Attributes
 
-| Attribute                              | Element                | Values               | Description                                 |
-| -------------------------------------- | ---------------------- | -------------------- | ------------------------------------------- |
-| `data-ck="multi-select"`               | Root                   | -                    | Identifies the root container               |
-| `data-ck="multi-select-input-wrapper"` | Wrapper                | -                    | Outer container for the input area          |
-| `data-ck="multi-select-tags"`          | Div                    | -                    | Wraps tags, overflow badge, and input (flex-wrapping area, sibling to action buttons) |
-| `data-ck="multi-select-tag"`           | Tag                    | -                    | Individual selected tag chip                |
-| `data-ck="multi-select-tag-remove"`    | Button                 | -                    | Remove button inside a tag                  |
-| `data-ck="multi-select-input"`         | Input                  | -                    | Text input for filtering                    |
-| `data-ck="multi-select-trigger"`       | Button                 | -                    | Toggle button for dropdown                  |
-| `data-ck="multi-select-positioner"`    | Div (portal)           | -                    | Always-rendered positioning wrapper around dropdown content |
-| `data-ck="multi-select-content"`       | Menu                   | -                    | Dropdown menu container                     |
-| `data-ck="multi-select-item"`          | Item                   | -                    | Individual dropdown item                    |
-| `data-slot="icon"`                     | Div (inside item)      | -                    | Trailing icon slot for CSS-injected indicator (`aria-hidden`) |
-| `data-ck="multi-select-empty"`         | Div                    | -                    | Empty state / max-reached message           |
-| `data-ck="multi-select-separator"`     | Div                    | -                    | Visual separator between groups             |
-| `data-ck="multi-select-group"`         | Div                    | -                    | Group container (`role="group"` with `aria-labelledby`) |
-| `data-ck="multi-select-group-label"`   | Div                    | -                    | Group label heading (`role="presentation"`) |
-| `data-ck="multi-select-clear"`         | Button                 | -                    | Clear-all button (when `clearable` is true) |
-| `data-ck="multi-select-live"`          | Div                    | -                    | Live region for screen reader announcements (must be styled sr-only) |
-| `data-ck="multi-select-tag-overflow"`  | Span                   | -                    | "+N more" overflow indicator (`aria-label` describes hidden count) |
-| `data-state`                           | Root, Trigger, Positioner, Content | `"open"`, `"closed"` | Dropdown open/close state             |
-| `data-side`                            | Content                | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI) |
-| `data-unmounted`                       | Positioner             | `true`               | Present when the positioner content is unmounted |
-| `data-state`                           | Item                   | `"checked"`, `"unchecked"` | Whether the item is currently selected |
-| `data-active`                          | Tag                    | `true`               | Present on the currently focused tag        |
-| `data-disabled`                        | Root, Item             | `true`               | Present when disabled                       |
-| `data-empty`                           | Content                | `true`               | Present on menu when no options are visible |
-| `data-error`                           | Root                   | `true`               | Present when `error` prop is true           |
-| `data-fixed`                           | Tag                    | `true`               | Present on tags that cannot be removed      |
-| `data-has-value`                       | Root                   | `true`               | Present when at least one item is selected  |
-| `data-highlighted`                     | Item                   | `true`               | Present on keyboard-highlighted item        |
-| `data-max-reached`                     | Root                   | `true`               | Present when `maxSelected` limit is reached |
-| `data-readonly`                        | Root                   | `true`               | Present when `readOnly` prop is true        |
-| `data-required`                        | Root                   | `true`               | Present when `required` prop is true        |
-| `data-variant`                         | Root                   | string               | Variant name for styling                    |
+| Attribute                              | Element                            | Values                                   | Description                                                                           |
+| -------------------------------------- | ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `data-ck="multi-select"`               | Root                               | -                                        | Identifies the root container                                                         |
+| `data-ck="multi-select-input-wrapper"` | Wrapper                            | -                                        | Outer container for the input area                                                    |
+| `data-ck="multi-select-tags"`          | Div                                | -                                        | Wraps tags, overflow badge, and input (flex-wrapping area, sibling to action buttons) |
+| `data-ck="multi-select-tag"`           | Tag                                | -                                        | Individual selected tag chip                                                          |
+| `data-ck="multi-select-tag-remove"`    | Button                             | -                                        | Remove button inside a tag                                                            |
+| `data-ck="multi-select-input"`         | Input                              | -                                        | Text input for filtering                                                              |
+| `data-ck="multi-select-trigger"`       | Button                             | -                                        | Toggle button for dropdown                                                            |
+| `data-ck="multi-select-positioner"`    | Div (portal)                       | -                                        | Always-rendered positioning wrapper around dropdown content                           |
+| `data-ck="multi-select-content"`       | Menu                               | -                                        | Dropdown menu container                                                               |
+| `data-ck="multi-select-item"`          | Item                               | -                                        | Individual dropdown item                                                              |
+| `data-slot="icon"`                     | Div (inside item)                  | -                                        | Trailing icon slot for CSS-injected indicator (`aria-hidden`)                         |
+| `data-ck="multi-select-empty"`         | Div                                | -                                        | Empty state / max-reached message                                                     |
+| `data-ck="multi-select-separator"`     | Div                                | -                                        | Visual separator between groups                                                       |
+| `data-ck="multi-select-group"`         | Div                                | -                                        | Group container (`role="group"` with `aria-labelledby`)                               |
+| `data-ck="multi-select-group-label"`   | Div                                | -                                        | Group label heading (`role="presentation"`)                                           |
+| `data-ck="multi-select-clear"`         | Button                             | -                                        | Clear-all button (when `clearable` is true)                                           |
+| `data-ck="multi-select-live"`          | Div                                | -                                        | Live region for screen reader announcements (must be styled sr-only)                  |
+| `data-ck="multi-select-tag-overflow"`  | Span                               | -                                        | "+N more" overflow indicator (`aria-label` describes hidden count)                    |
+| `data-state`                           | Root, Trigger, Positioner, Content | `"open"`, `"closed"`                     | Dropdown open/close state                                                             |
+| `data-side`                            | Content                            | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI)                             |
+| `data-unmounted`                       | Positioner                         | `true`                                   | Present when the positioner content is unmounted                                      |
+| `data-state`                           | Item                               | `"checked"`, `"unchecked"`               | Whether the item is currently selected                                                |
+| `data-active`                          | Tag                                | `true`                                   | Present on the currently focused tag                                                  |
+| `data-disabled`                        | Root, Item                         | `true`                                   | Present when disabled                                                                 |
+| `data-empty`                           | Content                            | `true`                                   | Present on menu when no options are visible                                           |
+| `data-error`                           | Root                               | `true`                                   | Present when `error` prop is true                                                     |
+| `data-fixed`                           | Tag                                | `true`                                   | Present on tags that cannot be removed                                                |
+| `data-has-value`                       | Root                               | `true`                                   | Present when at least one item is selected                                            |
+| `data-highlighted`                     | Item                               | `true`                                   | Present on keyboard-highlighted item                                                  |
+| `data-max-reached`                     | Root                               | `true`                                   | Present when `maxSelected` limit is reached                                           |
+| `data-readonly`                        | Root                               | `true`                                   | Present when `readOnly` prop is true                                                  |
+| `data-required`                        | Root                               | `true`                                   | Present when `required` prop is true                                                  |
+| `data-variant`                         | Root                               | string                                   | Variant name for styling                                                              |
 
 ## Accessibility
 
@@ -1397,18 +1506,18 @@ Follows WAI-ARIA Combobox pattern with multiselectable Listbox.
 
 ### Keyboard Support
 
-| Key            | Context           | Action                                   |
-| -------------- | ----------------- | ---------------------------------------- |
-| `ArrowDown`    | Input             | Open menu / move to next item            |
-| `ArrowUp`      | Input             | Move to previous item                    |
+| Key            | Context           | Action                                             |
+| -------------- | ----------------- | -------------------------------------------------- |
+| `ArrowDown`    | Input             | Open menu / move to next item                      |
+| `ArrowUp`      | Input             | Move to previous item                              |
 | `Enter`        | Item highlighted  | Toggle item selection, keep menu open, clear input |
-| `Escape`       | Menu open         | Close menu                               |
-| `Home` / `End` | Menu open         | Jump to first / last item                |
-| `Backspace`    | Input empty       | Remove last selected tag                 |
-| `ArrowLeft`    | Input, caret at 0 | Focus last tag                           |
-| `ArrowRight`   | Tag focused       | Focus next tag or return to input        |
-| `ArrowLeft`    | Tag focused       | Focus previous tag                       |
-| Characters     | Input             | Filter options by typing                 |
+| `Escape`       | Menu open         | Close menu                                         |
+| `Home` / `End` | Menu open         | Jump to first / last item                          |
+| `Backspace`    | Input empty       | Remove last selected tag                           |
+| `ArrowLeft`    | Input, caret at 0 | Focus last tag                                     |
+| `ArrowRight`   | Tag focused       | Focus next tag or return to input                  |
+| `ArrowLeft`    | Tag focused       | Focus previous tag                                 |
+| Characters     | Input             | Filter options by typing                           |
 
 - ARIA attributes:
   - `role="combobox"` on the input element
@@ -1480,14 +1589,23 @@ An accessible pagination component supporting both numeric page navigation (offs
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Pagination } from '@components-kit/react';
+
+const fetchNext = () => {};
+const fetchPrevious = () => {};
+const fetchFirst = () => {};
+const fetchLast = () => {};
 
 // Basic offset mode (uncontrolled)
 <Pagination totalPages={10} defaultPage={1} />
 
 // Controlled offset mode
-const [page, setPage] = useState(1);
-<Pagination totalPages={10} page={page} onPageChange={setPage} />
+function ControlledPagination() {
+  const [page, setPage] = useState(1);
+
+  return <Pagination totalPages={10} page={page} onPageChange={setPage} />;
+}
 
 // With custom siblings
 <Pagination totalPages={20} defaultPage={10} siblings={2} />
@@ -1523,44 +1641,44 @@ const [page, setPage] = useState(1);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `totalPages` | `number` | - | Total pages. Enables offset mode when provided. |
-| `page` | `number` | - | Controlled current page (1-based) |
-| `defaultPage` | `number` | `1` | Initial page for uncontrolled mode |
-| `onPageChange` | `(page: number) => void` | - | Callback on page change (offset mode) |
-| `siblings` | `number` | `1` | Sibling pages on each side of current |
-| `disabled` | `boolean` | - | Disables all buttons |
-| `showFirstLast` | `boolean` | `false` | Show first/last navigation buttons |
-| `variantName` | `VariantFor<"pagination">` | - | Variant name for styling |
-| `hasNextPage` | `boolean` | - | Next page available (cursor mode) |
-| `hasPreviousPage` | `boolean` | - | Previous page available (cursor mode) |
-| `onNext` | `() => void` | - | Next callback (cursor mode) |
-| `onPrevious` | `() => void` | - | Previous callback (cursor mode) |
-| `onFirst` | `() => void` | - | First callback (both modes) |
-| `onLast` | `() => void` | - | Last callback (both modes) |
-| `hasFirstPage` | `boolean` | - | First page available (cursor mode, defaults to `hasPreviousPage`) |
-| `hasLastPage` | `boolean` | - | Last page available (cursor mode, defaults to `hasNextPage`) |
+| Prop              | Type                       | Default | Description                                                       |
+| ----------------- | -------------------------- | ------- | ----------------------------------------------------------------- |
+| `totalPages`      | `number`                   | -       | Total pages. Enables offset mode when provided.                   |
+| `page`            | `number`                   | -       | Controlled current page (1-based)                                 |
+| `defaultPage`     | `number`                   | `1`     | Initial page for uncontrolled mode                                |
+| `onPageChange`    | `(page: number) => void`   | -       | Callback on page change (offset mode)                             |
+| `siblings`        | `number`                   | `1`     | Sibling pages on each side of current                             |
+| `disabled`        | `boolean`                  | -       | Disables all buttons                                              |
+| `showFirstLast`   | `boolean`                  | `false` | Show first/last navigation buttons                                |
+| `variantName`     | `VariantFor<"pagination">` | -       | Variant name for styling                                          |
+| `hasNextPage`     | `boolean`                  | -       | Next page available (cursor mode)                                 |
+| `hasPreviousPage` | `boolean`                  | -       | Previous page available (cursor mode)                             |
+| `onNext`          | `() => void`               | -       | Next callback (cursor mode)                                       |
+| `onPrevious`      | `() => void`               | -       | Previous callback (cursor mode)                                   |
+| `onFirst`         | `() => void`               | -       | First callback (both modes)                                       |
+| `onLast`          | `() => void`               | -       | Last callback (both modes)                                        |
+| `hasFirstPage`    | `boolean`                  | -       | First page available (cursor mode, defaults to `hasPreviousPage`) |
+| `hasLastPage`     | `boolean`                  | -       | Last page available (cursor mode, defaults to `hasNextPage`)      |
 
 Also accepts all standard `nav` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Applied On | Values | Description |
-|-----------|-----------|--------|-------------|
-| `data-ck="pagination"` | Root | `"pagination"` | Component identifier |
-| `data-mode` | Root | `"offset"`, `"cursor"` | Current pagination mode |
-| `data-variant` | Root | string | Variant name for styling |
-| `data-disabled` | Root, buttons | `true` | Present when disabled |
-| `data-ck="pagination-list"` | List | `"pagination-list"` | Button list container |
-| `data-ck="pagination-page"` | Page button | `"pagination-page"` | Page number button |
-| `data-ck="pagination-previous"` | Prev button | `"pagination-previous"` | Previous navigation button |
-| `data-ck="pagination-next"` | Next button | `"pagination-next"` | Next navigation button |
-| `data-ck="pagination-first"` | First button | `"pagination-first"` | First navigation button |
-| `data-ck="pagination-last"` | Last button | `"pagination-last"` | Last navigation button |
-| `data-ck="pagination-ellipsis"` | Ellipsis | `"pagination-ellipsis"` | Truncation indicator |
-| `data-state` | Page button | `"active"`, `"inactive"` | Current page state |
-| `data-slot="page-item"` | List items | `"page-item"` | Structural slot |
+| Attribute                       | Applied On    | Values                   | Description                |
+| ------------------------------- | ------------- | ------------------------ | -------------------------- |
+| `data-ck="pagination"`          | Root          | `"pagination"`           | Component identifier       |
+| `data-mode`                     | Root          | `"offset"`, `"cursor"`   | Current pagination mode    |
+| `data-variant`                  | Root          | string                   | Variant name for styling   |
+| `data-disabled`                 | Root, buttons | `true`                   | Present when disabled      |
+| `data-ck="pagination-list"`     | List          | `"pagination-list"`      | Button list container      |
+| `data-ck="pagination-page"`     | Page button   | `"pagination-page"`      | Page number button         |
+| `data-ck="pagination-previous"` | Prev button   | `"pagination-previous"`  | Previous navigation button |
+| `data-ck="pagination-next"`     | Next button   | `"pagination-next"`      | Next navigation button     |
+| `data-ck="pagination-first"`    | First button  | `"pagination-first"`     | First navigation button    |
+| `data-ck="pagination-last"`     | Last button   | `"pagination-last"`      | Last navigation button     |
+| `data-ck="pagination-ellipsis"` | Ellipsis      | `"pagination-ellipsis"`  | Truncation indicator       |
+| `data-state`                    | Page button   | `"active"`, `"inactive"` | Current page state         |
+| `data-slot="page-item"`         | List items    | `"page-item"`            | Structural slot            |
 
 ## Accessibility
 
@@ -1576,21 +1694,21 @@ Uses `<nav>` landmark with `aria-label="Pagination"` following the WAI-ARIA navi
 
 ### Keyboard Support
 
-| Key | Action |
-|-----|--------|
+| Key                 | Action                                |
+| ------------------- | ------------------------------------- |
 | `Tab` / `Shift+Tab` | Move focus between pagination buttons |
-| `Enter` | Activate the focused button |
-| `Space` | Activate the focused button |
+| `Enter`             | Activate the focused button           |
+| `Space`             | Activate the focused button           |
 
 ### WCAG 2.2 AA Compliance
 
-| Criterion | Level | Requirement |
-|-----------|-------|-------------|
-| 2.1.1 Keyboard | A | All buttons keyboard-operable |
-| 2.4.3 Focus Order | A | Logical DOM focus sequence |
-| 2.5.8 Target Size | AA | Ensure minimum 24x24px button targets |
-| 1.4.3 Contrast | AA | Ensure 4.5:1 text contrast ratio |
-| 4.1.2 Name, Role, Value | A | All buttons have accessible names and roles |
+| Criterion               | Level | Requirement                                 |
+| ----------------------- | ----- | ------------------------------------------- |
+| 2.1.1 Keyboard          | A     | All buttons keyboard-operable               |
+| 2.4.3 Focus Order       | A     | Logical DOM focus sequence                  |
+| 2.5.8 Target Size       | AA    | Ensure minimum 24x24px button targets       |
+| 1.4.3 Contrast          | AA    | Ensure 4.5:1 text contrast ratio            |
+| 4.1.2 Name, Role, Value | A     | All buttons have accessible names and roles |
 
 ### Best Practices
 
@@ -1687,6 +1805,7 @@ A container and radio input components for single selection from multiple option
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { RadioGroup, RadioGroupItem } from '@components-kit/react';
 
 // Basic radio group
@@ -1721,24 +1840,41 @@ import { RadioGroup, RadioGroupItem } from '@components-kit/react';
 </fieldset>
 
 // Controlled
-const [selected, setSelected] = useState('option1');
-<RadioGroup aria-label="Preferences">
-  <RadioGroupItem
-    id="opt1"
-    name="preference"
-    value="option1"
-    checked={selected === 'option1'}
-    onChange={(e) => setSelected(e.target.value)}
-  />
-  <label htmlFor="opt1">Option 1</label>
-</RadioGroup>
+function ControlledPreferences() {
+  const [selected, setSelected] = useState('email');
+
+  return (
+    <RadioGroup aria-label="Notification preference">
+      <div>
+        <RadioGroupItem
+          id="pref-email"
+          name="preference"
+          value="email"
+          checked={selected === 'email'}
+          onChange={(e) => setSelected(e.target.value)}
+        />
+        <label htmlFor="pref-email">Email</label>
+      </div>
+      <div>
+        <RadioGroupItem
+          id="pref-push"
+          name="preference"
+          value="push"
+          checked={selected === 'push'}
+          onChange={(e) => setSelected(e.target.value)}
+        />
+        <label htmlFor="pref-push">Push</label>
+      </div>
+    </RadioGroup>
+  );
+}
 ```
 
 ## RadioGroup Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"radio_group">` | - | Variant name for styling |
+| Prop          | Type                        | Default | Description              |
+| ------------- | --------------------------- | ------- | ------------------------ |
+| `variantName` | `VariantFor<"radio_group">` | -       | Variant name for styling |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -1748,8 +1884,8 @@ Accepts all standard `input[type="radio"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                                    |
+| -------------- | ------ | ---------------------------------------------- |
 | `data-variant` | string | The variant name for styling (RadioGroup only) |
 
 ## Accessibility
@@ -1784,7 +1920,12 @@ A dropdown select component with keyboard navigation, powered by Downshift.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Select } from '@components-kit/react';
+
+const setFruit = (value: string | undefined) => {
+  console.log('Selected fruit:', value);
+};
 
 // Simple string options
 <Select
@@ -1822,29 +1963,29 @@ import { Select } from '@components-kit/react';
 
 ## Props
 
-| Prop             | Type                              | Default          | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `aria-label`     | `string`                          | -                | Accessible label for the trigger button. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                              |
-| `autoFocus`      | `boolean`                         | `false`          | Auto-focus the trigger on mount                                                                                                                                          |
-| `options`        | `SelectOption<T>[]`               | **required**     | Array of options to display                                                                                                                                              |
-| `placement`      | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
-| `value`          | `T`                               | -                | Controlled value                                                                                                                                                         |
-| `defaultOpen`    | `boolean`                         | `false`          | Whether the dropdown is open by default on mount                                                                                                                         |
-| `defaultValue`   | `T`                               | -                | Default value (uncontrolled)                                                                                                                                             |
-| `onValueChange`  | `(value: T \| undefined) => void` | -                | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Select..."`    | Placeholder text                                                                                                                                                         |
-| `disabled`       | `boolean`                         | `false`          | Disables the select                                                                                                                                                      |
-| `emptyContent`   | `string`                          | `"No options"`   | Text displayed when there are no options                                                                                                                                 |
-| `error`          | `boolean`                         | `false`          | Marks the select as invalid (adds `data-error`)                                                                                                                          |
-| `maxDropdownHeight` | `number`                       | -                | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
-| `menuPortal`     | `HTMLElement \| null`             | -                | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
-| `name`           | `string`                          | -                | Form field name. When set, renders a hidden input for native form submission                                                                                             |
-| `onOpenChange`   | `(open: boolean) => void`         | -                | Callback when the dropdown opens or closes                                                                                                                               |
-| `openOnFocus`    | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |
-| `readOnly`       | `boolean`                         | `false`          | Read-only mode — visually normal but prevents interaction                                                                                                                |
-| `required`       | `boolean`                         | `false`          | Marks the select as required (`aria-required` + `data-required`)                                                                                                         |
-| `variantName`    | `VariantFor<"select">`            | -                | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| Prop                | Type                              | Default          | Description                                                                                                                                                              |
+| ------------------- | --------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aria-label`        | `string`                          | -                | Accessible label for the trigger button. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                              |
+| `autoFocus`         | `boolean`                         | `false`          | Auto-focus the trigger on mount                                                                                                                                          |
+| `options`           | `SelectOption<T>[]`               | **required**     | Array of options to display                                                                                                                                              |
+| `placement`         | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
+| `value`             | `T`                               | -                | Controlled value                                                                                                                                                         |
+| `defaultOpen`       | `boolean`                         | `false`          | Whether the dropdown is open by default on mount                                                                                                                         |
+| `defaultValue`      | `T`                               | -                | Default value (uncontrolled)                                                                                                                                             |
+| `onValueChange`     | `(value: T \| undefined) => void` | -                | Callback when selection changes                                                                                                                                          |
+| `placeholder`       | `string`                          | `"Select..."`    | Placeholder text                                                                                                                                                         |
+| `disabled`          | `boolean`                         | `false`          | Disables the select                                                                                                                                                      |
+| `emptyContent`      | `string`                          | `"No options"`   | Text displayed when there are no options                                                                                                                                 |
+| `error`             | `boolean`                         | `false`          | Marks the select as invalid (adds `data-error`)                                                                                                                          |
+| `maxDropdownHeight` | `number`                          | -                | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
+| `menuPortal`        | `HTMLElement \| null`             | -                | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
+| `name`              | `string`                          | -                | Form field name. When set, renders a hidden input for native form submission                                                                                             |
+| `onOpenChange`      | `(open: boolean) => void`         | -                | Callback when the dropdown opens or closes                                                                                                                               |
+| `openOnFocus`       | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |
+| `readOnly`          | `boolean`                         | `false`          | Read-only mode — visually normal but prevents interaction                                                                                                                |
+| `required`          | `boolean`                         | `false`          | Marks the select as required (`aria-required` + `data-required`)                                                                                                         |
+| `variantName`       | `VariantFor<"select">`            | -                | Variant name for styling                                                                                                                                                 |
+| `getOptionValue`    | `(option: T) => string \| number` | -                | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
 
 ## Option Types
 
@@ -1879,12 +2020,19 @@ const users: User[] = [
   { id: 3, name: "Charlie", email: "charlie@example.com" },
 ];
 
-<Select<User>
-  options={users.map((u) => ({ value: u, label: u.name }))}
-  getOptionValue={(user) => user.id}
-  onValueChange={setSelectedUser}
-  placeholder="Select a user..."
-/>;
+function UserSelect() {
+  const [selectedUser, setSelectedUser] = useState<User | undefined>();
+
+  return (
+    <Select<User>
+      options={users.map((u) => ({ value: u, label: u.name }))}
+      value={selectedUser}
+      onValueChange={setSelectedUser}
+      getOptionValue={(user) => user.id}
+      placeholder="Select a user..."
+    />
+  );
+}
 ```
 
 The `getOptionValue` function is required for object values because React uses reference equality by default, which won't work when options are recreated. By extracting a unique primitive key (like an `id`), the component can correctly identify which option is selected even when the object references change.
@@ -1928,33 +2076,33 @@ function SelectForm() {
 
 ## Data Attributes
 
-| Attribute                      | Element                      | Values                                           | Description                                                          |
-| ------------------------------ | ---------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| `data-ck="select"`             | Root                         | -                                                | Component identifier                                                 |
-| `data-ck="select-trigger"`     | Button                       | -                                                | Trigger button                                                       |
-| `data-ck="select-value"`       | Span                         | -                                                | Value display area                                                   |
-| `data-slot="icon"`             | Div (inside trigger)         | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)         |
-| `data-ck="select-positioner"`  | Div (portal)                 | -                                                | Always-rendered positioning wrapper around dropdown content           |
-| `data-ck="select-content"`     | Menu                         | -                                                | Dropdown menu container                                              |
-| `data-ck="select-item"`        | Item                         | -                                                | Individual option item                                               |
-| `data-slot="icon"`             | Div (inside item)            | -                                                | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`) |
-| `data-ck="select-separator"`   | Div                          | -                                                | Visual separator between groups                                      |
-| `data-ck="select-group"`       | Div                          | -                                                | Group container (`role="group"` with `aria-labelledby`)              |
-| `data-ck="select-group-label"` | Div                          | -                                                | Group heading label (`role="presentation"`)                          |
-| `data-ck="select-live"`        | Div                          | -                                                | Live region for screen reader announcements (must be styled sr-only) |
-| `data-ck="select-empty"`       | Div                          | -                                                | Empty state message when no options available                        |
+| Attribute                      | Element                                  | Values                                           | Description                                                                     |
+| ------------------------------ | ---------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `data-ck="select"`             | Root                                     | -                                                | Component identifier                                                            |
+| `data-ck="select-trigger"`     | Button                                   | -                                                | Trigger button                                                                  |
+| `data-ck="select-value"`       | Span                                     | -                                                | Value display area                                                              |
+| `data-slot="icon"`             | Div (inside trigger)                     | -                                                | Icon slot for CSS-injected chevron indicator (`aria-hidden`)                    |
+| `data-ck="select-positioner"`  | Div (portal)                             | -                                                | Always-rendered positioning wrapper around dropdown content                     |
+| `data-ck="select-content"`     | Menu                                     | -                                                | Dropdown menu container                                                         |
+| `data-ck="select-item"`        | Item                                     | -                                                | Individual option item                                                          |
+| `data-slot="icon"`             | Div (inside item)                        | -                                                | Trailing icon slot for CSS-injected indicator (e.g. checkmark) (`aria-hidden`)  |
+| `data-ck="select-separator"`   | Div                                      | -                                                | Visual separator between groups                                                 |
+| `data-ck="select-group"`       | Div                                      | -                                                | Group container (`role="group"` with `aria-labelledby`)                         |
+| `data-ck="select-group-label"` | Div                                      | -                                                | Group heading label (`role="presentation"`)                                     |
+| `data-ck="select-live"`        | Div                                      | -                                                | Live region for screen reader announcements (must be styled sr-only)            |
+| `data-ck="select-empty"`       | Div                                      | -                                                | Empty state message when no options available                                   |
 | `data-state`                   | Root, Trigger, Positioner, Content, Item | `"open"`, `"closed"`, `"checked"`, `"unchecked"` | Open/close state on root/trigger/positioner/content; checked/unchecked on items |
-| `data-side`                    | Content                      | `"bottom"`, `"top"`, `"left"`, `"right"`         | Current placement side of the dropdown (from Floating UI)            |
-| `data-unmounted`               | Positioner                   | `true`                                           | Present when the positioner content is unmounted                     |
-| `data-disabled`                | Root, Item                   | `true`                                           | Present when disabled                                                |
-| `data-empty`                   | Content                      | `true`                                           | Present on menu when no options are visible                          |
-| `data-error`                   | Root                         | `true`                                           | Present when `error` prop is true                                    |
-| `data-has-value`               | Root                         | `true`                                           | Present when an item is selected                                     |
-| `data-highlighted`             | Item                         | `true`                                           | Present on the currently highlighted item                            |
-| `data-placeholder`             | Value                        | `""`                                             | Present when showing placeholder text                                |
-| `data-readonly`                | Root                         | `true`                                           | Present when `readOnly` prop is true                                 |
-| `data-required`                | Root                         | `true`                                           | Present when `required` prop is true                                 |
-| `data-variant`                 | Root                         | string                                           | Variant name for styling                                             |
+| `data-side`                    | Content                                  | `"bottom"`, `"top"`, `"left"`, `"right"`         | Current placement side of the dropdown (from Floating UI)                       |
+| `data-unmounted`               | Positioner                               | `true`                                           | Present when the positioner content is unmounted                                |
+| `data-disabled`                | Root, Item                               | `true`                                           | Present when disabled                                                           |
+| `data-empty`                   | Content                                  | `true`                                           | Present on menu when no options are visible                                     |
+| `data-error`                   | Root                                     | `true`                                           | Present when `error` prop is true                                               |
+| `data-has-value`               | Root                                     | `true`                                           | Present when an item is selected                                                |
+| `data-highlighted`             | Item                                     | `true`                                           | Present on the currently highlighted item                                       |
+| `data-placeholder`             | Value                                    | `""`                                             | Present when showing placeholder text                                           |
+| `data-readonly`                | Root                                     | `true`                                           | Present when `readOnly` prop is true                                            |
+| `data-required`                | Root                                     | `true`                                           | Present when `required` prop is true                                            |
+| `data-variant`                 | Root                                     | string                                           | Variant name for styling                                                        |
 
 ## Accessibility
 
@@ -2046,20 +2194,28 @@ import { Separator } from '@components-kit/react';
 
 // Decorative separator (hidden from screen readers)
 <Separator aria-hidden="true" />
+
+// Toolbar divider (vertical)
+<div aria-label="Editor actions" role="toolbar" style={{ display: 'flex', gap: 8 }}>
+  <button type="button">Bold</button>
+  <button type="button">Italic</button>
+  <Separator orientation="vertical" />
+  <button type="button">Link</button>
+</div>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| Prop          | Type                         | Default        | Description                  |
+| ------------- | ---------------------------- | -------------- | ---------------------------- |
 | `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Orientation of the separator |
 
 Also accepts all standard `hr` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute          | Values                       | Description     |
+| ------------------ | ---------------------------- | --------------- |
 | `data-orientation` | `"horizontal"`, `"vertical"` | The orientation |
 
 ## Accessibility
@@ -2120,18 +2276,18 @@ import { Skeleton } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `width` | `string` | - | Width of the skeleton (e.g., "200px", "100%") |
-| `height` | `string` | - | Height of the skeleton (e.g., "100px", "1em") |
-| `variantName` | `VariantFor<"skeleton">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description                                   |
+| ------------- | ------------------------ | ------- | --------------------------------------------- |
+| `width`       | `string`                 | -       | Width of the skeleton (e.g., "200px", "100%") |
+| `height`      | `string`                 | -       | Height of the skeleton (e.g., "100px", "1em") |
+| `variantName` | `VariantFor<"skeleton">` | -       | Variant name for styling                      |
 
 Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
@@ -2176,7 +2332,12 @@ An accessible slider input component for selecting a numeric value within a rang
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Slider } from '@components-kit/react';
+
+const saveToServer = (value: number) => {
+  console.log('Committed slider value:', value);
+};
 
 // Basic slider with external label
 <label id="volume-label">Volume</label>
@@ -2186,8 +2347,11 @@ import { Slider } from '@components-kit/react';
 <Slider aria-label="Volume" defaultValue={50} />
 
 // Controlled slider
-const [volume, setVolume] = useState(50);
-<Slider aria-label="Volume" value={volume} onValueChange={setVolume} />
+function VolumeSlider() {
+  const [volume, setVolume] = useState(50);
+
+  return <Slider aria-label="Volume" value={volume} onValueChange={setVolume} />;
+}
 
 // With onValueCommit (fires only when drag ends)
 <Slider aria-label="Volume" defaultValue={50} onValueCommit={(v) => saveToServer(v)} />
@@ -2217,32 +2381,32 @@ const [volume, setVolume] = useState(50);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `number` | - | Controlled value |
-| `defaultValue` | `number` | `min` | Initial value for uncontrolled mode |
-| `min` | `number` | `0` | Minimum value |
-| `max` | `number` | `100` | Maximum value |
-| `step` | `number` | `1` | Step increment between values |
-| `disabled` | `boolean` | - | Disables the slider |
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider |
-| `onValueChange` | `(value: number) => void` | - | Callback fired when the value changes (on every move) |
-| `onValueCommit` | `(value: number) => void` | - | Callback fired when the user finishes a pointer interaction (on pointer up) |
-| `variantName` | `VariantFor<"slider">` | - | Variant name for styling |
+| Prop            | Type                         | Default        | Description                                                                 |
+| --------------- | ---------------------------- | -------------- | --------------------------------------------------------------------------- |
+| `value`         | `number`                     | -              | Controlled value                                                            |
+| `defaultValue`  | `number`                     | `min`          | Initial value for uncontrolled mode                                         |
+| `min`           | `number`                     | `0`            | Minimum value                                                               |
+| `max`           | `number`                     | `100`          | Maximum value                                                               |
+| `step`          | `number`                     | `1`            | Step increment between values                                               |
+| `disabled`      | `boolean`                    | -              | Disables the slider                                                         |
+| `orientation`   | `"horizontal" \| "vertical"` | `"horizontal"` | Layout direction of the slider                                              |
+| `onValueChange` | `(value: number) => void`    | -              | Callback fired when the value changes (on every move)                       |
+| `onValueCommit` | `(value: number) => void`    | -              | Callback fired when the user finishes a pointer interaction (on pointer up) |
+| `variantName`   | `VariantFor<"slider">`       | -              | Variant name for styling                                                    |
 
 Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Applied On | Values | Description |
-|-----------|-----------|--------|-------------|
-| `data-ck="slider"` | Root | `"slider"` | Component identifier |
-| `data-disabled` | Root | `true` | Present when disabled |
-| `data-orientation` | Root | `"horizontal"` \| `"vertical"` | The slider orientation |
-| `data-variant` | Root | string | The variant name for styling |
-| `data-ck="slider-track"` | Track | `"slider-track"` | The track (bar background) element |
-| `data-ck="slider-range"` | Range | `"slider-range"` | The filled portion of the track |
-| `data-ck="slider-thumb"` | Thumb | `"slider-thumb"` | The draggable thumb element |
+| Attribute                | Applied On | Values                         | Description                        |
+| ------------------------ | ---------- | ------------------------------ | ---------------------------------- |
+| `data-ck="slider"`       | Root       | `"slider"`                     | Component identifier               |
+| `data-disabled`          | Root       | `true`                         | Present when disabled              |
+| `data-orientation`       | Root       | `"horizontal"` \| `"vertical"` | The slider orientation             |
+| `data-variant`           | Root       | string                         | The variant name for styling       |
+| `data-ck="slider-track"` | Track      | `"slider-track"`               | The track (bar background) element |
+| `data-ck="slider-range"` | Range      | `"slider-range"`               | The filled portion of the track    |
+| `data-ck="slider-thumb"` | Thumb      | `"slider-thumb"`               | The draggable thumb element        |
 
 ## Accessibility
 
@@ -2255,14 +2419,14 @@ Also accepts all standard `div` HTML attributes.
 
 ### Keyboard Support
 
-| Key | Action |
-|-----|--------|
-| `ArrowRight` / `ArrowUp` | Increase value by one step |
+| Key                       | Action                     |
+| ------------------------- | -------------------------- |
+| `ArrowRight` / `ArrowUp`  | Increase value by one step |
 | `ArrowLeft` / `ArrowDown` | Decrease value by one step |
-| `Home` | Set value to minimum |
-| `End` | Set value to maximum |
-| `PageUp` | Increase value by 10× step |
-| `PageDown` | Decrease value by 10× step |
+| `Home`                    | Set value to minimum       |
+| `End`                     | Set value to maximum       |
+| `PageUp`                  | Increase value by 10× step |
+| `PageDown`                | Decrease value by 10× step |
 
 ### Best Practices
 
@@ -2282,19 +2446,34 @@ A toggle switch component for binary on/off choices with immediate effect.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Switch } from '@components-kit/react';
+
+const saveAutoSavePreference = (enabled: boolean) => {
+  console.log('Auto-save:', enabled);
+};
 
 // Basic switch with label
 <Switch id="notifications" variantName="default" />
 <label htmlFor="notifications">Enable notifications</label>
 
-// Controlled switch
-const [enabled, setEnabled] = useState(false);
-<Switch
-  checked={enabled}
-  onChange={(e) => setEnabled(e.target.checked)}
-  variantName="default"
-/>
+// Controlled switch with immediate effect
+function AutoSaveSetting() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <Switch
+      checked={enabled}
+      onChange={(e) => {
+        const nextValue = e.target.checked;
+        setEnabled(nextValue);
+        saveAutoSavePreference(nextValue);
+      }}
+      aria-label="Enable auto-save"
+      variantName="default"
+    />
+  );
+}
 
 // With aria-label (no visible label)
 <Switch
@@ -2324,26 +2503,30 @@ const [enabled, setEnabled] = useState(false);
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"switch">` | - | Variant name for styling |
+| Prop          | Type                   | Default | Description              |
+| ------------- | ---------------------- | ------- | ------------------------ |
+| `variantName` | `VariantFor<"switch">` | -       | Variant name for styling |
 
 Also accepts all standard `input[type="checkbox"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
+| Attribute       | Values                     | Description                  |
+| --------------- | -------------------------- | ---------------------------- |
+| `data-state`    | `"checked"`, `"unchecked"` | Current checked state        |
+| `data-disabled` | `true`                     | Present when disabled        |
+| `data-variant`  | string                     | The variant name for styling |
 
 ## Switch vs Checkbox
 
 Use a **Switch** when:
+
 - The action takes immediate effect (no form submission)
 - It's a simple on/off choice (like a light switch)
 - Used in settings panels or preference screens
 
 Use a **Checkbox** when:
+
 - Part of a form that will be submitted
 - Multiple options can be selected
 - There's an indeterminate/mixed state
@@ -2390,7 +2573,9 @@ A fully-featured data table component powered by TanStack Table.
 ## Usage
 
 ```tsx
-import { Table, Pagination, ColumnDef } from '@components-kit/react';
+import { useState } from 'react';
+import { Pagination, Table } from '@components-kit/react';
+import type { ColumnDef, RowSelectionState, SortingState } from '@components-kit/react';
 
 interface User {
   id: string;
@@ -2403,46 +2588,56 @@ const columns: ColumnDef<User>[] = [
   { accessorKey: 'email', header: 'Email' },
 ];
 
+const users: User[] = [
+  { id: '1', name: 'Jane Doe', email: 'jane@example.com' },
+  { id: '2', name: 'John Smith', email: 'john@example.com' },
+];
+
 // Basic usage
 <Table data={users} columns={columns} />
 
-// With sorting
-const [sorting, setSorting] = useState<SortingState>([]);
-<Table
-  data={users}
-  columns={columns}
-  enableSorting
-  sorting={sorting}
-  onSortingChange={setSorting}
-/>
-
-// With pagination (compose with Pagination component)
-const [pageIndex, setPageIndex] = useState(0);
-const pageSize = 10;
-
-<Table
-  data={users}
-  columns={columns}
-  enablePagination
-  pageIndex={pageIndex}
-  pageSize={pageSize}
-  onPageChange={setPageIndex}
-/>
-<Pagination
-  page={pageIndex + 1}
-  totalPages={Math.ceil(users.length / pageSize)}
-  onPageChange={(page) => setPageIndex(page - 1)}
-/>
-
 // With row selection
-const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-<Table
-  data={users}
-  columns={columns}
-  enableRowSelection
-  rowSelection={rowSelection}
-  onRowSelectionChange={setRowSelection}
-/>
+function SelectableUsersTable() {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  return (
+    <Table
+      data={users}
+      columns={columns}
+      enableRowSelection
+      rowSelection={rowSelection}
+      onRowSelectionChange={setRowSelection}
+    />
+  );
+}
+
+// With sorting + pagination UI
+function SortablePaginatedUsersTable() {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 10;
+
+  return (
+    <>
+      <Table
+        data={users}
+        columns={columns}
+        enableSorting
+        sorting={sorting}
+        onSortingChange={setSorting}
+        enablePagination
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        onPageChange={setPageIndex}
+      />
+      <Pagination
+        page={pageIndex + 1}
+        totalPages={Math.ceil(users.length / pageSize)}
+        onPageChange={(page) => setPageIndex(page - 1)}
+      />
+    </>
+  );
+}
 
 // Custom cell rendering
 <Table
@@ -2452,7 +2647,9 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ getValue }) => <Badge>{getValue()}</Badge>,
+      cell: ({ getValue }) => (
+        <span data-status={getValue() as string}>{getValue() as string}</span>
+      ),
     },
   ]}
 />
@@ -2485,73 +2682,110 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `TData[]` | **required** | Data array to display |
-| `columns` | `ColumnDef<TData>[]` | **required** | Column definitions |
-| `variantName` | `VariantFor<"table">` | - | Variant name for styling |
-| `caption` | `ReactNode` | - | Table caption |
-| `isLoading` | `boolean` | `false` | Shows loading state |
+### Core
+
+| Prop               | Type                  | Default      | Description                           |
+| ------------------ | --------------------- | ------------ | ------------------------------------- |
+| `data`             | `TData[]`             | **required** | Data array to display                 |
+| `columns`          | `ColumnDef<TData>[]`  | **required** | Column definitions                    |
+| `caption`          | `ReactNode`           | -            | Table caption content                 |
+| `captionSide`      | `"top" \| "bottom"`   | `"top"`      | Caption position                      |
+| `isLoading`        | `boolean`             | `false`      | Shows loading state row               |
+| `variantName`      | `VariantFor<"table">` | -            | Variant name for styling              |
+| `aria-label`       | `string`              | -            | Accessible label for the table        |
+| `aria-describedby` | `string`              | -            | ID of an element describing the table |
+
+### Data / Identity
+
+| Prop         | Type                                    | Default | Description                               |
+| ------------ | --------------------------------------- | ------- | ----------------------------------------- |
+| `getRowId`   | `(originalRow, index) => string`        | -       | Custom row ID extraction                  |
+| `getSubRows` | `(originalRow) => TData[] \| undefined` | -       | Returns nested rows for hierarchical data |
 
 ### Sorting
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableSorting` | `boolean` | `false` | Enable column sorting |
-| `sorting` | `SortingState` | - | Controlled sorting state |
-| `onSortingChange` | `(sorting) => void` | - | Sorting change callback |
-| `manualSorting` | `boolean` | `false` | Server-side sorting |
+| Prop              | Type                | Default | Description              |
+| ----------------- | ------------------- | ------- | ------------------------ |
+| `enableSorting`   | `boolean`           | `false` | Enable column sorting    |
+| `sorting`         | `SortingState`      | -       | Controlled sorting state |
+| `onSortingChange` | `(sorting) => void` | -       | Sorting change callback  |
+| `manualSorting`   | `boolean`           | `false` | Server-side sorting      |
+
+### Filtering
+
+| Prop                    | Type                                          | Default | Description                    |
+| ----------------------- | --------------------------------------------- | ------- | ------------------------------ |
+| `enableFiltering`       | `boolean`                                     | `false` | Enable filtering features      |
+| `enableColumnFilters`   | `boolean`                                     | `false` | Enable per-column filters      |
+| `globalFilter`          | `string`                                      | -       | Controlled global filter value |
+| `columnFilters`         | `ColumnFiltersState`                          | -       | Controlled column filters      |
+| `onGlobalFilterChange`  | `(globalFilter: string) => void`              | -       | Global filter change callback  |
+| `onColumnFiltersChange` | `(columnFilters: ColumnFiltersState) => void` | -       | Column filters change callback |
+| `manualFiltering`       | `boolean`                                     | `false` | Server-side filtering          |
 
 ### Pagination
 
 The Table handles pagination **data logic** (row slicing) but does not render pagination UI. Compose with the `Pagination` component for navigation controls.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enablePagination` | `boolean` | `false` | Enable pagination (row slicing) |
-| `pageSize` | `number` | `10` | Rows per page |
-| `pageIndex` | `number` | `0` | Current page (0-indexed) |
-| `pageCount` | `number` | - | Total pages (manual pagination) |
-| `onPageChange` | `(index) => void` | - | Page change callback |
+| Prop               | Type              | Default | Description                     |
+| ------------------ | ----------------- | ------- | ------------------------------- |
+| `enablePagination` | `boolean`         | `false` | Enable pagination (row slicing) |
+| `pageSize`         | `number`          | `10`    | Rows per page                   |
+| `pageIndex`        | `number`          | `0`     | Current page (0-indexed)        |
+| `pageCount`        | `number`          | -       | Total pages (manual pagination) |
+| `onPageChange`     | `(index) => void` | -       | Page change callback            |
+| `onPageSizeChange` | `(size) => void`  | -       | Page size change callback       |
+| `manualPagination` | `boolean`         | `false` | Server-side pagination          |
 
 ### Row Selection
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableRowSelection` | `boolean \| (row) => boolean` | `false` | Enable selection |
-| `enableMultiRowSelection` | `boolean` | `true` | Allow multi-select |
-| `rowSelection` | `RowSelectionState` | - | Controlled selection state |
-| `onRowSelectionChange` | `(selection) => void` | - | Selection change callback |
+| Prop                      | Type                          | Default | Description                |
+| ------------------------- | ----------------------------- | ------- | -------------------------- |
+| `enableRowSelection`      | `boolean \| (row) => boolean` | `false` | Enable selection           |
+| `enableMultiRowSelection` | `boolean`                     | `true`  | Allow multi-select         |
+| `rowSelection`            | `RowSelectionState`           | -       | Controlled selection state |
+| `onRowSelectionChange`    | `(selection) => void`         | -       | Selection change callback  |
+| `onRowClick`              | `(row) => void`               | -       | Row click callback         |
 
 ### Footer
 
 The table footer renders automatically when any column definition includes a `footer` property. No enable prop needed.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `renderFooter` | `({ table }) => ReactNode` | - | Custom footer renderer (overrides column footers) |
+| Prop           | Type                       | Default | Description                                       |
+| -------------- | -------------------------- | ------- | ------------------------------------------------- |
+| `renderFooter` | `({ table }) => ReactNode` | -       | Custom footer renderer (overrides column footers) |
 
 ### Row Expansion
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableExpanding` | `boolean` | `false` | Enable row expansion |
-| `expanded` | `ExpandedState` | - | Controlled expanded state |
-| `onExpandedChange` | `(expanded) => void` | - | Expansion change callback |
-| `renderSubComponent` | `({ row }) => ReactNode` | - | Expanded content renderer |
+| Prop                 | Type                     | Default | Description               |
+| -------------------- | ------------------------ | ------- | ------------------------- |
+| `enableExpanding`    | `boolean`                | `false` | Enable row expansion      |
+| `expanded`           | `ExpandedState`          | -       | Controlled expanded state |
+| `onExpandedChange`   | `(expanded) => void`     | -       | Expansion change callback |
+| `renderSubComponent` | `({ row }) => ReactNode` | -       | Expanded content renderer |
+
+### Custom Renderers
+
+| Prop            | Type                            | Default | Description                 |
+| --------------- | ------------------------------- | ------- | --------------------------- |
+| `renderHeader`  | `({ table }) => ReactNode`      | -       | Custom header renderer      |
+| `renderCell`    | `({ cell }) => ReactNode`       | -       | Custom cell renderer        |
+| `renderRow`     | `({ row, index }) => ReactNode` | -       | Custom row renderer         |
+| `renderLoading` | `() => ReactNode`               | -       | Custom loading row renderer |
+| `renderEmpty`   | `() => ReactNode`               | -       | Custom empty row renderer   |
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | Variant name for styling |
-| `data-caption-side` | `"top"`, `"bottom"` | Caption position |
-| `data-clickable` | `true` | Row has click handler |
-| `data-loading` | `true` | Present when loading |
-| `data-sort` | `"asc"`, `"desc"`, `"none"` | Column sort direction |
-| `data-sortable` | `true` | Column is sortable |
-| `data-selected` | `true` | Row is selected |
-| `data-footer-row` | present | Row is a footer row |
+| Attribute           | Values                      | Description              |
+| ------------------- | --------------------------- | ------------------------ |
+| `data-variant`      | string                      | Variant name for styling |
+| `data-caption-side` | `"top"`, `"bottom"`         | Caption position         |
+| `data-clickable`    | `true`                      | Row has click handler    |
+| `data-loading`      | `true`                      | Present when loading     |
+| `data-sort`         | `"asc"`, `"desc"`, `"none"` | Column sort direction    |
+| `data-sortable`     | `true`                      | Column is sortable       |
+| `data-selected`     | `true`                      | Row is selected          |
+| `data-footer-row`   | present                     | Row is a footer row      |
 
 ## Accessibility
 
@@ -2580,7 +2814,7 @@ import type {
   RowSelectionState,
   SortingState,
   TableInstance,
-} from '@components-kit/react';
+} from "@components-kit/react";
 ```
 
 ---
@@ -2592,6 +2826,8 @@ A fully accessible tabs component for organizing content into multiple panels.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
+import { BellIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { Tabs } from '@components-kit/react';
 
 // Basic uncontrolled tabs
@@ -2628,8 +2864,6 @@ function ControlledExample() {
 }
 
 // With icons
-import { UserIcon, SettingsIcon, BellIcon } from 'lucide-react';
-
 <Tabs
   tabs={[
     { id: 'user', label: 'Profile', icon: <UserIcon /> },
@@ -2673,42 +2907,42 @@ import { UserIcon, SettingsIcon, BellIcon } from 'lucide-react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tabs` | `TabItem[]` | **required** | Array of tab items |
-| `children` | `ReactNode` | **required** | Panel content. Each child must have a `data-tab-panel` attribute matching a tab `id`. |
-| `defaultValue` | `string` | - | Initial active tab ID (uncontrolled mode) |
-| `value` | `string` | - | Controlled active tab ID |
-| `onValueChange` | `(tabId: string) => void` | - | Callback fired when active tab changes |
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Tab list orientation |
-| `variantName` | `VariantFor<"tabs">` | - | Variant name for styling |
+| Prop            | Type                         | Default        | Description                                                                           |
+| --------------- | ---------------------------- | -------------- | ------------------------------------------------------------------------------------- |
+| `tabs`          | `TabItem[]`                  | **required**   | Array of tab items                                                                    |
+| `children`      | `ReactNode`                  | **required**   | Panel content. Each child must have a `data-tab-panel` attribute matching a tab `id`. |
+| `defaultValue`  | `string`                     | -              | Initial active tab ID (uncontrolled mode)                                             |
+| `value`         | `string`                     | -              | Controlled active tab ID                                                              |
+| `onValueChange` | `(tabId: string) => void`    | -              | Callback fired when active tab changes                                                |
+| `orientation`   | `"horizontal" \| "vertical"` | `"horizontal"` | Tab list orientation                                                                  |
+| `variantName`   | `VariantFor<"tabs">`         | -              | Variant name for styling                                                              |
 
 Also accepts all standard `div` HTML attributes.
 
 ### TabItem
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `id` | `string` | **required** | Unique tab identifier |
-| `label` | `string \| ReactNode` | **required** | Tab label content |
-| `icon` | `ReactNode` | - | Icon element displayed before the label |
-| `disabled` | `boolean` | - | Disables the tab |
+| Prop       | Type                  | Default      | Description                             |
+| ---------- | --------------------- | ------------ | --------------------------------------- |
+| `id`       | `string`              | **required** | Unique tab identifier                   |
+| `label`    | `string \| ReactNode` | **required** | Tab label content                       |
+| `icon`     | `ReactNode`           | -            | Icon element displayed before the label |
+| `disabled` | `boolean`             | -            | Disables the tab                        |
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-ck` | `"tabs"` | Root container identifier |
-| `data-ck` | `"tab"` | Tab trigger identifier |
-| `data-ck` | `"tab-panel"` | Tab panel identifier |
-| `data-variant` | string | The variant name for styling |
-| `data-orientation` | `"horizontal"`, `"vertical"` | Tab list orientation |
-| `data-state` | `"selected"`, `"unselected"` | Tab trigger selection state |
-| `data-state` | `"active"`, `"inactive"` | Tab panel visibility state |
-| `data-disabled` | `true` | Present when tab is disabled |
-| `data-slot` | `"tablist"` | Identifies the tab list container |
-| `data-slot` | `"icon"` | Identifies the icon slot within a tab |
-| `data-slot` | `"label"` | Identifies the label slot within a tab |
+| Attribute          | Values                       | Description                            |
+| ------------------ | ---------------------------- | -------------------------------------- |
+| `data-ck`          | `"tabs"`                     | Root container identifier              |
+| `data-ck`          | `"tab"`                      | Tab trigger identifier                 |
+| `data-ck`          | `"tab-panel"`                | Tab panel identifier                   |
+| `data-variant`     | string                       | The variant name for styling           |
+| `data-orientation` | `"horizontal"`, `"vertical"` | Tab list orientation                   |
+| `data-state`       | `"selected"`, `"unselected"` | Tab trigger selection state            |
+| `data-state`       | `"active"`, `"inactive"`     | Tab panel visibility state             |
+| `data-disabled`    | `true`                       | Present when tab is disabled           |
+| `data-slot`        | `"tablist"`                  | Identifies the tab list container      |
+| `data-slot`        | `"icon"`                     | Identifies the icon slot within a tab  |
+| `data-slot`        | `"label"`                    | Identifies the label slot within a tab |
 
 ## Accessibility
 
@@ -2716,13 +2950,13 @@ Follows the [WAI-ARIA Tabs Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tab
 
 ### Keyboard Support
 
-| Key | Description |
-|-----|-------------|
-| `Tab` | Moves focus into the tab list (to the active tab), then to the active panel |
-| `ArrowRight` (horizontal) / `ArrowDown` (vertical) | Moves focus to and activates the next enabled tab. Stops at the last tab. |
-| `ArrowLeft` (horizontal) / `ArrowUp` (vertical) | Moves focus to and activates the previous enabled tab. Stops at the first tab. |
-| `Home` | Moves focus to and activates the first enabled tab |
-| `End` | Moves focus to and activates the last enabled tab |
+| Key                                                | Description                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `Tab`                                              | Moves focus into the tab list (to the active tab), then to the active panel    |
+| `ArrowRight` (horizontal) / `ArrowDown` (vertical) | Moves focus to and activates the next enabled tab. Stops at the last tab.      |
+| `ArrowLeft` (horizontal) / `ArrowUp` (vertical)    | Moves focus to and activates the previous enabled tab. Stops at the first tab. |
+| `Home`                                             | Moves focus to and activates the first enabled tab                             |
+| `End`                                              | Moves focus to and activates the last enabled tab                              |
 
 ### ARIA Roles and Attributes
 
@@ -2734,7 +2968,7 @@ Follows the [WAI-ARIA Tabs Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tab
 ### Best Practices
 
 - Use tabs for related content that doesn't need to be viewed simultaneously
-- Keep tab labels concise (1-2 words when possible)
+- Keep tab labels concise (1–2 words when possible)
 - Don't use tabs for sequential processes (use a stepper instead)
 - Each panel child must have a `data-tab-panel` attribute matching a tab `id`
 - Use `variantName` to apply consistent styling across your app
@@ -2784,42 +3018,42 @@ import { Text } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"p"` | HTML element to render as (polymorphic) |
-| `variantName` | `VariantFor<"text">` | - | Variant name for styling |
+| Prop          | Type                 | Default | Description                             |
+| ------------- | -------------------- | ------- | --------------------------------------- |
+| `as`          | `ElementType`        | `"p"`   | HTML element to render as (polymorphic) |
+| `variantName` | `VariantFor<"text">` | -       | Variant name for styling                |
 
 Also accepts all HTML attributes for the rendered element.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Common Elements
 
-| Element | Use Case |
-|---------|----------|
-| `p` | Paragraphs of text (default) |
-| `span` | Inline text without semantic meaning |
-| `strong` | Important text (not just bold styling) |
-| `em` | Emphasized text (not just italic styling) |
-| `small` | Side comments, disclaimers, fine print |
-| `label` | Form input labels (use with `htmlFor`) |
-| `div` | Block-level text container |
+| Element  | Use Case                                  |
+| -------- | ----------------------------------------- |
+| `p`      | Paragraphs of text (default)              |
+| `span`   | Inline text without semantic meaning      |
+| `strong` | Important text (not just bold styling)    |
+| `em`     | Emphasized text (not just italic styling) |
+| `small`  | Side comments, disclaimers, fine print    |
+| `label`  | Form input labels (use with `htmlFor`)    |
+| `div`    | Block-level text container                |
 
 ## Accessibility
 
 Choose elements based on semantic meaning:
 
-| Element | Meaning |
-|---------|---------|
-| `<p>` | Paragraph of content |
-| `<strong>` | Important text (announced by screen readers) |
-| `<em>` | Emphasized text (announced by screen readers) |
-| `<small>` | Side comments or fine print |
-| `<label>` | Form input labels (use `htmlFor` for association) |
+| Element    | Meaning                                           |
+| ---------- | ------------------------------------------------- |
+| `<p>`      | Paragraph of content                              |
+| `<strong>` | Important text (announced by screen readers)      |
+| `<em>`     | Emphasized text (announced by screen readers)     |
+| `<small>`  | Side comments or fine print                       |
+| `<label>`  | Form input labels (use `htmlFor` for association) |
 
 ### Best Practices
 
@@ -2846,6 +3080,7 @@ A multi-line text input component with automatic height adjustment.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Textarea } from '@components-kit/react';
 
 // Basic textarea with label
@@ -2863,13 +3098,24 @@ import { Textarea } from '@components-kit/react';
   variantName="default"
 />
 
-// Controlled textarea
-const [value, setValue] = useState('');
-<Textarea
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  variantName="default"
-/>
+// Controlled textarea with live character count
+function BioField() {
+  const [value, setValue] = useState('');
+
+  return (
+    <>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        maxLength={500}
+        aria-describedby="bio-count"
+        placeholder="Write your bio..."
+        variantName="default"
+      />
+      <span id="bio-count">{value.length}/500 characters</span>
+    </>
+  );
+}
 
 // With validation error
 <Textarea
@@ -2879,27 +3125,32 @@ const [value, setValue] = useState('');
 />
 <span id="error-message">This field is required</span>
 
-// With character count
-<Textarea
-  maxLength={500}
-  aria-describedby="char-count"
-  variantName="default"
-/>
-<span id="char-count">{value.length}/500 characters</span>
-
 // Disabled state
 <Textarea
   disabled
   value="This content cannot be edited"
   variantName="default"
 />
+
+// Form integration
+<form onSubmit={(e) => e.preventDefault()}>
+  <label htmlFor="feedback">Feedback</label>
+  <Textarea
+    id="feedback"
+    name="feedback"
+    required
+    minLength={10}
+    placeholder="Tell us what we can improve"
+    variantName="default"
+  />
+</form>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"textarea">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description              |
+| ------------- | ------------------------ | ------- | ------------------------ |
+| `variantName` | `VariantFor<"textarea">` | -       | Variant name for styling |
 
 Also accepts all standard `textarea` HTML attributes.
 
@@ -2915,8 +3166,8 @@ The textarea automatically adjusts its height as content grows:
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
@@ -2978,23 +3229,29 @@ yarn add sonner
 ## Usage
 
 ```tsx
-import { toast } from '@components-kit/react';  // Import toast from components-kit
-import { Toaster } from 'sonner';                // Import Toaster from sonner
+import { toast } from "@components-kit/react";
+import { Toaster } from "sonner";
 
-// Add Toaster to your app root (in layout.tsx or _app.tsx)
-<Toaster />
+const restoreItem = () => {};
+const openChangelog = () => {};
+const saveAgain = () => {};
+const saveChanges = () => {};
+const processPayment = async () => {};
+
+// Add Toaster to your app root (layout.tsx or _app.tsx)
+<Toaster />;
 
 // Basic toast with title
 toast({
   title: "Settings saved",
-  variantName: "success"
+  variantName: "success",
 });
 
 // Toast with title and description
 toast({
   title: "Update available",
   description: "A new version of the app is ready to install.",
-  variantName: "info"
+  variantName: "info",
 });
 
 // Toast with action button
@@ -3003,9 +3260,9 @@ toast({
   description: "The item has been removed from your list.",
   button: {
     label: "Undo",
-    onClick: () => restoreItem()
+    onClick: () => restoreItem(),
   },
-  variantName: "info"
+  variantName: "info",
 });
 
 // Toast with custom duration
@@ -3013,13 +3270,13 @@ toast({
   title: "Session expiring soon",
   description: "Your session will expire in 5 minutes.",
   duration: 10000, // 10 seconds
-  variantName: "warning"
+  variantName: "warning",
 });
 
 // Title only (minimal)
 toast({
   title: "Quick notification",
-  variantName: "success"
+  variantName: "success",
 });
 
 // With rich content (ReactNode)
@@ -3037,45 +3294,45 @@ toast({
   ),
   button: {
     label: "View changelog",
-    onClick: () => openChangelog()
+    onClick: () => openChangelog(),
   },
-  variantName: "success"
+  variantName: "success",
 });
 
 // Different positions
 toast({
   title: "Top center notification",
   position: "top-center",
-  variantName: "info"
+  variantName: "info",
 });
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `title` | `string \| ReactNode` | **Required** | Main title of the toast |
-| `description` | `string \| ReactNode` | - | Body content of the toast |
-| `button` | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }` | - | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
-| `variantName` | `VariantFor<"toast">` | - | Variant name for styling |
-| `duration` | `number` | `4000` | Time in ms before auto-dismiss |
-| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen |
-| `dismissible` | `boolean` | `true` | Whether toast can be dismissed by user (swipe) |
+| Prop          | Type                                                                                              | Default          | Description                                                                                                                                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`       | `string \| ReactNode`                                                                             | **Required**     | Main title of the toast                                                                                                                                                                                                                                                                     |
+| `description` | `string \| ReactNode`                                                                             | -                | Body content of the toast                                                                                                                                                                                                                                                                   |
+| `button`      | `Omit<ButtonProps, "asChild" \| "children" \| "size" \| "variantName"> & { label: string }`       | -                | Action button configuration. Uses the shared `Button` component with `size="sm"`. Accepts Button props (`isLoading`, `leadingIcon`, `trailingIcon`, etc.) plus a required `label`. Button variant is controlled by the parent toast's `variantName` via CSS. Toast auto-dismisses on click. |
+| `variantName` | `VariantFor<"toast">`                                                                             | -                | Variant name for styling                                                                                                                                                                                                                                                                    |
+| `duration`    | `number`                                                                                          | `4000`           | Time in ms before auto-dismiss                                                                                                                                                                                                                                                              |
+| `position`    | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | Toast position on screen                                                                                                                                                                                                                                                                    |
+| `dismissible` | `boolean`                                                                                         | `true`           | Whether toast can be dismissed by user (swipe)                                                                                                                                                                                                                                              |
 
 Inherits additional props from Sonner's `ExternalToast` type (className, style, id, etc.).
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-ck` | `"toast"` | Toast container identifier |
-| `data-ck` | `"button"` | Button element identifier (set by Button component) |
-| `data-size` | `"sm"` | Button size (always `"sm"` in toast) |
-| `data-variant` | `string` | The variant name for styling |
-| `data-has-title` | `true` \| `undefined` | Present when title is provided |
-| `data-has-description` | `true` \| `undefined` | Present when description is provided |
-| `data-has-action` | `true` \| `undefined` | Present when button is provided |
-| `data-slot` | `"icon"`, `"content"`, `"title"`, `"description"`, `"actions"`, `"action"` | Identifies internal slots for targeted styling |
+| Attribute              | Values                                                                     | Description                                         |
+| ---------------------- | -------------------------------------------------------------------------- | --------------------------------------------------- |
+| `data-ck`              | `"toast"`                                                                  | Toast container identifier                          |
+| `data-ck`              | `"button"`                                                                 | Button element identifier (set by Button component) |
+| `data-size`            | `"sm"`                                                                     | Button size (always `"sm"` in toast)                |
+| `data-variant`         | `string`                                                                   | The variant name for styling                        |
+| `data-has-title`       | `true` \| `undefined`                                                      | Present when title is provided                      |
+| `data-has-description` | `true` \| `undefined`                                                      | Present when description is provided                |
+| `data-has-action`      | `true` \| `undefined`                                                      | Present when button is provided                     |
+| `data-slot`            | `"icon"`, `"content"`, `"title"`, `"description"`, `"actions"`, `"action"` | Identifies internal slots for targeted styling      |
 
 ## Accessibility
 
@@ -3097,7 +3354,7 @@ Inherits additional props from Sonner's `ExternalToast` type (className, style, 
 - Keep toast messages concise and scannable (1-2 short sentences)
 - Use appropriate variant to match message severity (success, error, warning, info)
 - Provide action button only when immediate user response is needed
-- Don't use toasts for critical information - use alerts or dialogs instead
+- Don't use toasts for critical information — use alerts or dialogs instead
 - Consider toast frequency - avoid overwhelming users with notifications
 - Test with screen readers to ensure announcements are clear
 - Remember reduced motion preferences are handled by Sonner automatically
@@ -3109,7 +3366,7 @@ This component uses Sonner for toast management. You must include the `<Toaster 
 **Important:** Import `<Toaster />` directly from `sonner`, not from `@components-kit/react`. This prevents "use client" boundary issues in Next.js server components.
 
 ```tsx
-import { Toaster } from 'sonner'; // Import from sonner, not @components-kit/react
+import { Toaster } from "sonner"; // Import from sonner, not @components-kit/react
 
 export default function App() {
   return (
@@ -3125,7 +3382,7 @@ export default function App() {
 
 ```tsx
 // app/layout.tsx
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 export default function RootLayout({ children }) {
   return (
@@ -3140,6 +3397,7 @@ export default function RootLayout({ children }) {
 ```
 
 **Why import `<Toaster />` from sonner directly?**
+
 - Keeps your layout as a server component (Next.js optimization)
 - Avoids forcing client-side rendering where not needed
 - Reduces bundle size by not re-exporting third-party components
@@ -3151,13 +3409,13 @@ export default function RootLayout({ children }) {
 The toast function returns an ID that can be used for manual dismissal:
 
 ```tsx
-import { toast } from '@components-kit/react';
-import { toast as sonnerToast } from 'sonner';
+import { toast } from "@components-kit/react";
+import { toast as sonnerToast } from "sonner";
 
 const toastId = toast({
   title: "Processing...",
   description: "Please wait while we complete your request.",
-  duration: Infinity // Won't auto-dismiss
+  duration: Infinity, // Won't auto-dismiss
 });
 
 // Later, dismiss manually using Sonner's dismiss method
@@ -3175,7 +3433,7 @@ sonnerToast.dismiss();
 toast({
   title: "Changes saved",
   description: "Your settings have been updated successfully.",
-  variantName: "success"
+  variantName: "success",
 });
 ```
 
@@ -3187,10 +3445,10 @@ toast({
   description: "An error occurred while saving your changes.",
   button: {
     label: "Retry",
-    onClick: () => saveAgain()
+    onClick: () => saveAgain(),
   },
   variantName: "error",
-  duration: 8000 // Longer duration for errors
+  duration: 8000, // Longer duration for errors
 });
 ```
 
@@ -3202,9 +3460,9 @@ toast({
   description: "You have unsaved changes that will be lost.",
   button: {
     label: "Save now",
-    onClick: () => saveChanges()
+    onClick: () => saveChanges(),
   },
-  variantName: "warning"
+  variantName: "warning",
 });
 ```
 
@@ -3218,20 +3476,20 @@ toast({
       Check out our <a href="/features">new features page</a>.
     </span>
   ),
-  variantName: "info"
+  variantName: "info",
 });
 ```
 
 ### Processing with Manual Dismiss
 
 ```tsx
-import { toast as sonnerToast } from 'sonner';
+import { toast as sonnerToast } from "sonner";
 
 const toastId = toast({
   title: "Processing payment...",
   description: "Please do not close this window.",
   duration: Infinity,
-  variantName: "info"
+  variantName: "info",
 });
 
 // When processing completes
@@ -3241,7 +3499,7 @@ processPayment()
     toast({
       title: "Payment successful",
       description: "Your payment has been processed.",
-      variantName: "success"
+      variantName: "success",
     });
   })
   .catch(() => {
@@ -3249,7 +3507,7 @@ processPayment()
     toast({
       title: "Payment failed",
       description: "There was an error processing your payment.",
-      variantName: "error"
+      variantName: "error",
     });
   });
 ```

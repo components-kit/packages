@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -100,6 +106,16 @@ describe("MultiSelect Component", () => {
       expect((MultiSelect as { displayName?: string }).displayName).toBe(
         "MultiSelect",
       );
+    });
+
+    it("supports defaultOpen", () => {
+      const { container } = render(
+        <MultiSelect defaultOpen options={["apple", "banana", "cherry"]} />,
+      );
+
+      const root = container.querySelector('[data-ck="multi-select"]');
+      expect(root).toHaveAttribute("data-state", "open");
+      expect(screen.getByRole("option", { name: "apple" })).toBeInTheDocument();
     });
   });
 
@@ -392,11 +408,15 @@ describe("MultiSelect Component", () => {
       expect(items).toHaveLength(3);
 
       // Selected item should have data-state="checked"
-      const appleItem = Array.from(items).find((i) => i.textContent?.includes("apple"));
+      const appleItem = Array.from(items).find((i) =>
+        i.textContent?.includes("apple"),
+      );
       expect(appleItem).toHaveAttribute("data-state", "checked");
 
       // Unselected items should have data-state="unchecked"
-      const bananaItem = Array.from(items).find((i) => i.textContent?.includes("banana"));
+      const bananaItem = Array.from(items).find((i) =>
+        i.textContent?.includes("banana"),
+      );
       expect(bananaItem).toHaveAttribute("data-state", "unchecked");
     });
 
@@ -481,7 +501,10 @@ describe("MultiSelect Component", () => {
     it("keeps menu open after selection", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <MultiSelect openOnFocus={false} options={["apple", "banana", "cherry"]} />,
+        <MultiSelect
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -493,7 +516,12 @@ describe("MultiSelect Component", () => {
 
     it("toggles item checked state on click without removing from dropdown", async () => {
       const user = userEvent.setup();
-      render(<MultiSelect openOnFocus={false} options={["apple", "banana", "cherry"]} />);
+      render(
+        <MultiSelect
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
+      );
 
       await user.click(screen.getByRole("combobox"));
 
@@ -506,7 +534,9 @@ describe("MultiSelect Component", () => {
       expect(screen.getAllByRole("option")).toHaveLength(3);
 
       // Selected item should now be checked
-      const bananaItem = document.querySelector('[data-ck="multi-select-item"][data-state="checked"]');
+      const bananaItem = document.querySelector(
+        '[data-ck="multi-select-item"][data-state="checked"]',
+      );
       expect(bananaItem).toHaveTextContent("banana");
     });
 
@@ -575,11 +605,15 @@ describe("MultiSelect Component", () => {
       expect(items).toHaveLength(4);
 
       // Selected items should not be disabled
-      const appleItem = Array.from(items).find((i) => i.textContent?.includes("apple"));
+      const appleItem = Array.from(items).find((i) =>
+        i.textContent?.includes("apple"),
+      );
       expect(appleItem).not.toHaveAttribute("aria-disabled", "true");
 
       // Unselected items should be disabled when max reached
-      const cherryItem = Array.from(items).find((i) => i.textContent?.includes("cherry"));
+      const cherryItem = Array.from(items).find((i) =>
+        i.textContent?.includes("cherry"),
+      );
       expect(cherryItem).toHaveAttribute("aria-disabled", "true");
       expect(cherryItem).toHaveAttribute("data-disabled", "true");
     });
@@ -1229,7 +1263,9 @@ describe("MultiSelect Component", () => {
       expect(tagsWrapper).toBeInTheDocument();
 
       // Tags should be inside the wrapper
-      const tags = tagsWrapper!.querySelectorAll('[data-ck="multi-select-tag"]');
+      const tags = tagsWrapper!.querySelectorAll(
+        '[data-ck="multi-select-tag"]',
+      );
       expect(tags).toHaveLength(2);
 
       // Overflow badge should be inside the wrapper
@@ -1239,7 +1275,9 @@ describe("MultiSelect Component", () => {
       expect(overflow).toBeInTheDocument();
 
       // Input should be inside the wrapper
-      const input = tagsWrapper!.querySelector('[data-ck="multi-select-input"]');
+      const input = tagsWrapper!.querySelector(
+        '[data-ck="multi-select-input"]',
+      );
       expect(input).toBeInTheDocument();
 
       // Clear and trigger buttons should NOT be inside the wrapper
@@ -1256,7 +1294,9 @@ describe("MultiSelect Component", () => {
 
     it("has data-state on root, trigger, and content", async () => {
       const user = userEvent.setup();
-      const { container } = render(<MultiSelect openOnFocus={false} options={["apple"]} />);
+      const { container } = render(
+        <MultiSelect openOnFocus={false} options={["apple"]} />,
+      );
 
       const root = container.querySelector('[data-ck="multi-select"]');
       const trigger = container.querySelector(
@@ -1266,7 +1306,9 @@ describe("MultiSelect Component", () => {
       expect(root).toHaveAttribute("data-state", "closed");
       expect(trigger).toHaveAttribute("data-state", "closed");
       // Content is always in DOM; positioner is marked unmounted when closed
-      const positioner = document.querySelector('[data-ck="multi-select-positioner"]');
+      const positioner = document.querySelector(
+        '[data-ck="multi-select-positioner"]',
+      );
       expect(positioner).toHaveAttribute("data-unmounted");
 
       await user.click(screen.getByRole("combobox"));
@@ -1518,10 +1560,7 @@ describe("MultiSelect Component", () => {
   describe("openOnFocus", () => {
     it("opens dropdown when input receives focus and openOnFocus is true", () => {
       const { container } = render(
-        <MultiSelect
-          openOnFocus
-          options={["apple", "banana"]}
-        />,
+        <MultiSelect openOnFocus options={["apple", "banana"]} />,
       );
 
       const input = screen.getByRole("combobox");
@@ -2130,7 +2169,8 @@ describe("MultiSelect Component", () => {
       await user.paste("apple,banana;cherry");
 
       expect(onValueChange).toHaveBeenCalled();
-      const lastCall = onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
+      const lastCall =
+        onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
       expect(lastCall[0]).toContain("apple");
       expect(lastCall[0]).toContain("banana");
       expect(lastCall[0]).toContain("cherry");
@@ -2152,7 +2192,8 @@ describe("MultiSelect Component", () => {
       await user.type(input, "apple,unknown,banana");
 
       expect(onValueChange).toHaveBeenCalled();
-      const lastCall = onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
+      const lastCall =
+        onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
       expect(lastCall[0]).toContain("apple");
       expect(lastCall[0]).toContain("banana");
       expect(lastCall[0]).not.toContain("unknown");
@@ -2175,7 +2216,8 @@ describe("MultiSelect Component", () => {
       await user.type(input, "apple,banana,cherry,date");
 
       expect(onValueChange).toHaveBeenCalled();
-      const lastCall = onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
+      const lastCall =
+        onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
       expect(lastCall[0].length).toBeLessThanOrEqual(2);
     });
 
@@ -2196,7 +2238,8 @@ describe("MultiSelect Component", () => {
       await user.type(input, "apple,banana");
 
       // Should only add banana since apple is already selected
-      const lastCall = onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
+      const lastCall =
+        onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
       expect(lastCall[0]).toEqual(["apple", "banana"]);
     });
 
@@ -2217,7 +2260,8 @@ describe("MultiSelect Component", () => {
       // Without tokenSeparators, comma is treated as normal text — no split
       // onValueChange should NOT have been called with multiple items from splitting
       if (onValueChange.mock.calls.length > 0) {
-        const lastCall = onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
+        const lastCall =
+          onValueChange.mock.calls[onValueChange.mock.calls.length - 1];
         // Should not auto-split into ["apple", "banana"]
         expect(lastCall[0]).not.toEqual(["apple", "banana"]);
       }
@@ -2360,7 +2404,10 @@ describe("MultiSelect Component", () => {
     it("announces item selection with count", async () => {
       const user = userEvent.setup();
       const { container } = render(
-        <MultiSelect openOnFocus={false} options={["apple", "banana", "cherry"]} />,
+        <MultiSelect
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -2389,14 +2436,19 @@ describe("MultiSelect Component", () => {
       const liveRegion = container.querySelector(
         '[data-ck="multi-select-live"]',
       );
-      expect(liveRegion).toHaveTextContent(/apple deselected.*1 item selected/i);
+      expect(liveRegion).toHaveTextContent(
+        /apple deselected.*1 item selected/i,
+      );
     });
 
     it("clears announcement after 1000ms", async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       const user = userEvent.setup();
       const { container } = render(
-        <MultiSelect openOnFocus={false} options={["apple", "banana", "cherry"]} />,
+        <MultiSelect
+          openOnFocus={false}
+          options={["apple", "banana", "cherry"]}
+        />,
       );
 
       await user.click(screen.getByRole("combobox"));
@@ -2431,7 +2483,9 @@ describe("MultiSelect Component", () => {
       const liveRegion = container.querySelector(
         '[data-ck="multi-select-live"]',
       );
-      expect(liveRegion).toHaveTextContent(/banana selected.*2 items selected/i);
+      expect(liveRegion).toHaveTextContent(
+        /banana selected.*2 items selected/i,
+      );
     });
   });
 
@@ -2545,7 +2599,9 @@ describe("MultiSelect Component", () => {
       const liveRegion = container.querySelector(
         '[data-ck="multi-select-live"]',
       );
-      expect(liveRegion).toHaveTextContent(/apple deselected.*1 item selected/i);
+      expect(liveRegion).toHaveTextContent(
+        /apple deselected.*1 item selected/i,
+      );
     });
   });
 
@@ -2554,9 +2610,7 @@ describe("MultiSelect Component", () => {
       const onFocus = vi.fn();
       const user = userEvent.setup();
 
-      render(
-        <MultiSelect options={["apple", "banana"]} onFocus={onFocus} />,
-      );
+      render(<MultiSelect options={["apple", "banana"]} onFocus={onFocus} />);
 
       const input = screen.getByRole("combobox");
       await user.click(input);
@@ -2647,7 +2701,9 @@ describe("MultiSelect Component", () => {
       });
 
       // Content stays in DOM but positioner is marked unmounted
-      const positioner = document.querySelector('[data-ck="multi-select-positioner"]');
+      const positioner = document.querySelector(
+        '[data-ck="multi-select-positioner"]',
+      );
       expect(positioner).toHaveAttribute("data-unmounted");
     });
 
@@ -2662,7 +2718,10 @@ describe("MultiSelect Component", () => {
         '[data-ck="multi-select-content"]',
       ) as HTMLElement;
       // Positioner wrapper uses data attributes instead of inline styles
-      expect(content.parentElement!).toHaveAttribute("data-ck", "multi-select-positioner");
+      expect(content.parentElement!).toHaveAttribute(
+        "data-ck",
+        "multi-select-positioner",
+      );
       expect(content.parentElement!).toHaveAttribute("data-state", "closed");
     });
   });

@@ -7,6 +7,10 @@ Displays contextual feedback messages with heading, description, and action butt
 ```tsx
 import { Alert } from '@components-kit/react';
 
+const handleExtend = () => {
+  console.log('Session extended');
+};
+
 // Basic alert
 <Alert
   heading="Information"
@@ -58,4 +62,4 @@ Also accepts all standard `div` HTML attributes.
 - Keep alert messages concise and actionable
 - Use appropriate variant to match message severity
 - Provide a clear action when user response is needed
-- Don't overuse alerts - they should convey important information
+- Don't overuse alerts — they should convey important information

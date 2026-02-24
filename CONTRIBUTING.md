@@ -80,14 +80,14 @@ git push origin main
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start development mode with watch |
-| `pnpm build` | Build the library |
-| `pnpm test` | Run tests in watch mode |
-| `pnpm test:ui` | Run tests with UI |
-| `pnpm test:run` | Run tests once |
-| `pnpm lint` | Run ESLint |
+| Command         | Description                       |
+| --------------- | --------------------------------- |
+| `pnpm dev`      | Start development mode with watch |
+| `pnpm build`    | Build the library                 |
+| `pnpm test`     | Run tests in watch mode           |
+| `pnpm test:ui`  | Run tests with UI                 |
+| `pnpm test:run` | Run tests once                    |
+| `pnpm lint`     | Run ESLint                        |
 
 ### Project Structure
 
@@ -122,6 +122,26 @@ component-name/
   index.ts                 # Exports
   README.md                # Documentation
 ```
+
+### README Example Quality Checklist
+
+When writing or updating `README.md` examples for a component, use this checklist:
+
+- **Copy-paste first**: examples should run with minimal edits in a consumer app.
+- **No unresolved identifiers**: define any handlers/state/helpers used in snippets (or include clear placeholders).
+- **Import completeness**: include all imports used in the snippet (`useState`, `useEffect`, icons, helpers, etc.).
+- **Use realistic patterns**: prioritize common usage first; put advanced composition patterns after.
+- **Show controlled and uncontrolled where relevant**: if a component supports both, include both.
+- **Accessibility in examples**: include labels, ARIA, and keyboard-relevant patterns where applicable.
+- **Avoid contradictory patterns**: do not mix multiple unrelated concerns in one tiny snippet.
+- **Keep examples short but practical**: concise snippets that still reflect real usage.
+- **Match documented API**: every prop shown in examples must exist and behave as documented.
+
+Suggested quick checks before PR:
+
+1. Read each Usage example top-to-bottom and confirm it is self-contained.
+2. Compare shown props/events against the component implementation and tests.
+3. Prefer consistency across components (naming, formatting, and explanation style).
 
 ### Code Style Guidelines
 
@@ -202,32 +222,36 @@ pnpm test:run
 We use Vitest with React Testing Library:
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { Button } from './button';
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { Button } from "./button";
 
-describe('Button', () => {
-  it('renders children', () => {
+describe("Button", () => {
+  it("renders children", () => {
     render(<Button>Click me</Button>);
-    expect(screen.getByRole('button')).toHaveTextContent('Click me');
+    expect(screen.getByRole("button")).toHaveTextContent("Click me");
   });
 
-  it('handles click events', async () => {
+  it("handles click events", async () => {
     const user = userEvent.setup();
     const onClick = vi.fn();
 
     render(<Button onClick={onClick}>Click</Button>);
-    await user.click(screen.getByRole('button'));
+    await user.click(screen.getByRole("button"));
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('applies data attributes', () => {
-    render(<Button variantName="primary" size="lg">Test</Button>);
-    const button = screen.getByRole('button');
+  it("applies data attributes", () => {
+    render(
+      <Button variantName="primary" size="lg">
+        Test
+      </Button>,
+    );
+    const button = screen.getByRole("button");
 
-    expect(button).toHaveAttribute('data-variant', 'primary');
-    expect(button).toHaveAttribute('data-size', 'lg');
+    expect(button).toHaveAttribute("data-variant", "primary");
+    expect(button).toHaveAttribute("data-size", "lg");
   });
 });
 ```
@@ -294,6 +318,7 @@ Before submitting a pull request, ensure:
 Instead of updating CHANGELOG, please:
 
 1. **Write clear Conventional Commits** - We use your commit messages to build the CHANGELOG:
+
    ```
    feat: add loading state to Button
    fix: correct focus ring on Input
@@ -309,6 +334,7 @@ Instead of updating CHANGELOG, please:
 When cutting a new release:
 
 1. Review all merged PRs and commits since last release:
+
    ```bash
    git log v0.1.1..HEAD --oneline
    ```
@@ -318,6 +344,7 @@ When cutting a new release:
 3. Follow [Keep a Changelog](https://keepachangelog.com/) format
 
 4. Create release commit:
+
    ```bash
    # Edit CHANGELOG.md and libs/react/CHANGELOG.md
    # Bump version in package.json files

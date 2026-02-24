@@ -23,6 +23,11 @@ import { useEffect, useMemo } from "react";
  */
 export interface UseFloatingSelectOptions {
   /**
+   * Disable auto-flip to the opposite side when the dropdown overflows the viewport.
+   * @default false
+   */
+  disableFlip?: boolean;
+  /**
    * Whether the dropdown is currently open/visible.
    */
   isOpen: boolean;
@@ -183,6 +188,7 @@ export function useFloatingSelect(
   options: UseFloatingSelectOptions,
 ): UseFloatingSelectReturn {
   const {
+    disableFlip = false,
     isOpen,
     maxDropdownHeight,
     offsetDistance = 8,
@@ -194,7 +200,14 @@ export function useFloatingSelect(
   const middleware = useMemo(
     () => [
       offset(offsetDistance),
-      flip({ fallbackAxisSideDirection: "start", padding: viewportPadding }),
+      ...(!disableFlip
+        ? [
+            flip({
+              fallbackAxisSideDirection: "start",
+              padding: viewportPadding,
+            }),
+          ]
+        : []),
       shift({ padding: viewportPadding }),
       size({
         apply({ availableHeight, elements, rects }) {
@@ -211,7 +224,7 @@ export function useFloatingSelect(
       }),
       hide({ strategy: "referenceHidden" }),
     ],
-    [maxDropdownHeight, offsetDistance, viewportPadding],
+    [disableFlip, maxDropdownHeight, offsetDistance, viewportPadding],
   );
 
   const floating = useFloatingUI({

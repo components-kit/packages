@@ -39,17 +39,17 @@ import { Heading } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `as` | `ElementType` | `"h1"` | HTML element to render as (polymorphic) |
-| `variantName` | `VariantFor<"heading">` | - | Variant name for styling |
+| Prop          | Type                    | Default | Description                             |
+| ------------- | ----------------------- | ------- | --------------------------------------- |
+| `as`          | `ElementType`           | `"h1"`  | HTML element to render as (polymorphic) |
+| `variantName` | `VariantFor<"heading">` | -       | Variant name for styling                |
 
 Also accepts all HTML attributes for the rendered element.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
@@ -66,12 +66,7 @@ Proper heading hierarchy is essential for screen reader navigation:
 For headings that look like headings but shouldn't affect document structure:
 
 ```tsx
-<Heading
-  as="div"
-  role="heading"
-  aria-level={2}
-  variantName="h2"
->
+<Heading as="div" role="heading" aria-level={2} variantName="h2">
   Visual Heading Only
 </Heading>
 ```

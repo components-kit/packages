@@ -9,9 +9,18 @@ function TextareaPreview() {
   const [value, setValue] = useState("");
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "400px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "16px",
+        maxWidth: "400px",
+      }}
+    >
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Message
         </p>
         <Textarea
@@ -27,7 +36,9 @@ function TextareaPreview() {
         </p>
       </div>
       <div>
-        <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}>
+        <p
+          style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 4px" }}
+        >
           Disabled
         </p>
         <Textarea
@@ -46,15 +57,23 @@ export const textareaDemo: ComponentDemo = {
   code: `import { Textarea } from "@components-kit/react";
 import { useState } from "react";
 
-const [value, setValue] = useState("");
+function BioField() {
+  const [value, setValue] = useState("");
 
-<Textarea
-  placeholder="Type here..."
-  rows={3}
-  value={value}
-  variantName="default"
-  onChange={(e) => setValue(e.target.value)}
-/>
+  return (
+    <>
+      <Textarea
+        aria-describedby="bio-count"
+        maxLength={500}
+        placeholder="Write your bio..."
+        value={value}
+        variantName="default"
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <span id="bio-count">{value.length}/500 characters</span>
+    </>
+  );
+}
 
 <Textarea disabled placeholder="Disabled" rows={2} variantName="default" />`,
   id: "textarea",

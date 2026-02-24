@@ -7,7 +7,16 @@ A multi-select component with tag chips, type-ahead filtering, and keyboard navi
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { MultiSelect } from '@components-kit/react';
+
+const setFruits = (values: string[]) => {
+  console.log('Selected fruits:', values);
+};
+
+const setFrameworks = (values: string[]) => {
+  console.log('Selected frameworks:', values);
+};
 
 // Simple string options
 <MultiSelect
@@ -35,12 +44,17 @@ import { MultiSelect } from '@components-kit/react';
 />
 
 // Controlled mode
-const [selected, setSelected] = useState<string[]>(['apple']);
-<MultiSelect
-  options={['apple', 'banana', 'cherry']}
-  value={selected}
-  onValueChange={setSelected}
-/>
+function ControlledMultiSelect() {
+  const [selected, setSelected] = useState<string[]>(['apple']);
+
+  return (
+    <MultiSelect
+      options={['apple', 'banana', 'cherry']}
+      value={selected}
+      onValueChange={setSelected}
+    />
+  );
+}
 
 // Max selected limit
 <MultiSelect
@@ -111,41 +125,41 @@ const [selected, setSelected] = useState<string[]>(['apple']);
 
 ## Props
 
-| Prop             | Type                              | Default       | Description                                                                                                                                                              |
-| ---------------- | --------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `aria-label`     | `string`                          | -             | Accessible label for the multi-select input. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                          |
-| `autoFocus`      | `boolean`                         | `false`       | Auto-focus the input on mount                                                                                                                                            |
-| `onBlur`         | `(event: React.FocusEvent) => void` | -          | Callback when the input loses focus                                                                                                                                      |
-| `onFocus`        | `(event: React.FocusEvent) => void` | -          | Callback when the input receives focus                                                                                                                                   |
-| `options`        | `SelectOption<T>[]`               | **required**  | Array of options to display                                                                                                                                              |
-| `value`          | `T[]`                             | -             | Controlled selected values                                                                                                                                               |
-| `defaultOpen`    | `boolean`                         | `false`       | Whether the dropdown is open by default on mount                                                                                                                         |
-| `defaultValue`   | `T[]`                             | -             | Default selected values (uncontrolled)                                                                                                                                   |
-| `onValueChange`  | `(values: T[]) => void`           | -             | Callback when selection changes                                                                                                                                          |
-| `placeholder`    | `string`                          | `"Search..."` | Placeholder text shown when no items selected                                                                                                                            |
-| `disabled`       | `boolean`                         | `false`       | Disables the multi-select                                                                                                                                                |
-| `variantName`    | `VariantFor<"multi_select">`      | -             | Variant name for styling                                                                                                                                                 |
-| `getOptionValue` | `(option: T) => string \| number` | -             | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
-| `filterFn`       | `(option, inputValue) => boolean` | -             | Custom filter function (default: case-insensitive includes)                                                                                                              |
-| `maxSelected`    | `number`                          | -             | Maximum number of items that can be selected                                                                                                                             |
-| `clearable`      | `boolean`                         | `false`       | Show a clear-all button when items are selected                                                                                                                          |
-| `emptyContent`   | `string`                          | `"No results found"` | Text displayed when no options match the filter                                                                                                                    |
-| `error`          | `boolean`                         | `false`       | Marks the multi-select as invalid (adds `data-error`)                                                                                                                    |
-| `fixedValues`    | `T[]`                             | -             | Values that cannot be removed (tags rendered without remove button)                                                                                                      |
-| `maxDisplayedTags` | `number`                        | -             | Maximum tags to display before showing "+N more"                                                                                                                         |
-| `maxDropdownHeight` | `number`                       | -             | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
-| `maxReachedContent` | `string`                       | `"Maximum selections reached"` | Text displayed when maximum selections reached                                                                                                          |
-| `menuPortal`     | `HTMLElement \| null`             | -             | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
-| `name`           | `string`                          | -             | Form field name. When set, renders hidden inputs for native form submission                                                                                              |
-| `onOpenChange`   | `(open: boolean) => void`         | -             | Callback when the dropdown opens or closes                                                                                                                               |
-| `openOnFocus`    | `boolean`                         | `true`        | Open the dropdown when the input receives focus                                                                                                                          |
-| `placement`      | `Placement`                       | `"bottom-start"` | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                 |
-| `readOnly`       | `boolean`                         | `false`       | Read-only mode — visually normal but prevents interaction                                                                                                                |
-| `required`       | `boolean`                         | `false`       | Marks the multi-select as required (`aria-required` + `data-required`)                                                                                                   |
-| `tokenSeparators` | `string[]`                       | -             | Characters that trigger token creation on type/paste (e.g., `[",", ";"]`)                                                                                                |
-| `inputValue`     | `string`                          | -             | Controlled input text value                                                                                                                                              |
-| `defaultInputValue` | `string`                       | -             | Default input value (uncontrolled)                                                                                                                                       |
-| `onInputValueChange` | `(value: string) => void`     | -             | Callback when input text changes                                                                                                                                         |
+| Prop                 | Type                                | Default                        | Description                                                                                                                                                              |
+| -------------------- | ----------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `aria-label`         | `string`                            | -                              | Accessible label for the multi-select input. Required when there is no visible label element. Prefer a visible `<label>` element when possible.                          |
+| `autoFocus`          | `boolean`                           | `false`                        | Auto-focus the input on mount                                                                                                                                            |
+| `onBlur`             | `(event: React.FocusEvent) => void` | -                              | Callback when the input loses focus                                                                                                                                      |
+| `onFocus`            | `(event: React.FocusEvent) => void` | -                              | Callback when the input receives focus                                                                                                                                   |
+| `options`            | `SelectOption<T>[]`                 | **required**                   | Array of options to display                                                                                                                                              |
+| `value`              | `T[]`                               | -                              | Controlled selected values                                                                                                                                               |
+| `defaultOpen`        | `boolean`                           | `false`                        | Whether the dropdown is open by default on mount                                                                                                                         |
+| `defaultValue`       | `T[]`                               | -                              | Default selected values (uncontrolled)                                                                                                                                   |
+| `onValueChange`      | `(values: T[]) => void`             | -                              | Callback when selection changes                                                                                                                                          |
+| `placeholder`        | `string`                            | `"Search..."`                  | Placeholder text shown when no items selected                                                                                                                            |
+| `disabled`           | `boolean`                           | `false`                        | Disables the multi-select                                                                                                                                                |
+| `variantName`        | `VariantFor<"multi_select">`        | -                              | Variant name for styling                                                                                                                                                 |
+| `getOptionValue`     | `(option: T) => string \| number`   | -                              | Function to extract a unique primitive key from option values. Required for object values where reference equality won't work. For primitive values, this is not needed. |
+| `filterFn`           | `(option, inputValue) => boolean`   | -                              | Custom filter function (default: case-insensitive includes)                                                                                                              |
+| `maxSelected`        | `number`                            | -                              | Maximum number of items that can be selected                                                                                                                             |
+| `clearable`          | `boolean`                           | `false`                        | Show a clear-all button when items are selected                                                                                                                          |
+| `emptyContent`       | `string`                            | `"No results found"`           | Text displayed when no options match the filter                                                                                                                          |
+| `error`              | `boolean`                           | `false`                        | Marks the multi-select as invalid (adds `data-error`)                                                                                                                    |
+| `fixedValues`        | `T[]`                               | -                              | Values that cannot be removed (tags rendered without remove button)                                                                                                      |
+| `maxDisplayedTags`   | `number`                            | -                              | Maximum tags to display before showing "+N more"                                                                                                                         |
+| `maxDropdownHeight`  | `number`                            | -                              | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
+| `maxReachedContent`  | `string`                            | `"Maximum selections reached"` | Text displayed when maximum selections reached                                                                                                                           |
+| `menuPortal`         | `HTMLElement \| null`               | -                              | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
+| `name`               | `string`                            | -                              | Form field name. When set, renders hidden inputs for native form submission                                                                                              |
+| `onOpenChange`       | `(open: boolean) => void`           | -                              | Callback when the dropdown opens or closes                                                                                                                               |
+| `openOnFocus`        | `boolean`                           | `true`                         | Open the dropdown when the input receives focus                                                                                                                          |
+| `placement`          | `Placement`                         | `"bottom-start"`               | Dropdown placement relative to trigger ([Floating UI values](https://floating-ui.com/docs/computePosition#placement))                                                    |
+| `readOnly`           | `boolean`                           | `false`                        | Read-only mode — visually normal but prevents interaction                                                                                                                |
+| `required`           | `boolean`                           | `false`                        | Marks the multi-select as required (`aria-required` + `data-required`)                                                                                                   |
+| `tokenSeparators`    | `string[]`                          | -                              | Characters that trigger token creation on type/paste (e.g., `[",", ";"]`)                                                                                                |
+| `inputValue`         | `string`                            | -                              | Controlled input text value                                                                                                                                              |
+| `defaultInputValue`  | `string`                            | -                              | Default input value (uncontrolled)                                                                                                                                       |
+| `onInputValueChange` | `(value: string) => void`           | -                              | Callback when input text changes                                                                                                                                         |
 
 Also accepts all standard `div` HTML attributes.
 
@@ -170,6 +184,8 @@ Also accepts all standard `div` HTML attributes.
 When working with object values, you need to provide a `getOptionValue` function to extract a unique primitive identifier:
 
 ```tsx
+import { useState } from "react";
+
 interface User {
   id: number;
   name: string;
@@ -247,41 +263,41 @@ function MultiSelectForm() {
 
 ## Data Attributes
 
-| Attribute                              | Element                | Values               | Description                                 |
-| -------------------------------------- | ---------------------- | -------------------- | ------------------------------------------- |
-| `data-ck="multi-select"`               | Root                   | -                    | Identifies the root container               |
-| `data-ck="multi-select-input-wrapper"` | Wrapper                | -                    | Outer container for the input area          |
-| `data-ck="multi-select-tags"`          | Div                    | -                    | Wraps tags, overflow badge, and input (flex-wrapping area, sibling to action buttons) |
-| `data-ck="multi-select-tag"`           | Tag                    | -                    | Individual selected tag chip                |
-| `data-ck="multi-select-tag-remove"`    | Button                 | -                    | Remove button inside a tag                  |
-| `data-ck="multi-select-input"`         | Input                  | -                    | Text input for filtering                    |
-| `data-ck="multi-select-trigger"`       | Button                 | -                    | Toggle button for dropdown                  |
-| `data-ck="multi-select-positioner"`    | Div (portal)           | -                    | Always-rendered positioning wrapper around dropdown content |
-| `data-ck="multi-select-content"`       | Menu                   | -                    | Dropdown menu container                     |
-| `data-ck="multi-select-item"`          | Item                   | -                    | Individual dropdown item                    |
-| `data-slot="icon"`                     | Div (inside item)      | -                    | Trailing icon slot for CSS-injected indicator (`aria-hidden`) |
-| `data-ck="multi-select-empty"`         | Div                    | -                    | Empty state / max-reached message           |
-| `data-ck="multi-select-separator"`     | Div                    | -                    | Visual separator between groups             |
-| `data-ck="multi-select-group"`         | Div                    | -                    | Group container (`role="group"` with `aria-labelledby`) |
-| `data-ck="multi-select-group-label"`   | Div                    | -                    | Group label heading (`role="presentation"`) |
-| `data-ck="multi-select-clear"`         | Button                 | -                    | Clear-all button (when `clearable` is true) |
-| `data-ck="multi-select-live"`          | Div                    | -                    | Live region for screen reader announcements (must be styled sr-only) |
-| `data-ck="multi-select-tag-overflow"`  | Span                   | -                    | "+N more" overflow indicator (`aria-label` describes hidden count) |
-| `data-state`                           | Root, Trigger, Positioner, Content | `"open"`, `"closed"` | Dropdown open/close state             |
-| `data-side`                            | Content                | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI) |
-| `data-unmounted`                       | Positioner             | `true`               | Present when the positioner content is unmounted |
-| `data-state`                           | Item                   | `"checked"`, `"unchecked"` | Whether the item is currently selected |
-| `data-active`                          | Tag                    | `true`               | Present on the currently focused tag        |
-| `data-disabled`                        | Root, Item             | `true`               | Present when disabled                       |
-| `data-empty`                           | Content                | `true`               | Present on menu when no options are visible |
-| `data-error`                           | Root                   | `true`               | Present when `error` prop is true           |
-| `data-fixed`                           | Tag                    | `true`               | Present on tags that cannot be removed      |
-| `data-has-value`                       | Root                   | `true`               | Present when at least one item is selected  |
-| `data-highlighted`                     | Item                   | `true`               | Present on keyboard-highlighted item        |
-| `data-max-reached`                     | Root                   | `true`               | Present when `maxSelected` limit is reached |
-| `data-readonly`                        | Root                   | `true`               | Present when `readOnly` prop is true        |
-| `data-required`                        | Root                   | `true`               | Present when `required` prop is true        |
-| `data-variant`                         | Root                   | string               | Variant name for styling                    |
+| Attribute                              | Element                            | Values                                   | Description                                                                           |
+| -------------------------------------- | ---------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------- |
+| `data-ck="multi-select"`               | Root                               | -                                        | Identifies the root container                                                         |
+| `data-ck="multi-select-input-wrapper"` | Wrapper                            | -                                        | Outer container for the input area                                                    |
+| `data-ck="multi-select-tags"`          | Div                                | -                                        | Wraps tags, overflow badge, and input (flex-wrapping area, sibling to action buttons) |
+| `data-ck="multi-select-tag"`           | Tag                                | -                                        | Individual selected tag chip                                                          |
+| `data-ck="multi-select-tag-remove"`    | Button                             | -                                        | Remove button inside a tag                                                            |
+| `data-ck="multi-select-input"`         | Input                              | -                                        | Text input for filtering                                                              |
+| `data-ck="multi-select-trigger"`       | Button                             | -                                        | Toggle button for dropdown                                                            |
+| `data-ck="multi-select-positioner"`    | Div (portal)                       | -                                        | Always-rendered positioning wrapper around dropdown content                           |
+| `data-ck="multi-select-content"`       | Menu                               | -                                        | Dropdown menu container                                                               |
+| `data-ck="multi-select-item"`          | Item                               | -                                        | Individual dropdown item                                                              |
+| `data-slot="icon"`                     | Div (inside item)                  | -                                        | Trailing icon slot for CSS-injected indicator (`aria-hidden`)                         |
+| `data-ck="multi-select-empty"`         | Div                                | -                                        | Empty state / max-reached message                                                     |
+| `data-ck="multi-select-separator"`     | Div                                | -                                        | Visual separator between groups                                                       |
+| `data-ck="multi-select-group"`         | Div                                | -                                        | Group container (`role="group"` with `aria-labelledby`)                               |
+| `data-ck="multi-select-group-label"`   | Div                                | -                                        | Group label heading (`role="presentation"`)                                           |
+| `data-ck="multi-select-clear"`         | Button                             | -                                        | Clear-all button (when `clearable` is true)                                           |
+| `data-ck="multi-select-live"`          | Div                                | -                                        | Live region for screen reader announcements (must be styled sr-only)                  |
+| `data-ck="multi-select-tag-overflow"`  | Span                               | -                                        | "+N more" overflow indicator (`aria-label` describes hidden count)                    |
+| `data-state`                           | Root, Trigger, Positioner, Content | `"open"`, `"closed"`                     | Dropdown open/close state                                                             |
+| `data-side`                            | Content                            | `"bottom"`, `"top"`, `"left"`, `"right"` | Current placement side of the dropdown (from Floating UI)                             |
+| `data-unmounted`                       | Positioner                         | `true`                                   | Present when the positioner content is unmounted                                      |
+| `data-state`                           | Item                               | `"checked"`, `"unchecked"`               | Whether the item is currently selected                                                |
+| `data-active`                          | Tag                                | `true`                                   | Present on the currently focused tag                                                  |
+| `data-disabled`                        | Root, Item                         | `true`                                   | Present when disabled                                                                 |
+| `data-empty`                           | Content                            | `true`                                   | Present on menu when no options are visible                                           |
+| `data-error`                           | Root                               | `true`                                   | Present when `error` prop is true                                                     |
+| `data-fixed`                           | Tag                                | `true`                                   | Present on tags that cannot be removed                                                |
+| `data-has-value`                       | Root                               | `true`                                   | Present when at least one item is selected                                            |
+| `data-highlighted`                     | Item                               | `true`                                   | Present on keyboard-highlighted item                                                  |
+| `data-max-reached`                     | Root                               | `true`                                   | Present when `maxSelected` limit is reached                                           |
+| `data-readonly`                        | Root                               | `true`                                   | Present when `readOnly` prop is true                                                  |
+| `data-required`                        | Root                               | `true`                                   | Present when `required` prop is true                                                  |
+| `data-variant`                         | Root                               | string                                   | Variant name for styling                                                              |
 
 ## Accessibility
 
@@ -289,18 +305,18 @@ Follows WAI-ARIA Combobox pattern with multiselectable Listbox.
 
 ### Keyboard Support
 
-| Key            | Context           | Action                                   |
-| -------------- | ----------------- | ---------------------------------------- |
-| `ArrowDown`    | Input             | Open menu / move to next item            |
-| `ArrowUp`      | Input             | Move to previous item                    |
+| Key            | Context           | Action                                             |
+| -------------- | ----------------- | -------------------------------------------------- |
+| `ArrowDown`    | Input             | Open menu / move to next item                      |
+| `ArrowUp`      | Input             | Move to previous item                              |
 | `Enter`        | Item highlighted  | Toggle item selection, keep menu open, clear input |
-| `Escape`       | Menu open         | Close menu                               |
-| `Home` / `End` | Menu open         | Jump to first / last item                |
-| `Backspace`    | Input empty       | Remove last selected tag                 |
-| `ArrowLeft`    | Input, caret at 0 | Focus last tag                           |
-| `ArrowRight`   | Tag focused       | Focus next tag or return to input        |
-| `ArrowLeft`    | Tag focused       | Focus previous tag                       |
-| Characters     | Input             | Filter options by typing                 |
+| `Escape`       | Menu open         | Close menu                                         |
+| `Home` / `End` | Menu open         | Jump to first / last item                          |
+| `Backspace`    | Input empty       | Remove last selected tag                           |
+| `ArrowLeft`    | Input, caret at 0 | Focus last tag                                     |
+| `ArrowRight`   | Tag focused       | Focus next tag or return to input                  |
+| `ArrowLeft`    | Tag focused       | Focus previous tag                                 |
+| Characters     | Input             | Filter options by typing                           |
 
 - ARIA attributes:
   - `role="combobox"` on the input element

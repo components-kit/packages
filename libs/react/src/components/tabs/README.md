@@ -5,6 +5,8 @@ A fully accessible tabs component for organizing content into multiple panels.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
+import { BellIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { Tabs } from '@components-kit/react';
 
 // Basic uncontrolled tabs
@@ -41,8 +43,6 @@ function ControlledExample() {
 }
 
 // With icons
-import { UserIcon, SettingsIcon, BellIcon } from 'lucide-react';
-
 <Tabs
   tabs={[
     { id: 'user', label: 'Profile', icon: <UserIcon /> },
@@ -86,42 +86,42 @@ import { UserIcon, SettingsIcon, BellIcon } from 'lucide-react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tabs` | `TabItem[]` | **required** | Array of tab items |
-| `children` | `ReactNode` | **required** | Panel content. Each child must have a `data-tab-panel` attribute matching a tab `id`. |
-| `defaultValue` | `string` | - | Initial active tab ID (uncontrolled mode) |
-| `value` | `string` | - | Controlled active tab ID |
-| `onValueChange` | `(tabId: string) => void` | - | Callback fired when active tab changes |
-| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Tab list orientation |
-| `variantName` | `VariantFor<"tabs">` | - | Variant name for styling |
+| Prop            | Type                         | Default        | Description                                                                           |
+| --------------- | ---------------------------- | -------------- | ------------------------------------------------------------------------------------- |
+| `tabs`          | `TabItem[]`                  | **required**   | Array of tab items                                                                    |
+| `children`      | `ReactNode`                  | **required**   | Panel content. Each child must have a `data-tab-panel` attribute matching a tab `id`. |
+| `defaultValue`  | `string`                     | -              | Initial active tab ID (uncontrolled mode)                                             |
+| `value`         | `string`                     | -              | Controlled active tab ID                                                              |
+| `onValueChange` | `(tabId: string) => void`    | -              | Callback fired when active tab changes                                                |
+| `orientation`   | `"horizontal" \| "vertical"` | `"horizontal"` | Tab list orientation                                                                  |
+| `variantName`   | `VariantFor<"tabs">`         | -              | Variant name for styling                                                              |
 
 Also accepts all standard `div` HTML attributes.
 
 ### TabItem
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `id` | `string` | **required** | Unique tab identifier |
-| `label` | `string \| ReactNode` | **required** | Tab label content |
-| `icon` | `ReactNode` | - | Icon element displayed before the label |
-| `disabled` | `boolean` | - | Disables the tab |
+| Prop       | Type                  | Default      | Description                             |
+| ---------- | --------------------- | ------------ | --------------------------------------- |
+| `id`       | `string`              | **required** | Unique tab identifier                   |
+| `label`    | `string \| ReactNode` | **required** | Tab label content                       |
+| `icon`     | `ReactNode`           | -            | Icon element displayed before the label |
+| `disabled` | `boolean`             | -            | Disables the tab                        |
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-ck` | `"tabs"` | Root container identifier |
-| `data-ck` | `"tab"` | Tab trigger identifier |
-| `data-ck` | `"tab-panel"` | Tab panel identifier |
-| `data-variant` | string | The variant name for styling |
-| `data-orientation` | `"horizontal"`, `"vertical"` | Tab list orientation |
-| `data-state` | `"selected"`, `"unselected"` | Tab trigger selection state |
-| `data-state` | `"active"`, `"inactive"` | Tab panel visibility state |
-| `data-disabled` | `true` | Present when tab is disabled |
-| `data-slot` | `"tablist"` | Identifies the tab list container |
-| `data-slot` | `"icon"` | Identifies the icon slot within a tab |
-| `data-slot` | `"label"` | Identifies the label slot within a tab |
+| Attribute          | Values                       | Description                            |
+| ------------------ | ---------------------------- | -------------------------------------- |
+| `data-ck`          | `"tabs"`                     | Root container identifier              |
+| `data-ck`          | `"tab"`                      | Tab trigger identifier                 |
+| `data-ck`          | `"tab-panel"`                | Tab panel identifier                   |
+| `data-variant`     | string                       | The variant name for styling           |
+| `data-orientation` | `"horizontal"`, `"vertical"` | Tab list orientation                   |
+| `data-state`       | `"selected"`, `"unselected"` | Tab trigger selection state            |
+| `data-state`       | `"active"`, `"inactive"`     | Tab panel visibility state             |
+| `data-disabled`    | `true`                       | Present when tab is disabled           |
+| `data-slot`        | `"tablist"`                  | Identifies the tab list container      |
+| `data-slot`        | `"icon"`                     | Identifies the icon slot within a tab  |
+| `data-slot`        | `"label"`                    | Identifies the label slot within a tab |
 
 ## Accessibility
 
@@ -129,13 +129,13 @@ Follows the [WAI-ARIA Tabs Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tab
 
 ### Keyboard Support
 
-| Key | Description |
-|-----|-------------|
-| `Tab` | Moves focus into the tab list (to the active tab), then to the active panel |
-| `ArrowRight` (horizontal) / `ArrowDown` (vertical) | Moves focus to and activates the next enabled tab. Stops at the last tab. |
-| `ArrowLeft` (horizontal) / `ArrowUp` (vertical) | Moves focus to and activates the previous enabled tab. Stops at the first tab. |
-| `Home` | Moves focus to and activates the first enabled tab |
-| `End` | Moves focus to and activates the last enabled tab |
+| Key                                                | Description                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `Tab`                                              | Moves focus into the tab list (to the active tab), then to the active panel    |
+| `ArrowRight` (horizontal) / `ArrowDown` (vertical) | Moves focus to and activates the next enabled tab. Stops at the last tab.      |
+| `ArrowLeft` (horizontal) / `ArrowUp` (vertical)    | Moves focus to and activates the previous enabled tab. Stops at the first tab. |
+| `Home`                                             | Moves focus to and activates the first enabled tab                             |
+| `End`                                              | Moves focus to and activates the last enabled tab                              |
 
 ### ARIA Roles and Attributes
 
@@ -147,7 +147,7 @@ Follows the [WAI-ARIA Tabs Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tab
 ### Best Practices
 
 - Use tabs for related content that doesn't need to be viewed simultaneously
-- Keep tab labels concise (1-2 words when possible)
+- Keep tab labels concise (1–2 words when possible)
 - Don't use tabs for sequential processes (use a stepper instead)
 - Each panel child must have a `data-tab-panel` attribute matching a tab `id`
 - Use `variantName` to apply consistent styling across your app

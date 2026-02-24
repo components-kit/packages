@@ -113,6 +113,7 @@ import {
  * @param {T[]} [value] - Controlled selected values.
  * @param {T[]} [defaultValue] - Default values for uncontrolled mode.
  * @param {(values: T[]) => void} [onValueChange] - Callback when selection changes.
+ * @param {boolean} [defaultOpen=false] - Whether the dropdown is open by default on mount.
  * @param {string} [placeholder="Search..."] - Placeholder text shown when no items selected.
  * @param {string} [aria-label] - Accessible label for the input. Required when no visible label exists.
  * @param {boolean} [autoFocus=false] - Auto-focus the input on mount.
@@ -239,6 +240,11 @@ interface MultiSelectProps<T = string> extends Omit<
    * Default input value for uncontrolled input mode.
    */
   defaultInputValue?: string;
+  /**
+   * Whether the dropdown is open by default on mount.
+   * @default false
+   */
+  defaultOpen?: boolean;
   /**
    * Default selected values for uncontrolled mode.
    */
@@ -390,6 +396,7 @@ function MultiSelectInner<T = string>(
     className,
     clearable = false,
     defaultInputValue,
+    defaultOpen = false,
     defaultValue,
     disabled = false,
     emptyContent = "No results found",
@@ -683,6 +690,7 @@ function MultiSelectInner<T = string>(
     openMenu,
   } = useCombobox<NormalizedItem<T>>({
     id: inputId,
+    initialIsOpen: defaultOpen,
     ...(controlledInputValue !== undefined && {
       inputValue: controlledInputValue,
     }),

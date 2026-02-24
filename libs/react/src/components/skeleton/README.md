@@ -41,18 +41,18 @@ import { Skeleton } from '@components-kit/react';
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `width` | `string` | - | Width of the skeleton (e.g., "200px", "100%") |
-| `height` | `string` | - | Height of the skeleton (e.g., "100px", "1em") |
-| `variantName` | `VariantFor<"skeleton">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description                                   |
+| ------------- | ------------------------ | ------- | --------------------------------------------- |
+| `width`       | `string`                 | -       | Width of the skeleton (e.g., "200px", "100%") |
+| `height`      | `string`                 | -       | Height of the skeleton (e.g., "100px", "1em") |
+| `variantName` | `VariantFor<"skeleton">` | -       | Variant name for styling                      |
 
 Also accepts all standard `div` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility

@@ -38,13 +38,26 @@ export const switchDemo: ComponentDemo = {
   code: `import { Switch } from "@components-kit/react";
 import { useState } from "react";
 
-const [checked, setChecked] = useState(false);
+const saveAutoSavePreference = (enabled: boolean) => {
+  console.log("Auto-save:", enabled);
+};
 
-<Switch
-  checked={checked}
-  variantName="default"
-  onChange={(e) => setChecked(e.target.checked)}
-/>
+function AutoSaveSetting() {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <Switch
+      aria-label="Enable auto-save"
+      checked={enabled}
+      variantName="default"
+      onChange={(e) => {
+        const nextValue = e.target.checked;
+        setEnabled(nextValue);
+        saveAutoSavePreference(nextValue);
+      }}
+    />
+  );
+}
 
 <Switch defaultChecked variantName="default" />
 <Switch disabled variantName="default" />`,

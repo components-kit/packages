@@ -98,6 +98,7 @@ import {
  * @param {SelectOption<T>[]} options - Array of options to display. Required.
  * @param {T} [value] - Controlled selected value.
  * @param {T} [defaultValue] - Default value for uncontrolled mode.
+ * @param {boolean} [defaultOpen=false] - Whether the dropdown is open by default on mount.
  * @param {(value: T | undefined) => void} [onValueChange] - Callback when selection changes.
  * @param {string} [placeholder="Select..."] - Placeholder text shown when no value is selected.
  * @param {string} [aria-label] - Accessible label for the trigger. Required when no visible label exists.
@@ -211,6 +212,11 @@ interface SelectProps<T = string> extends Omit<
    */
   autoFocus?: boolean;
   /**
+   * Whether the dropdown is open by default on mount.
+   * @default false
+   */
+  defaultOpen?: boolean;
+  /**
    * Default value for uncontrolled mode.
    */
   defaultValue?: T;
@@ -311,6 +317,7 @@ function SelectInner<T = string>(
     "aria-label": ariaLabel,
     autoFocus,
     className,
+    defaultOpen = false,
     defaultValue,
     disabled = false,
     emptyContent = "No options",
@@ -385,6 +392,7 @@ function SelectInner<T = string>(
     selectedItem,
   } = useSelect<NormalizedItem<T>>({
     id: triggerId,
+    initialIsOpen: defaultOpen,
     initialSelectedItem: initialItem,
     isItemDisabled: (item) => item?.disabled ?? false,
     items: selectableItems,

@@ -5,6 +5,7 @@ A text input component for single-line user input with support for various input
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Input } from '@components-kit/react';
 
 // Basic text input with label
@@ -21,12 +22,20 @@ import { Input } from '@components-kit/react';
 />
 
 // Controlled input
-const [value, setValue] = useState('');
-<Input
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  variantName="default"
-/>
+function SearchField() {
+  const [value, setValue] = useState('');
+
+  return (
+    <Input
+      aria-label="Search"
+      inputMode="search"
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      placeholder="Search components..."
+      variantName="default"
+    />
+  );
+}
 
 // With validation error
 <label htmlFor="email">Email</label>
@@ -49,21 +58,33 @@ const [value, setValue] = useState('');
   step="1"
   variantName="default"
 />
+
+// Form integration
+<form onSubmit={(e) => e.preventDefault()}>
+  <label htmlFor="username">Username</label>
+  <Input
+    id="username"
+    name="username"
+    autoComplete="username"
+    required
+    variantName="default"
+  />
+</form>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `type` | `string` | `"text"` | Input type (text, email, password, number, etc.) |
-| `variantName` | `VariantFor<"input">` | - | Variant name for styling |
+| Prop          | Type                  | Default  | Description                                      |
+| ------------- | --------------------- | -------- | ------------------------------------------------ |
+| `type`        | `string`              | `"text"` | Input type (text, email, password, number, etc.) |
+| `variantName` | `VariantFor<"input">` | -        | Variant name for styling                         |
 
 Also accepts all standard `input` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility

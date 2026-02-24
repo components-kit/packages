@@ -7,7 +7,9 @@ A fully-featured data table component powered by TanStack Table.
 ## Usage
 
 ```tsx
-import { Table, Pagination, ColumnDef } from '@components-kit/react';
+import { useState } from 'react';
+import { Pagination, Table } from '@components-kit/react';
+import type { ColumnDef, RowSelectionState, SortingState } from '@components-kit/react';
 
 interface User {
   id: string;
@@ -20,46 +22,56 @@ const columns: ColumnDef<User>[] = [
   { accessorKey: 'email', header: 'Email' },
 ];
 
+const users: User[] = [
+  { id: '1', name: 'Jane Doe', email: 'jane@example.com' },
+  { id: '2', name: 'John Smith', email: 'john@example.com' },
+];
+
 // Basic usage
 <Table data={users} columns={columns} />
 
-// With sorting
-const [sorting, setSorting] = useState<SortingState>([]);
-<Table
-  data={users}
-  columns={columns}
-  enableSorting
-  sorting={sorting}
-  onSortingChange={setSorting}
-/>
-
-// With pagination (compose with Pagination component)
-const [pageIndex, setPageIndex] = useState(0);
-const pageSize = 10;
-
-<Table
-  data={users}
-  columns={columns}
-  enablePagination
-  pageIndex={pageIndex}
-  pageSize={pageSize}
-  onPageChange={setPageIndex}
-/>
-<Pagination
-  page={pageIndex + 1}
-  totalPages={Math.ceil(users.length / pageSize)}
-  onPageChange={(page) => setPageIndex(page - 1)}
-/>
-
 // With row selection
-const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-<Table
-  data={users}
-  columns={columns}
-  enableRowSelection
-  rowSelection={rowSelection}
-  onRowSelectionChange={setRowSelection}
-/>
+function SelectableUsersTable() {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  return (
+    <Table
+      data={users}
+      columns={columns}
+      enableRowSelection
+      rowSelection={rowSelection}
+      onRowSelectionChange={setRowSelection}
+    />
+  );
+}
+
+// With sorting + pagination UI
+function SortablePaginatedUsersTable() {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 10;
+
+  return (
+    <>
+      <Table
+        data={users}
+        columns={columns}
+        enableSorting
+        sorting={sorting}
+        onSortingChange={setSorting}
+        enablePagination
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        onPageChange={setPageIndex}
+      />
+      <Pagination
+        page={pageIndex + 1}
+        totalPages={Math.ceil(users.length / pageSize)}
+        onPageChange={(page) => setPageIndex(page - 1)}
+      />
+    </>
+  );
+}
 
 // Custom cell rendering
 <Table
@@ -69,7 +81,9 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ getValue }) => <Badge>{getValue()}</Badge>,
+      cell: ({ getValue }) => (
+        <span data-status={getValue() as string}>{getValue() as string}</span>
+      ),
     },
   ]}
 />
@@ -102,73 +116,110 @@ const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `TData[]` | **required** | Data array to display |
-| `columns` | `ColumnDef<TData>[]` | **required** | Column definitions |
-| `variantName` | `VariantFor<"table">` | - | Variant name for styling |
-| `caption` | `ReactNode` | - | Table caption |
-| `isLoading` | `boolean` | `false` | Shows loading state |
+### Core
+
+| Prop               | Type                  | Default      | Description                           |
+| ------------------ | --------------------- | ------------ | ------------------------------------- |
+| `data`             | `TData[]`             | **required** | Data array to display                 |
+| `columns`          | `ColumnDef<TData>[]`  | **required** | Column definitions                    |
+| `caption`          | `ReactNode`           | -            | Table caption content                 |
+| `captionSide`      | `"top" \| "bottom"`   | `"top"`      | Caption position                      |
+| `isLoading`        | `boolean`             | `false`      | Shows loading state row               |
+| `variantName`      | `VariantFor<"table">` | -            | Variant name for styling              |
+| `aria-label`       | `string`              | -            | Accessible label for the table        |
+| `aria-describedby` | `string`              | -            | ID of an element describing the table |
+
+### Data / Identity
+
+| Prop         | Type                                    | Default | Description                               |
+| ------------ | --------------------------------------- | ------- | ----------------------------------------- |
+| `getRowId`   | `(originalRow, index) => string`        | -       | Custom row ID extraction                  |
+| `getSubRows` | `(originalRow) => TData[] \| undefined` | -       | Returns nested rows for hierarchical data |
 
 ### Sorting
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableSorting` | `boolean` | `false` | Enable column sorting |
-| `sorting` | `SortingState` | - | Controlled sorting state |
-| `onSortingChange` | `(sorting) => void` | - | Sorting change callback |
-| `manualSorting` | `boolean` | `false` | Server-side sorting |
+| Prop              | Type                | Default | Description              |
+| ----------------- | ------------------- | ------- | ------------------------ |
+| `enableSorting`   | `boolean`           | `false` | Enable column sorting    |
+| `sorting`         | `SortingState`      | -       | Controlled sorting state |
+| `onSortingChange` | `(sorting) => void` | -       | Sorting change callback  |
+| `manualSorting`   | `boolean`           | `false` | Server-side sorting      |
+
+### Filtering
+
+| Prop                    | Type                                          | Default | Description                    |
+| ----------------------- | --------------------------------------------- | ------- | ------------------------------ |
+| `enableFiltering`       | `boolean`                                     | `false` | Enable filtering features      |
+| `enableColumnFilters`   | `boolean`                                     | `false` | Enable per-column filters      |
+| `globalFilter`          | `string`                                      | -       | Controlled global filter value |
+| `columnFilters`         | `ColumnFiltersState`                          | -       | Controlled column filters      |
+| `onGlobalFilterChange`  | `(globalFilter: string) => void`              | -       | Global filter change callback  |
+| `onColumnFiltersChange` | `(columnFilters: ColumnFiltersState) => void` | -       | Column filters change callback |
+| `manualFiltering`       | `boolean`                                     | `false` | Server-side filtering          |
 
 ### Pagination
 
 The Table handles pagination **data logic** (row slicing) but does not render pagination UI. Compose with the `Pagination` component for navigation controls.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enablePagination` | `boolean` | `false` | Enable pagination (row slicing) |
-| `pageSize` | `number` | `10` | Rows per page |
-| `pageIndex` | `number` | `0` | Current page (0-indexed) |
-| `pageCount` | `number` | - | Total pages (manual pagination) |
-| `onPageChange` | `(index) => void` | - | Page change callback |
+| Prop               | Type              | Default | Description                     |
+| ------------------ | ----------------- | ------- | ------------------------------- |
+| `enablePagination` | `boolean`         | `false` | Enable pagination (row slicing) |
+| `pageSize`         | `number`          | `10`    | Rows per page                   |
+| `pageIndex`        | `number`          | `0`     | Current page (0-indexed)        |
+| `pageCount`        | `number`          | -       | Total pages (manual pagination) |
+| `onPageChange`     | `(index) => void` | -       | Page change callback            |
+| `onPageSizeChange` | `(size) => void`  | -       | Page size change callback       |
+| `manualPagination` | `boolean`         | `false` | Server-side pagination          |
 
 ### Row Selection
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableRowSelection` | `boolean \| (row) => boolean` | `false` | Enable selection |
-| `enableMultiRowSelection` | `boolean` | `true` | Allow multi-select |
-| `rowSelection` | `RowSelectionState` | - | Controlled selection state |
-| `onRowSelectionChange` | `(selection) => void` | - | Selection change callback |
+| Prop                      | Type                          | Default | Description                |
+| ------------------------- | ----------------------------- | ------- | -------------------------- |
+| `enableRowSelection`      | `boolean \| (row) => boolean` | `false` | Enable selection           |
+| `enableMultiRowSelection` | `boolean`                     | `true`  | Allow multi-select         |
+| `rowSelection`            | `RowSelectionState`           | -       | Controlled selection state |
+| `onRowSelectionChange`    | `(selection) => void`         | -       | Selection change callback  |
+| `onRowClick`              | `(row) => void`               | -       | Row click callback         |
 
 ### Footer
 
 The table footer renders automatically when any column definition includes a `footer` property. No enable prop needed.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `renderFooter` | `({ table }) => ReactNode` | - | Custom footer renderer (overrides column footers) |
+| Prop           | Type                       | Default | Description                                       |
+| -------------- | -------------------------- | ------- | ------------------------------------------------- |
+| `renderFooter` | `({ table }) => ReactNode` | -       | Custom footer renderer (overrides column footers) |
 
 ### Row Expansion
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `enableExpanding` | `boolean` | `false` | Enable row expansion |
-| `expanded` | `ExpandedState` | - | Controlled expanded state |
-| `onExpandedChange` | `(expanded) => void` | - | Expansion change callback |
-| `renderSubComponent` | `({ row }) => ReactNode` | - | Expanded content renderer |
+| Prop                 | Type                     | Default | Description               |
+| -------------------- | ------------------------ | ------- | ------------------------- |
+| `enableExpanding`    | `boolean`                | `false` | Enable row expansion      |
+| `expanded`           | `ExpandedState`          | -       | Controlled expanded state |
+| `onExpandedChange`   | `(expanded) => void`     | -       | Expansion change callback |
+| `renderSubComponent` | `({ row }) => ReactNode` | -       | Expanded content renderer |
+
+### Custom Renderers
+
+| Prop            | Type                            | Default | Description                 |
+| --------------- | ------------------------------- | ------- | --------------------------- |
+| `renderHeader`  | `({ table }) => ReactNode`      | -       | Custom header renderer      |
+| `renderCell`    | `({ cell }) => ReactNode`       | -       | Custom cell renderer        |
+| `renderRow`     | `({ row, index }) => ReactNode` | -       | Custom row renderer         |
+| `renderLoading` | `() => ReactNode`               | -       | Custom loading row renderer |
+| `renderEmpty`   | `() => ReactNode`               | -       | Custom empty row renderer   |
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | Variant name for styling |
-| `data-caption-side` | `"top"`, `"bottom"` | Caption position |
-| `data-clickable` | `true` | Row has click handler |
-| `data-loading` | `true` | Present when loading |
-| `data-sort` | `"asc"`, `"desc"`, `"none"` | Column sort direction |
-| `data-sortable` | `true` | Column is sortable |
-| `data-selected` | `true` | Row is selected |
-| `data-footer-row` | present | Row is a footer row |
+| Attribute           | Values                      | Description              |
+| ------------------- | --------------------------- | ------------------------ |
+| `data-variant`      | string                      | Variant name for styling |
+| `data-caption-side` | `"top"`, `"bottom"`         | Caption position         |
+| `data-clickable`    | `true`                      | Row has click handler    |
+| `data-loading`      | `true`                      | Present when loading     |
+| `data-sort`         | `"asc"`, `"desc"`, `"none"` | Column sort direction    |
+| `data-sortable`     | `true`                      | Column is sortable       |
+| `data-selected`     | `true`                      | Row is selected          |
+| `data-footer-row`   | present                     | Row is a footer row      |
 
 ## Accessibility
 
@@ -197,5 +248,5 @@ import type {
   RowSelectionState,
   SortingState,
   TableInstance,
-} from '@components-kit/react';
+} from "@components-kit/react";
 ```

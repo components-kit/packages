@@ -5,6 +5,7 @@ A checkbox input component for boolean selections with indeterminate state suppo
 ## Usage
 
 ```tsx
+import { useEffect, useRef, useState } from 'react';
 import { Checkbox } from '@components-kit/react';
 
 // Basic checkbox with label
@@ -12,12 +13,17 @@ import { Checkbox } from '@components-kit/react';
 <label htmlFor="terms">I accept the terms</label>
 
 // Controlled checkbox
-const [checked, setChecked] = useState(false);
-<Checkbox
-  checked={checked}
-  onChange={(e) => setChecked(e.target.checked)}
-  variantName="default"
-/>
+function MarketingOptIn() {
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <Checkbox
+      checked={checked}
+      onChange={(e) => setChecked(e.target.checked)}
+      variantName="default"
+    />
+  );
+}
 
 // Disabled state
 <Checkbox id="disabled" disabled variantName="default" />
@@ -33,28 +39,47 @@ const [checked, setChecked] = useState(false);
 <span id="accept-error">You must accept the terms</span>
 
 // Indeterminate state (select all pattern)
-const checkboxRef = useRef<HTMLInputElement>(null);
-useEffect(() => {
-  if (checkboxRef.current) {
-    checkboxRef.current.indeterminate = someChecked && !allChecked;
-  }
-}, [someChecked, allChecked]);
-<Checkbox ref={checkboxRef} checked={allChecked} onChange={handleSelectAll} />
+function SelectAllCheckbox() {
+  const checkboxRef = useRef<HTMLInputElement>(null);
+  const [items, setItems] = useState({ apple: true, banana: false, cherry: true });
+
+  const values = Object.values(items);
+  const allChecked = values.every(Boolean);
+  const someChecked = values.some(Boolean);
+
+  useEffect(() => {
+    if (checkboxRef.current) {
+      checkboxRef.current.indeterminate = someChecked && !allChecked;
+    }
+  }, [someChecked, allChecked]);
+
+  return (
+    <Checkbox
+      ref={checkboxRef}
+      checked={allChecked}
+      onChange={(e) => {
+        const next = e.target.checked;
+        setItems({ apple: next, banana: next, cherry: next });
+      }}
+    />
+  );
+}
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"checkbox">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description              |
+| ------------- | ------------------------ | ------- | ------------------------ |
+| `variantName` | `VariantFor<"checkbox">` | -       | Variant name for styling |
 
 Also accepts all standard `input[type="checkbox"]` HTML attributes.
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
-| `data-variant` | string | The variant name for styling |
+| Attribute      | Values       | Description                  |
+| -------------- | ------------ | ---------------------------- |
+| `data-ck`      | `"checkbox"` | Component identifier         |
+| `data-variant` | string       | The variant name for styling |
 
 ## Accessibility
 

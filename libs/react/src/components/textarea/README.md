@@ -5,6 +5,7 @@ A multi-line text input component with automatic height adjustment.
 ## Usage
 
 ```tsx
+import { useState } from 'react';
 import { Textarea } from '@components-kit/react';
 
 // Basic textarea with label
@@ -22,13 +23,24 @@ import { Textarea } from '@components-kit/react';
   variantName="default"
 />
 
-// Controlled textarea
-const [value, setValue] = useState('');
-<Textarea
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-  variantName="default"
-/>
+// Controlled textarea with live character count
+function BioField() {
+  const [value, setValue] = useState('');
+
+  return (
+    <>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        maxLength={500}
+        aria-describedby="bio-count"
+        placeholder="Write your bio..."
+        variantName="default"
+      />
+      <span id="bio-count">{value.length}/500 characters</span>
+    </>
+  );
+}
 
 // With validation error
 <Textarea
@@ -38,27 +50,32 @@ const [value, setValue] = useState('');
 />
 <span id="error-message">This field is required</span>
 
-// With character count
-<Textarea
-  maxLength={500}
-  aria-describedby="char-count"
-  variantName="default"
-/>
-<span id="char-count">{value.length}/500 characters</span>
-
 // Disabled state
 <Textarea
   disabled
   value="This content cannot be edited"
   variantName="default"
 />
+
+// Form integration
+<form onSubmit={(e) => e.preventDefault()}>
+  <label htmlFor="feedback">Feedback</label>
+  <Textarea
+    id="feedback"
+    name="feedback"
+    required
+    minLength={10}
+    placeholder="Tell us what we can improve"
+    variantName="default"
+  />
+</form>
 ```
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variantName` | `VariantFor<"textarea">` | - | Variant name for styling |
+| Prop          | Type                     | Default | Description              |
+| ------------- | ------------------------ | ------- | ------------------------ |
+| `variantName` | `VariantFor<"textarea">` | -       | Variant name for styling |
 
 Also accepts all standard `textarea` HTML attributes.
 
@@ -74,8 +91,8 @@ The textarea automatically adjusts its height as content grows:
 
 ## Data Attributes
 
-| Attribute | Values | Description |
-|-----------|--------|-------------|
+| Attribute      | Values | Description                  |
+| -------------- | ------ | ---------------------------- |
 | `data-variant` | string | The variant name for styling |
 
 ## Accessibility
