@@ -552,6 +552,7 @@ function AsyncSearch() {
 | `loading` | `boolean` | `false` | Whether the combobox is in a loading state (for async search) |
 | `loadingContent` | `ReactNode` | `"Loading..."` | Custom content displayed while loading |
 | `maxDropdownHeight` | `number` | - | Maximum height of the dropdown in pixels |
+| `menuPortal` | `HTMLElement \| null` | - | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body` |
 | `name` | `string` | - | Form field name. Renders a hidden input for form submission |
 | `onBlur` | `(event: React.FocusEvent) => void` | - | Callback when the input loses focus |
 | `onFocus` | `(event: React.FocusEvent) => void` | - | Callback when the input receives focus |
@@ -1242,6 +1243,7 @@ const [selected, setSelected] = useState<string[]>(['apple']);
 | `maxDisplayedTags` | `number`                        | -             | Maximum tags to display before showing "+N more"                                                                                                                         |
 | `maxDropdownHeight` | `number`                       | -             | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
 | `maxReachedContent` | `string`                       | `"Maximum selections reached"` | Text displayed when maximum selections reached                                                                                                          |
+| `menuPortal`     | `HTMLElement \| null`             | -             | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
 | `name`           | `string`                          | -             | Form field name. When set, renders hidden inputs for native form submission                                                                                              |
 | `onOpenChange`   | `(open: boolean) => void`         | -             | Callback when the dropdown opens or closes                                                                                                                               |
 | `openOnFocus`    | `boolean`                         | `true`        | Open the dropdown when the input receives focus                                                                                                                          |
@@ -1835,6 +1837,7 @@ import { Select } from '@components-kit/react';
 | `emptyContent`   | `string`                          | `"No options"`   | Text displayed when there are no options                                                                                                                                 |
 | `error`          | `boolean`                         | `false`          | Marks the select as invalid (adds `data-error`)                                                                                                                          |
 | `maxDropdownHeight` | `number`                       | -                | Maximum dropdown height in pixels (caps available viewport space)                                                                                                        |
+| `menuPortal`     | `HTMLElement \| null`             | -                | Explicit portal root for the dropdown. When provided, the menu is portaled into this element instead of `document.body`                                                  |
 | `name`           | `string`                          | -                | Form field name. When set, renders a hidden input for native form submission                                                                                             |
 | `onOpenChange`   | `(open: boolean) => void`         | -                | Callback when the dropdown opens or closes                                                                                                                               |
 | `openOnFocus`    | `boolean`                         | `true`           | Open the dropdown when the trigger receives focus                                                                                                                        |

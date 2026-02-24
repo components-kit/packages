@@ -31,49 +31,13 @@ function ToastFullPreview() {
         variantName="outline"
         onClick={() =>
           toast({
-            description: "Your changes have been applied.",
+            description: "Your changes have been applied successfully.",
             title: "Settings saved",
             variantName: "default",
           })
         }
       >
-        Default
-      </Button>
-      <Button
-        variantName="outline"
-        onClick={() =>
-          toast({
-            description: "Operation completed successfully.",
-            title: "Success",
-            variantName: "success",
-          })
-        }
-      >
-        Success
-      </Button>
-      <Button
-        variantName="outline"
-        onClick={() =>
-          toast({
-            description: "Please review your input.",
-            title: "Warning",
-            variantName: "warning",
-          })
-        }
-      >
-        Warning
-      </Button>
-      <Button
-        variantName="outline"
-        onClick={() =>
-          toast({
-            description: "An error occurred.",
-            title: "Error",
-            variantName: "destructive",
-          })
-        }
-      >
-        Error
+        Show toast
       </Button>
     </div>
   );

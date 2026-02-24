@@ -31,14 +31,6 @@ function InputFullPreview() {
           variantName="default"
         />
       </div>
-      <div>
-        <p className="mb-1 text-sm text-neutral-500">Password</p>
-        <Input placeholder="••••••••" type="password" variantName="default" />
-      </div>
-      <div>
-        <p className="mb-1 text-sm text-neutral-500">Disabled</p>
-        <Input disabled placeholder="Cannot edit" variantName="default" />
-      </div>
     </div>
   );
 }

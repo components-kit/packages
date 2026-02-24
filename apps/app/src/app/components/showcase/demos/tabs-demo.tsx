@@ -36,28 +36,20 @@ function TabsFullPreview() {
         tabs={[
           { id: "account", label: "Account" },
           { id: "security", label: "Security" },
-          { id: "billing", label: "Billing" },
         ]}
         variantName="default"
       >
         <div data-tab-panel="account">
           <div className="rounded-lg border p-4">
             <p className="text-sm text-neutral-500">
-              Manage your account settings and preferences.
+              Manage your account settings.
             </p>
           </div>
         </div>
         <div data-tab-panel="security">
           <div className="rounded-lg border p-4">
             <p className="text-sm text-neutral-500">
-              Update your password and security preferences.
-            </p>
-          </div>
-        </div>
-        <div data-tab-panel="billing">
-          <div className="rounded-lg border p-4">
-            <p className="text-sm text-neutral-500">
-              View your billing history and manage payment methods.
+              Update your password and security settings.
             </p>
           </div>
         </div>

@@ -24,23 +24,6 @@ function TextareaFullPreview() {
           variantName="default"
         />
       </div>
-      <div>
-        <p className="mb-1 text-sm text-neutral-500">Bio</p>
-        <Textarea
-          defaultValue="Headless components styled entirely through data attributes."
-          rows={3}
-          variantName="default"
-        />
-      </div>
-      <div>
-        <p className="mb-1 text-sm text-neutral-500">Notes (disabled)</p>
-        <Textarea
-          disabled
-          placeholder="Cannot edit"
-          rows={2}
-          variantName="default"
-        />
-      </div>
     </div>
   );
 }
