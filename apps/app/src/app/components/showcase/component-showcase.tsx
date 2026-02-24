@@ -32,19 +32,15 @@ export function ComponentShowcase({ componentDocs }: ComponentShowcaseProps) {
           </div>
         );
 
-        return componentDocs[demo.id]?.length ? (
+        return (
           <DocModal
             key={demo.id}
             preview={demo.fullPreview}
             title={demo.name}
-            tokens={componentDocs[demo.id]}
+            tokens={componentDocs[demo.id] ?? []}
           >
             {card}
           </DocModal>
-        ) : (
-          <div key={demo.id} className="min-w-0">
-            {card}
-          </div>
         );
       })}
     </div>
