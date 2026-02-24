@@ -155,6 +155,8 @@ Without the CLI, `VariantFor<"button">` resolves to `string`. With the generated
 │  hooks/use-floating-select.ts ─── Floating UI dropdown positioning      │
 │  hooks/use-exit-transition.ts ─── delayed unmount for CSS exit anims    │
 │  hooks/use-debounced-callback.ts ── debounced async callbacks           │
+│  hooks/use-floating-viewport-sync.ts ── mobile viewport sync for       │
+│                                         dropdown repositioning          │
 │  utils/select.ts ─── processOptions, filterRenderItems, areValuesEqual, │
 │                       serializeValue, findItemByValue, findItemsByValue  │
 │  utils/render-dropdown-items.tsx ── shared dropdown item renderer        │
@@ -241,6 +243,7 @@ packages/
 │   │   │   ├── use-debounced-callback.ts
 │   │   │   ├── use-floating-select.ts
 │   │   │   ├── use-floating.ts
+│   │   │   ├── use-floating-viewport-sync.ts
 │   │   │   └── index.ts
 │   │   ├── types/                   # TypeScript type definitions
 │   │   │   ├── register.ts         # ComponentsKitVariants + VariantFor<T>

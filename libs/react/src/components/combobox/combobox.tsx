@@ -17,7 +17,11 @@ import {
 import type { VariantFor } from "../../types/register";
 import type { NormalizedItem, SelectOption } from "../../types/select";
 
-import { useExitTransition, useFloatingSelect } from "../../hooks";
+import {
+  useExitTransition,
+  useFloatingSelect,
+  useFloatingViewportSync,
+} from "../../hooks";
 import { mergeRefs } from "../../utils/merge-refs";
 import { renderDropdownItems } from "../../utils/render-dropdown-items";
 import {
@@ -56,6 +60,8 @@ import {
  * - Read-only mode that prevents interaction while showing current value
  * - Live region for screen reader selection and result count announcements
  * - Icon slot (`data-slot="icon"`) for CSS-injected icons
+ * - Custom portal root via `menuPortal` prop
+ * - Mobile viewport sync (repositions dropdown on iOS virtual keyboard changes)
  * - Full accessibility (WAI-ARIA Combobox with Listbox Popup pattern)
  * - CSS-based styling via data attributes
  *
@@ -66,8 +72,12 @@ import {
  * pattern). Input value is tracked locally for filtering and synced via
  * `onInputValueChange`.
  *
- * Dropdown is rendered inside a `FloatingPortal` and positioned via
- * `useFloatingSelect` (Floating UI) with flip, shift, and size middleware.
+ * Dropdown is rendered inside a `FloatingPortal` (portal root customizable via
+ * `menuPortal` prop) and positioned via `useFloatingSelect` (Floating UI) with
+ * flip, shift, and size middleware.
+ *
+ * `useFloatingViewportSync` keeps the dropdown positioned correctly when the
+ * mobile viewport shifts (e.g. iOS virtual keyboard appearing).
  *
  * Uses `data-ck` attributes for CSS-based styling. Forwards refs correctly for
  * DOM access.
@@ -130,6 +140,7 @@ import {
  * @param {boolean} [error=false] - Whether the combobox has an error (for async search or validation).
  * @param {ReactNode} [errorContent="An error occurred"] - Custom content displayed when an error occurs.
  * @param {number} [maxDropdownHeight] - Maximum height of the dropdown in pixels.
+ * @param {HTMLElement | null} [menuPortal] - Explicit portal root for the dropdown. Defaults to `document.body`.
  * @param {string} [name] - Form field name. When set, renders a hidden input for form submission.
  * @param {(open: boolean) => void} [onOpenChange] - Callback when dropdown opens or closes.
  * @param {boolean} [openOnFocus=true] - Whether to open dropdown when input receives focus.
@@ -366,6 +377,12 @@ interface ComboboxProps<T = string> extends Omit<
    */
   maxDropdownHeight?: number;
   /**
+   * Explicit portal root for the dropdown positioner.
+   * When provided, the menu is portaled into this element.
+   * If omitted, defaults to `document.body` in the browser.
+   */
+  menuPortal?: HTMLElement | null;
+  /**
    * Form field name. When set, renders a hidden `<input>` for native form submission.
    */
   name?: string;
@@ -452,6 +469,7 @@ function ComboboxInner<T = string>(
     loading = false,
     loadingContent = "Loading...",
     maxDropdownHeight,
+    menuPortal,
     name,
     onBlur,
     onFocus,
@@ -516,7 +534,13 @@ function ComboboxInner<T = string>(
       filterRenderItems(allRenderItems, allSelectableItems, (item) =>
         showAllItems ? true : effectiveFilter(item, currentInputValue),
       ),
-    [allRenderItems, allSelectableItems, effectiveFilter, currentInputValue, showAllItems],
+    [
+      allRenderItems,
+      allSelectableItems,
+      effectiveFilter,
+      currentInputValue,
+      showAllItems,
+    ],
   );
 
   // Find controlled/initial selected item
@@ -596,7 +620,9 @@ function ComboboxInner<T = string>(
         type === useCombobox.stateChangeTypes.InputClick &&
         openedByFocusRef.current
       ) {
-        queueMicrotask(() => { openedByFocusRef.current = false; });
+        queueMicrotask(() => {
+          openedByFocusRef.current = false;
+        });
         return { ...changes, isOpen: true };
       }
       return changes;
@@ -604,12 +630,26 @@ function ComboboxInner<T = string>(
   });
 
   // Use Floating UI for positioning
-  const { floatingProps, referenceProps } = useFloatingSelect({
+  const {
+    context: floatingContext,
+    floatingProps,
+    referenceProps,
+  } = useFloatingSelect({
     isOpen,
     maxDropdownHeight,
     placement,
+    strategy: "fixed",
   });
   const side = floatingProps.placement.split("-")[0];
+  const menuPortalRoot =
+    menuPortal ?? (typeof document !== "undefined" ? document.body : null);
+
+  useFloatingViewportSync(
+    isOpen,
+    floatingContext.update,
+    currentInputValue,
+    filteredRenderItems.length,
+  );
 
   // Delay data-state transition for CSS exit animations
   const contentRef = useRef<HTMLDivElement>(null);
@@ -764,7 +804,7 @@ function ComboboxInner<T = string>(
 
       {/* Dropdown content - Always rendered in portal so Downshift's getMenuProps
            ref is never unmounted (required for click-outside detection and SSR). */}
-      <FloatingPortal>
+      <FloatingPortal root={menuPortalRoot ?? undefined}>
         <div
           style={{
             ...floatingProps.style,
@@ -777,11 +817,17 @@ function ComboboxInner<T = string>(
           ref={floatingProps.ref}
         >
           <div
-            {...getMenuProps({ id: menuId, ref: menuRef }, { suppressRefError: true })}
+            {...getMenuProps(
+              { id: menuId, ref: menuRef },
+              { suppressRefError: true },
+            )}
             aria-labelledby={inputId}
             aria-orientation="vertical"
             data-ck="combobox-content"
-            data-empty={(!loading && !error && filteredRenderItems.length === 0) || undefined}
+            data-empty={
+              (!loading && !error && filteredRenderItems.length === 0) ||
+              undefined
+            }
             data-side={side}
             data-state={contentState}
           >
@@ -801,14 +847,22 @@ function ComboboxInner<T = string>(
 
                 {/* Error state */}
                 {!loading && error && (
-                  <div aria-live="assertive" data-ck="combobox-error" role="alert">
+                  <div
+                    aria-live="assertive"
+                    data-ck="combobox-error"
+                    role="alert"
+                  >
                     {errorContent}
                   </div>
                 )}
 
                 {/* Empty state */}
                 {!loading && !error && filteredRenderItems.length === 0 && (
-                  <div aria-live="polite" data-ck="combobox-empty" role="status">
+                  <div
+                    aria-live="polite"
+                    data-ck="combobox-empty"
+                    role="status"
+                  >
                     {emptyContent}
                   </div>
                 )}

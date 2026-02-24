@@ -50,6 +50,7 @@ import {
  * - CSS-based styling via data attributes
  * - Icon slot (`data-slot="icon"`) for CSS-injected chevron and close indicators
  * - Configurable dropdown placement via Floating UI
+ * - Custom portal root via `menuPortal` prop
  * - Clear all button via `clearable` prop
  * - Tag overflow with `maxDisplayedTags` prop
  * - Token separators for paste support
@@ -64,8 +65,9 @@ import {
  * - `selectedItem` is always `null` in useCombobox to prevent single-selection tracking
  * - Input is cleared after each selection
  * - Backspace navigates/removes tags via `useMultipleSelection`
- * - Dropdown is rendered inside a `FloatingPortal` and positioned via
- *   `useFloatingSelect` (Floating UI) with flip, shift, and size middleware
+ * - Dropdown is rendered inside a `FloatingPortal` (portal root customizable via
+ *   `menuPortal` prop) and positioned via `useFloatingSelect` (Floating UI) with
+ *   flip, shift, and size middleware
  * - Uses `data-ck` attributes for CSS-based styling
  * - Forwards refs correctly for DOM access
  *
@@ -126,6 +128,7 @@ import {
  * @param {T[]} [fixedValues] - Values that cannot be removed. Tags render without remove button.
  * @param {number} [maxDisplayedTags] - Maximum tags to display before showing "+N more".
  * @param {number} [maxDropdownHeight] - Maximum height of the dropdown in pixels.
+ * @param {HTMLElement | null} [menuPortal] - Explicit portal root for the dropdown. Defaults to `document.body`.
  * @param {string} [name] - Form field name. When set, renders hidden inputs for form submission.
  * @param {(event: React.FocusEvent) => void} [onBlur] - Callback when input loses focus.
  * @param {(event: React.FocusEvent) => void} [onFocus] - Callback when input receives focus.
@@ -299,6 +302,11 @@ interface MultiSelectProps<T = string> extends Omit<
    */
   maxSelected?: number;
   /**
+   * Explicit portal root for the dropdown positioner.
+   * When provided, the menu is portaled into this element.
+   */
+  menuPortal?: HTMLElement | null;
+  /**
    * Form field name. When set, renders hidden inputs for native form submission.
    */
   name?: string;
@@ -394,6 +402,7 @@ function MultiSelectInner<T = string>(
     maxDropdownHeight,
     maxReachedContent = "Maximum selections reached",
     maxSelected,
+    menuPortal,
     name,
     onBlur,
     onFocus,
@@ -643,17 +652,10 @@ function MultiSelectInner<T = string>(
 
   // Filter by text input (selected items remain visible in the dropdown)
   const { filteredRenderItems, filteredSelectableItems } = useMemo(() => {
-    return filterRenderItems(
-      allRenderItems,
-      allSelectableItems,
-      (item) => effectiveFilter(item, inputValue),
+    return filterRenderItems(allRenderItems, allSelectableItems, (item) =>
+      effectiveFilter(item, inputValue),
     );
-  }, [
-    allRenderItems,
-    allSelectableItems,
-    effectiveFilter,
-    inputValue,
-  ]);
+  }, [allRenderItems, allSelectableItems, effectiveFilter, inputValue]);
 
   // Announce result count when filtering
   const resultCountTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -662,9 +664,7 @@ function MultiSelectInner<T = string>(
     if (!inputValue) return undefined;
     const count = filteredSelectableItems.length;
     resultCountTimerRef.current = setTimeout(() => {
-      setAnnouncement(
-        `${count} result${count !== 1 ? "s" : ""} available`,
-      );
+      setAnnouncement(`${count} result${count !== 1 ? "s" : ""} available`);
     }, 300);
     return () => {
       if (resultCountTimerRef.current)
@@ -724,11 +724,7 @@ function MultiSelectInner<T = string>(
                 setSelectedItems(
                   selectedItems.filter(
                     (sel) =>
-                      !areValuesEqual(
-                        sel.value,
-                        newItem.value,
-                        getOptionValue,
-                      ),
+                      !areValuesEqual(sel.value, newItem.value, getOptionValue),
                   ),
                 );
               }
@@ -756,7 +752,9 @@ function MultiSelectInner<T = string>(
         type === useCombobox.stateChangeTypes.InputClick &&
         openedByFocusRef.current
       ) {
-        queueMicrotask(() => { openedByFocusRef.current = false; });
+        queueMicrotask(() => {
+          openedByFocusRef.current = false;
+        });
         return { ...changes, isOpen: true };
       }
       switch (type) {
@@ -781,6 +779,8 @@ function MultiSelectInner<T = string>(
     placement,
   });
   const side = floatingProps.placement.split("-")[0];
+  const menuPortalRoot =
+    menuPortal ?? (typeof document !== "undefined" ? document.body : null);
 
   // Delay unmount for CSS exit animations
   const contentRef = useRef<HTMLDivElement>(null);
@@ -1010,7 +1010,7 @@ function MultiSelectInner<T = string>(
 
       {/* Dropdown content - Always rendered in portal so Downshift's getMenuProps
            ref is never unmounted (required for click-outside detection and SSR). */}
-      <FloatingPortal>
+      <FloatingPortal root={menuPortalRoot ?? undefined}>
         <div
           style={{
             ...floatingProps.style,
@@ -1023,7 +1023,10 @@ function MultiSelectInner<T = string>(
           ref={floatingProps.ref}
         >
           <div
-            {...getMenuProps({ id: menuId, ref: menuRef }, { suppressRefError: true })}
+            {...getMenuProps(
+              { id: menuId, ref: menuRef },
+              { suppressRefError: true },
+            )}
             aria-labelledby={inputId}
             aria-multiselectable="true"
             aria-orientation="vertical"
