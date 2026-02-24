@@ -18,27 +18,33 @@ const instrumentSans = Instrument_Sans({
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
-const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('ck-dark-mode');var d=s!==null?s==='true':window.matchMedia('(prefers-color-scheme:dark)').matches;if(d){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()`;
+const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('ck-dark-mode');var d=s==='true';if(d){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()`;
 
 const DESCRIPTION =
   "Simplify your workflow with an AI-ready component bundle. Sync designer-led variants via CLI for full type-safety—accessible, props-driven, and ready to ship with zero complexity.";
+
+const OG_TITLE = "CSS ships instantly—no code, no redeploy, no maintenance.";
+const OG_DESCRIPTION =
+  "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
 
 export const metadata: Metadata = {
   description: DESCRIPTION,
   metadataBase: new URL("https://componentskit.com"),
   openGraph: {
-    description: DESCRIPTION,
+    description: OG_DESCRIPTION,
+    images: [{ height: 630, url: "/og-image.png", width: 1200 }],
     locale: "en_US",
     siteName: "ComponentsKit",
-    title: "ComponentsKit",
+    title: OG_TITLE,
     type: "website",
     url: "https://componentskit.com",
   },
   title: "ComponentsKit — pnpm add @components-kit/react",
   twitter: {
     card: "summary_large_image",
-    description: DESCRIPTION,
-    title: "ComponentsKit",
+    description: OG_DESCRIPTION,
+    images: ["/og-image.png"],
+    title: OG_TITLE,
   },
 };
 

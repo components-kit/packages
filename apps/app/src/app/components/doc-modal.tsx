@@ -91,7 +91,7 @@ export function DocModal({
             <div className="flex-1 overflow-y-auto overflow-x-hidden">
               <div className="mx-auto max-w-3xl px-4 sm:px-6">
                 {/* Interactive preview */}
-                <div className="flex items-center justify-center rounded-2xl bg-neutral-0 px-4 py-6 sm:px-6 sm:py-10 mt-2 mb-8">
+                <div className="flex items-center justify-center rounded-2xl bg-neutral-100 px-4 py-6 sm:px-6 sm:py-10 mt-2 mb-8">
                   {preview}
                 </div>
 

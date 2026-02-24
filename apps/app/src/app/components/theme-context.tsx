@@ -20,13 +20,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [darkMode, setDarkMode] = useState(false);
   const hydrated = useRef(false);
 
-  /* Sync initial state from localStorage / system preference (client only) */
+  /* Sync initial state from localStorage (default: light mode) */
   useEffect(() => {
     const stored = localStorage.getItem("ck-dark-mode");
-    const initial =
-      stored !== null
-        ? stored === "true"
-        : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initial = stored === "true";
     setDarkMode(initial);
     hydrated.current = true;
   }, []);
