@@ -1,5 +1,4 @@
 {
-  "buildCommand": "pnpm run frontend:build",
-  "outputDirectory": "apps/app/.next",
-  "framework": "nextjs"
+  "buildCommand": "pnpm frontend:build",
+  "outputDirectory": "apps/app/.next"
 }
