@@ -3,6 +3,7 @@ export * from "./badge";
 export * from "./button";
 export * from "./checkbox";
 export * from "./combobox";
+export * from "./dialog";
 export * from "./heading";
 export * from "./icon";
 export * from "./input";
