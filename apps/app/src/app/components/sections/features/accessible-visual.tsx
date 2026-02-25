@@ -53,7 +53,7 @@ export function AccessibleVisual() {
   }, []);
 
   return (
-    <div className="relative h-104 sm:h-96 rounded-xl overflow-hidden">
+    <div className="relative h-104 sm:h-96 rounded-xl overflow-hidden will-change-transform">
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
