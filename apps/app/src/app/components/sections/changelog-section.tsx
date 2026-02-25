@@ -33,7 +33,12 @@ function renderMarkdown(body: string) {
   );
 }
 
+const MAX_RELEASES = 3;
+const RELEASES_URL = "https://github.com/components-kit/packages/releases";
+
 export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
+  const visible = releases.slice(0, MAX_RELEASES);
+
   return (
     <section id="changelog" className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
       <h2 className="text-2xl sm:text-3xl font-medium">What&apos;s New</h2>
@@ -42,7 +47,7 @@ export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
         Follow along on{" "}
         <a
           className="underline hover:text-ink"
-          href="https://github.com/components-kit/packages/releases"
+          href={RELEASES_URL}
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -52,7 +57,7 @@ export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
       </p>
 
       <div className="mt-8 space-y-10 sm:space-y-16">
-        {releases.map((release) => (
+        {visible.map((release) => (
           <article
             key={release.tag_name}
             className="grid gap-x-8 sm:gap-x-16 gap-y-4 sm:grid-cols-[180px_1fr]"
@@ -81,6 +86,19 @@ export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
           <p className="text-sm text-neutral-500">No releases found.</p>
         )}
       </div>
+
+      {releases.length > MAX_RELEASES && (
+        <div className="mt-10 sm:mt-16 text-center">
+          <a
+            className="text-sm text-neutral-500 hover:text-ink underline"
+            href={RELEASES_URL}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            View all releases on GitHub &rarr;
+          </a>
+        </div>
+      )}
     </section>
   );
 }
