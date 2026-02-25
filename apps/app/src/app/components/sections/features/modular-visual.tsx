@@ -11,7 +11,7 @@ const PEERS = [
 
 export function ModularVisual() {
   return (
-    <div className="relative h-64 sm:h-96 rounded-xl overflow-hidden">
+    <div className="relative h-64 sm:h-96 rounded-xl overflow-hidden will-change-transform">
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[

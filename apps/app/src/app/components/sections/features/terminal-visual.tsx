@@ -58,7 +58,7 @@ export async function TerminalVisual() {
 
       {/* Front editor — Props-based style (main focus) */}
       <EditorPanel
-        className="absolute top-20 left-20 sm:top-28 sm:left-36 -right-4 -bottom-8 sm:-right-6 sm:-bottom-12 flex flex-col rounded-tl-lg overflow-hidden border border-neutral-200 shadow-2xl"
+        className="absolute top-20 left-14 sm:top-28 sm:left-36 -right-4 -bottom-8 sm:-right-6 sm:-bottom-12 flex flex-col rounded-tl-lg overflow-hidden border border-neutral-200 shadow-2xl"
         style={{ backgroundColor: "oklch(97.5% 0.003 70)" }}
         darkStyle={{ backgroundColor: "#1e1e1e" }}
         filename="props-driven.tsx"
