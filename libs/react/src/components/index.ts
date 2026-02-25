@@ -8,6 +8,7 @@ export * from "./icon";
 export * from "./input";
 export * from "./multi-select";
 export * from "./pagination";
+export * from "./popover";
 export * from "./progress";
 export * from "./radio-group";
 export * from "./select";
