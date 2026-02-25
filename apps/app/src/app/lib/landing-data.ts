@@ -1,43 +1,13 @@
-import { marked } from "marked";
-import { unstable_cache } from "next/cache";
-import fs from "node:fs/promises";
-import path from "node:path";
-
 import type { GitHubRelease } from "@/app/types/landing";
 import type { ComponentDocs } from "@/app/types/showcase";
 
-import { COMPONENT_IDS } from "@/app/constants/components";
+// Generated at build time by scripts/generate-component-docs.mjs.
+// This avoids runtime fs reads that fail in Vercel's serverless environment.
+import componentDocsData from "@/app/generated/component-docs.json";
 
-const COMPONENTS_DIR = path.resolve(
-  process.cwd(),
-  "../../libs/react/src/components",
-);
-
-// Wrapped in unstable_cache so docs are read from disk at build time and
-// persisted across ISR revalidations (the source files don't exist in the
-// Vercel serverless runtime).
-export const getComponentDocs = unstable_cache(
-  async (): Promise<ComponentDocs> => {
-    const entries = await Promise.all(
-      COMPONENT_IDS.map(async (id) => {
-        try {
-          const raw = await fs.readFile(
-            path.join(COMPONENTS_DIR, id, "README.md"),
-            "utf-8",
-          );
-          const tokens = [...marked.lexer(raw)];
-          return [id, tokens] as const;
-        } catch {
-          return [id, []] as const;
-        }
-      }),
-    );
-
-    return Object.fromEntries(entries);
-  },
-  ["component-docs"],
-  { revalidate: false },
-);
+export function getComponentDocs(): ComponentDocs {
+  return componentDocsData as ComponentDocs;
+}
 
 export async function getReleases(): Promise<GitHubRelease[]> {
   const res = await fetch(

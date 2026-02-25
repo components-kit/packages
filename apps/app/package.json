@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "cp ../../llms.txt ../../llms-full.txt public/",
+    "prebuild": "cp ../../llms.txt ../../llms-full.txt public/ && node scripts/generate-component-docs.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
