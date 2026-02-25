@@ -1,5 +1,3 @@
-"use client";
-
 import type { Token, Tokens } from "marked";
 import type { ReactNode } from "react";
 

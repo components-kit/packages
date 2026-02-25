@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-
 import type { ComponentDocs } from "@/app/types/showcase";
 
-import { buildBundleUrl } from "@/app/utils/build-bundle-url";
+import { useBundleSync } from "@/app/hooks/use-bundle-sync";
 
 import { ComponentShowcase } from "./showcase/component-showcase";
-import { useTheme } from "./theme-context";
 import { ThemeControls } from "./theme-controls";
 
 /* ── Component ── */
@@ -17,48 +14,7 @@ export function ThemeConfigurator({
 }: {
   componentDocs: ComponentDocs;
 }) {
-  const { borderRadius, darkMode, grayScale, primaryColor } = useTheme();
-
-  const url = useMemo(
-    () => buildBundleUrl(primaryColor, grayScale, borderRadius),
-    [primaryColor, grayScale, borderRadius],
-  );
-
-  /* Swap the bundle <link> href when theme changes (preload-then-swap) */
-  useEffect(() => {
-    const oldLink = document.getElementById(
-      "ck-bundle",
-    ) as HTMLLinkElement | null;
-    if (!oldLink || oldLink.href === url) return undefined;
-
-    const newLink = document.createElement("link");
-    newLink.rel = "stylesheet";
-    newLink.href = url;
-
-    newLink.onload = () => {
-      oldLink.remove();
-      newLink.id = "ck-bundle";
-    };
-
-    newLink.onerror = () => {
-      newLink.remove();
-    };
-
-    document.head.appendChild(newLink);
-
-    return () => {
-      if (!newLink.id && newLink.parentNode) {
-        newLink.remove();
-      }
-    };
-  }, [url]);
-
-  /* Dark mode class toggle (for globals.css dark overrides) */
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle("dark", darkMode);
-    root.setAttribute("data-theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
+  useBundleSync();
 
   return (
     <section id="showcase" className="mx-auto max-w-7xl px-4 sm:px-6 py-16">

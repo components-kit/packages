@@ -5,10 +5,12 @@ import type { Token } from "marked";
 import { FloatingPortal } from "@floating-ui/react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 
+import { Button } from "./ui/button";
 import { MarkdownRenderer } from "./ui/markdown-renderer";
 
 interface DocModalProps {
   children: ReactNode;
+  componentId: string;
   preview: ReactNode;
   title: string;
   tokens: Token[];
@@ -16,6 +18,7 @@ interface DocModalProps {
 
 export function DocModal({
   children,
+  componentId,
   preview,
   title,
   tokens,
@@ -68,7 +71,12 @@ export function DocModal({
           >
             {/* Header */}
             <div className="flex h-16 shrink-0 items-center justify-between px-4 sm:px-6">
-              <h2 className="text-lg font-semibold text-ink">{title}</h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold text-ink">{title}</h2>
+                <Button href={`/docs/${componentId}`} variant="outline">
+                  Full docs &rarr;
+                </Button>
+              </div>
               <button
                 className="rounded-md p-1 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-ink"
                 aria-label="Close"
