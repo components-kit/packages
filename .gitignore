@@ -49,3 +49,6 @@ coverage/
 # LLM docs copied into landing page public/ during build
 apps/app/public/llms.txt
 apps/app/public/llms-full.txt
+
+# Generated component docs (built from README files before next build)
+apps/app/src/app/generated/

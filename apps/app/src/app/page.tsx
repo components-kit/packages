@@ -10,10 +10,8 @@ import { getComponentDocs, getReleases } from "@/app/lib/landing-data";
 
 /* ── Page ── */
 export default async function Home() {
-  const [componentDocs, releases] = await Promise.all([
-    getComponentDocs(),
-    getReleases(),
-  ]);
+  const componentDocs = getComponentDocs();
+  const releases = await getReleases();
 
   return (
     <>
