@@ -1,40 +1,10 @@
-import { marked } from "marked";
-
 import type { GitHubRelease } from "@/app/types/landing";
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function renderMarkdown(body: string) {
-  const cleaned = body
-    .split("\n")
-    .filter((line) => {
-      const t = line.trim();
-      return (
-        t !== "---" &&
-        !t.startsWith("**Full Changelog**") &&
-        !t.startsWith("**npm:**")
-      );
-    })
-    .join("\n");
-
-  const html = marked.parse(cleaned, { async: false }) as string;
-
-  return (
-    <div
-      className="changelog-prose"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
-}
+import { ReleaseList } from "./release-list";
 
 const MAX_RELEASES = 3;
-const RELEASES_URL = "https://github.com/components-kit/packages/releases";
+const GITHUB_RELEASES_URL =
+  "https://github.com/components-kit/packages/releases";
 
 export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
   const visible = releases.slice(0, MAX_RELEASES);
@@ -44,58 +14,29 @@ export function ChangelogSection({ releases }: { releases: GitHubRelease[] }) {
       <h2 className="text-2xl sm:text-3xl font-medium">What&apos;s New</h2>
       <p className="mt-2 max-w-lg text-neutral-600">
         New components, API improvements, and bug fixes — shipped regularly.
-        Follow along on{" "}
+        Follow along on the{" "}
         <a
           className="underline hover:text-ink"
-          href={RELEASES_URL}
-          rel="noopener noreferrer"
+          href={GITHUB_RELEASES_URL}
+          rel="noopener"
           target="_blank"
         >
-          GitHub Releases
+          full changelog
         </a>
         .
       </p>
 
-      <div className="mt-8 space-y-10 sm:space-y-16">
-        {visible.map((release) => (
-          <article
-            key={release.tag_name}
-            className="grid gap-x-8 sm:gap-x-16 gap-y-4 sm:grid-cols-[180px_1fr]"
-          >
-            <div className="sm:sticky sm:top-20 sm:self-start">
-              <a
-                className="text-lg font-semibold text-ink hover:underline"
-                href={release.html_url}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                {release.tag_name}
-              </a>
-              <time
-                className="mt-1 block text-sm text-neutral-600"
-                dateTime={release.published_at}
-              >
-                {formatDate(release.published_at)}
-              </time>
-            </div>
-            <div>{renderMarkdown(release.body)}</div>
-          </article>
-        ))}
-
-        {releases.length === 0 && (
-          <p className="text-sm text-neutral-500">No releases found.</p>
-        )}
-      </div>
+      <ReleaseList releases={visible} />
 
       {releases.length > MAX_RELEASES && (
         <div className="mt-10 sm:mt-16 text-center">
           <a
             className="text-sm text-neutral-500 hover:text-ink underline"
-            href={RELEASES_URL}
-            rel="noopener noreferrer"
+            href={GITHUB_RELEASES_URL}
+            rel="noopener"
             target="_blank"
           >
-            View all releases on GitHub &rarr;
+            View full changelog &rarr;
           </a>
         </div>
       )}

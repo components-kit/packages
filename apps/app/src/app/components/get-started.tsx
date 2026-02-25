@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { codeToHtml } from "shiki/bundle/web";
+import { useMemo } from "react";
 
 import { buildBundleUrl } from "@/app/utils/build-bundle-url";
 
@@ -103,20 +102,23 @@ interface Step {
   code: string;
   description: string;
   label: string;
-  lang: string;
   lineNumbers: boolean;
+  preRenderedHtml?: string;
   title: string;
 }
 
-function buildSteps(bundleUrl: string): Step[] {
+function buildSteps(
+  bundleUrl: string,
+  preRenderedHtml: Record<string, string>,
+): Step[] {
   return [
     {
-      code: STEP_1_CODE, // Suggestion: npm install @your-lib/core && npm install -D @your-lib/cli
+      code: STEP_1_CODE,
       description:
         "Install the core package along with the CLI as a dev dependency. React is the only required peer—advanced components like TanStack Table are opt-in.",
       label: "Terminal",
-      lang: "bash",
       lineNumbers: false,
+      preRenderedHtml: preRenderedHtml.step1,
       title: "Install the dependencies",
     },
     {
@@ -124,17 +126,16 @@ function buildSteps(bundleUrl: string): Step[] {
       description:
         "Connect the edge-cached CSS bundle. Use query params to customize your theme—like primaryColor or borderRadius—without touching a single CSS file.",
       label: "layout.tsx",
-      lang: "html",
       lineNumbers: true,
       title: "Connect the styles",
     },
     {
-      code: STEP_3_CODE, // Suggestion: npx your-lib init && npx your-lib generate
+      code: STEP_3_CODE,
       description:
         "Initialize your config file and run the generator. This creates a local schema that syncs your design tokens with TypeScript for full autocomplete.",
       label: "Terminal",
-      lang: "bash",
       lineNumbers: false,
+      preRenderedHtml: preRenderedHtml.step3,
       title: "Initialize & Generate",
     },
     {
@@ -142,8 +143,8 @@ function buildSteps(bundleUrl: string): Step[] {
       description:
         "Import your components and pass props with confidence. Every variant name is strictly typed and validated against your config at build time.",
       label: "page.tsx",
-      lang: "tsx",
       lineNumbers: true,
+      preRenderedHtml: preRenderedHtml.step4,
       title: "Ship type-safe code",
     },
   ];
@@ -151,54 +152,50 @@ function buildSteps(bundleUrl: string): Step[] {
 
 /* ── Highlighted code block ── */
 
-function ShikiCode({
+function CodeBlock({
   code,
   label,
-  lang,
   lineNumbers,
+  preRenderedHtml,
 }: {
   code: string;
   label: string;
-  lang: string;
   lineNumbers: boolean;
+  preRenderedHtml?: string;
 }) {
-  const [html, setHtml] = useState("");
-
-  useEffect(() => {
-    let cancelled = false;
-    codeToHtml(code, {
-      defaultColor: false,
-      lang,
-      themes: { dark: "github-dark-dimmed", light: "github-light" },
-    }).then((result) => {
-      if (!cancelled) setHtml(result);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [code, lang]);
-
   return (
     <div className="overflow-hidden rounded-lg border bg-neutral-100">
       <div className="flex items-center justify-between border-b bg-neutral-200 px-4 py-2">
         <span className="select-none text-xs text-neutral-600">{label}</span>
         <CopyIconButton text={code} />
       </div>
-      <div
-        className={`overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono${
-          lineNumbers
-            ? " [&_.line]:before:mr-6 [&_.line]:before:inline-block [&_.line]:before:w-4 [&_.line]:before:text-right [&_.line]:before:text-neutral-400 [&_.line]:before:content-[counter(line)] [&_.line]:before:[counter-increment:line] [&_code]:[counter-reset:line]"
-            : ""
-        }`}
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      {preRenderedHtml ? (
+        <div
+          className={`overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono${
+            lineNumbers
+              ? " [&_.line]:before:mr-6 [&_.line]:before:inline-block [&_.line]:before:w-4 [&_.line]:before:text-right [&_.line]:before:text-neutral-400 [&_.line]:before:content-[counter(line)] [&_.line]:before:[counter-increment:line] [&_code]:[counter-reset:line]"
+              : ""
+          }`}
+          dangerouslySetInnerHTML={{ __html: preRenderedHtml }}
+        />
+      ) : (
+        <div className="overflow-x-auto p-4">
+          <pre className="bg-transparent text-sm leading-relaxed">
+            <code className="font-mono text-neutral-700">{code}</code>
+          </pre>
+        </div>
+      )}
     </div>
   );
 }
 
 /* ── Section ── */
 
-export function GetStarted() {
+export interface GetStartedProps {
+  preRenderedHtml: Record<string, string>;
+}
+
+export function GetStarted({ preRenderedHtml }: GetStartedProps) {
   const { borderRadius, grayScale, primaryColor } = useTheme();
 
   const bundleUrl = useMemo(
@@ -206,7 +203,10 @@ export function GetStarted() {
     [primaryColor, grayScale, borderRadius],
   );
 
-  const steps = useMemo(() => buildSteps(bundleUrl), [bundleUrl]);
+  const steps = useMemo(
+    () => buildSteps(bundleUrl, preRenderedHtml),
+    [bundleUrl, preRenderedHtml],
+  );
   const agentPrompt = useMemo(
     () =>
       buildAgentPrompt(bundleUrl, { borderRadius, grayScale, primaryColor }),
@@ -253,11 +253,11 @@ export function GetStarted() {
                   </div>
                 )}
                 <div className="mt-4">
-                  <ShikiCode
+                  <CodeBlock
                     code={step.code}
                     label={step.label}
-                    lang={step.lang}
                     lineNumbers={step.lineNumbers}
+                    preRenderedHtml={step.preRenderedHtml}
                   />
                 </div>
               </div>

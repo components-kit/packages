@@ -23,11 +23,35 @@ const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('ck-dark-m
 const DESCRIPTION =
   "Simplify your workflow with an AI-ready component bundle. Sync designer-led variants via CLI for full type-safety—accessible, props-driven, and ready to ship with zero complexity.";
 
-const OG_TITLE = "CSS ships instantly—no code, no redeploy, no maintenance.";
+const OG_TITLE = "ComponentsKit — Accessible React Components, Zero Complexity";
 const OG_DESCRIPTION =
   "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
 
+const JSON_LD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    logo: "https://componentskit.com/logo-symbol.svg",
+    name: "ComponentsKit",
+    sameAs: [
+      "https://github.com/components-kit/packages",
+      "https://x.com/componentskit",
+    ],
+    url: "https://componentskit.com",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    applicationCategory: "DeveloperApplication",
+    description: DESCRIPTION,
+    name: "ComponentsKit",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    operatingSystem: "Any",
+  },
+];
+
 export const metadata: Metadata = {
+  alternates: { canonical: "https://componentskit.com" },
   description: DESCRIPTION,
   metadataBase: new URL("https://componentskit.com"),
   openGraph: {
@@ -39,7 +63,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://componentskit.com",
   },
-  title: "ComponentsKit — pnpm add @components-kit/react",
+  title: "ComponentsKit — Accessible React Components, Zero Complexity",
   twitter: {
     card: "summary_large_image",
     description: OG_DESCRIPTION,
@@ -56,8 +80,14 @@ export default function RootLayout({
   return (
     <html className={instrumentSans.variable} lang="en">
       <head>
+        <link href="/logo-symbol.svg" rel="icon" type="image/svg+xml" />
+        <link as="style" href={DEFAULT_BUNDLE_HREF} rel="preload" />
         <link id="ck-bundle" href={DEFAULT_BUNDLE_HREF} rel="stylesheet" />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+          type="application/ld+json"
+        />
       </head>
       <body>
         {children}

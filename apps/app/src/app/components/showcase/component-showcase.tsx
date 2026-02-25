@@ -17,9 +17,7 @@ export function ComponentShowcase({ componentDocs }: ComponentShowcaseProps) {
         const card = (
           <div className="min-w-0 flex flex-col rounded-lg bg-neutral-200/60 overflow-hidden transition-colors hover:bg-neutral-200 group">
             <div className="p-1.5 pb-0 sm:p-2 sm:pb-0">
-              <div
-                className="flex h-36 sm:h-44 items-center justify-center p-4 sm:p-6 rounded-md bg-neutral-0 overflow-hidden **:pointer-events-none"
-              >
+              <div className="flex h-36 sm:h-44 items-center justify-center p-4 sm:p-6 rounded-md bg-neutral-0 overflow-hidden **:pointer-events-none">
                 {demo.preview}
               </div>
             </div>
@@ -35,6 +33,7 @@ export function ComponentShowcase({ componentDocs }: ComponentShowcaseProps) {
         return (
           <DocModal
             key={demo.id}
+            componentId={demo.id}
             preview={demo.fullPreview}
             title={demo.name}
             tokens={componentDocs[demo.id] ?? []}
