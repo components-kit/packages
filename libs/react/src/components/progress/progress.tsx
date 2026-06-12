@@ -1,5 +1,7 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   CSSProperties,
   forwardRef,
@@ -7,8 +9,6 @@ import {
   ReactNode,
   useId,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 /**
  * A linear progress bar component for displaying completion status.

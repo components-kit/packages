@@ -1,6 +1,6 @@
-import { Switch } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Switch } from "@components-kit/react";
 
 function SwitchPreview() {
   return (

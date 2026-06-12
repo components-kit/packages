@@ -1,6 +1,6 @@
-import { Text } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Text } from "@components-kit/react";
 
 function TextPreview() {
   return (

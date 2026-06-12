@@ -1,8 +1,8 @@
 "use client";
 
-import React, { forwardRef, ReactNode, useId } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import React, { forwardRef, ReactNode, useId } from "react";
 
 import { useTabs } from "./use-tabs";
 

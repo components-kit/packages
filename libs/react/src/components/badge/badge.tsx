@@ -1,8 +1,8 @@
 "use client";
 
-import { forwardRef, HTMLAttributes, ReactNode } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { forwardRef, HTMLAttributes, ReactNode } from "react";
 
 import { Slot } from "../slot/slot";
 

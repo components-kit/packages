@@ -20,6 +20,7 @@ yarn-error.log*
 # IDE settings
 .vscode/
 .idea/
+.claude/
 
 # System files
 .DS_Store

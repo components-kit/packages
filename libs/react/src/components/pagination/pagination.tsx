@@ -1,8 +1,8 @@
 "use client";
 
-import React, { forwardRef, useId } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import React, { forwardRef, useId } from "react";
 
 import { type PageItem, usePagination } from "./use-pagination";
 

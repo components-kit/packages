@@ -53,23 +53,23 @@ export async function TypeGenVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(36% 0.04 250 / 0.4)", position: "-top-16 -right-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(38% 0.025 258 / 0.5)", position: "bottom-1/3 -left-12", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(36% 0.035 244 / 0.3)", position: "-bottom-16 right-1/3", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(46% 0.105 255 / 0.34)", position: "-top-16 -right-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(44% 0.09 245 / 0.3)", position: "bottom-1/3 -left-12", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(47% 0.085 265 / 0.24)", position: "-bottom-16 right-1/3", size: "h-56 w-56" },
         ]}
-        darkGradient="linear-gradient(200deg, oklch(39% 0.015 258) 0%, oklch(37% 0.028 252) 50%, oklch(35% 0.035 246) 100%)"
+        darkGradient="linear-gradient(200deg, oklch(22% 0.018 255) 0%, oklch(18% 0.018 245) 52%, oklch(15.5% 0.016 265) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(87% 0.035 250 / 0.4)", position: "-top-16 -right-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(92% 0.018 258 / 0.5)", position: "bottom-1/3 -left-12", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(85% 0.028 244 / 0.3)", position: "-bottom-16 right-1/3", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(82% 0.13 255 / 0.44)", position: "-top-16 -right-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(84% 0.105 245 / 0.32)", position: "bottom-1/3 -left-12", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(81% 0.105 265 / 0.26)", position: "-bottom-16 right-1/3", size: "h-56 w-56" },
         ]}
-        gradient="linear-gradient(200deg, oklch(93% 0.012 258) 0%, oklch(88.5% 0.022 252) 50%, oklch(84% 0.03 246) 100%)"
+        gradient="linear-gradient(200deg, oklch(95.5% 0.026 255) 0%, oklch(92% 0.034 245) 52%, oklch(89.5% 0.032 265) 100%)"
       />
 
       {/* Back editor — Terminal output */}
       <EditorPanel
         className="absolute top-6 left-6 sm:top-10 sm:left-10 -right-8 -bottom-8 sm:-right-12 sm:-bottom-12 flex flex-col rounded-tl-lg overflow-hidden border border-neutral-200 shadow-xl"
-        style={{ backgroundColor: "oklch(97.5% 0.003 70)" }}
+        style={{ backgroundColor: "oklch(98% 0 0)" }}
         darkStyle={{ backgroundColor: "#1e1e1e" }}
         filename="terminal"
         html={terminalHtml}
@@ -79,7 +79,7 @@ export async function TypeGenVisual() {
       {/* Front editor — Generated types */}
       <EditorPanel
         className="absolute top-32 left-20 sm:top-48 sm:left-36 -right-4 -bottom-8 sm:-right-6 sm:-bottom-12 flex flex-col rounded-tl-lg overflow-hidden border border-neutral-200 shadow-2xl"
-        style={{ backgroundColor: "oklch(97.5% 0.003 70)" }}
+        style={{ backgroundColor: "oklch(98% 0 0)" }}
         darkStyle={{ backgroundColor: "#1e1e1e" }}
         filename="components-kit.d.ts"
         html={typesHtml}

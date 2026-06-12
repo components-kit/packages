@@ -1,6 +1,6 @@
-import { Table } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Table } from "@components-kit/react";
 
 import { columns, users } from "./shared-data";
 

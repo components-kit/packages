@@ -59,7 +59,7 @@
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@floating-ui/react": "^0.26.0",
+    "@floating-ui/react": "^0.26.0 || ^0.27.0",
     "@tanstack/react-table": "^8.0.0",
     "downshift": "^9.0.0",
     "react": "^18.0.0 || ^19.0.0",
@@ -86,16 +86,15 @@
       "optional": true
     }
   },
-  "dependencies": {},
   "devDependencies": {
-    "@floating-ui/react": "^0.26.0",
-    "@tanstack/react-table": "^8.0.0",
-    "@types/react": "^18.0.28 || ^19.0.0",
-    "@types/react-dom": "^18.0.11 || ^19.0.0",
-    "downshift": "^9.0.0",
-    "sonner": "^1.0.0 || ^2.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.4.0"
+    "@floating-ui/react": "^0.27.19",
+    "@tanstack/react-table": "^8.21.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "downshift": "^9.3.6",
+    "sonner": "^2.0.7",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=16.0.0",

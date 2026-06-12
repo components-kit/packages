@@ -1,8 +1,8 @@
 "use client";
 
-import { forwardRef, HTMLAttributes, InputHTMLAttributes } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { forwardRef, HTMLAttributes, InputHTMLAttributes } from "react";
 
 /**
  * A container component for grouping radio buttons.

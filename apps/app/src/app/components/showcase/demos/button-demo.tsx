@@ -1,6 +1,6 @@
-import { Button } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Button } from "@components-kit/react";
 
 import { SearchIcon } from "./shared-data";
 

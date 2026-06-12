@@ -1,5 +1,7 @@
 "use client";
 
+import type { ThemeState } from "@/app/types/theme";
+
 import {
   createContext,
   type ReactNode,
@@ -9,13 +11,11 @@ import {
   useState,
 } from "react";
 
-import type { ThemeState } from "@/app/types/theme";
-
 const ThemeContext = createContext<ThemeState | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [primaryColor, setPrimaryColor] = useState("blue");
-  const [grayScale, setGrayScale] = useState("slate");
+  const [grayScale, setGrayScale] = useState("neutral");
   const [borderRadius, setBorderRadius] = useState("8px");
   const [darkMode, setDarkMode] = useState(false);
   const hydrated = useRef(false);

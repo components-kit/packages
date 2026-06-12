@@ -1,5 +1,7 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   Cell,
   ColumnDef,
@@ -26,8 +28,6 @@ import {
   useId,
   useState,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 /**
  * A fully-featured data table component powered by TanStack Table.

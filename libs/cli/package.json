@@ -52,12 +52,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "commander": "^13.0.0"
+    "commander": "^15.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.0.0",
-    "tsup": "^8.0.0",
-    "typescript": "^5.8.3"
+    "@types/node": "^25.9.3",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=18.0.0"

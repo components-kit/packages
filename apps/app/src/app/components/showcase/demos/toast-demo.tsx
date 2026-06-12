@@ -1,6 +1,6 @@
-import { Button, toast } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Button, toast } from "@components-kit/react";
 
 function ToastPreview() {
   return (

@@ -1,8 +1,8 @@
 "use client";
 
-import { ElementType, ReactNode, Ref } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { ElementType, ReactNode, Ref } from "react";
 
 import {
   createPolymorphicComponent,

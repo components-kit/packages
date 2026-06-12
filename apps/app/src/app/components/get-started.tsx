@@ -164,14 +164,25 @@ function CodeBlock({
   preRenderedHtml?: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border bg-neutral-100">
-      <div className="flex items-center justify-between border-b bg-neutral-200 px-4 py-2">
-        <span className="select-none text-xs text-neutral-600">{label}</span>
+    <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white dark:bg-neutral-100">
+      <div className="flex items-center justify-between gap-3 border-b border-neutral-200 bg-neutral-50 px-4 py-2.5 dark:bg-neutral-200">
+        <div className="flex min-w-0 items-center gap-2">
+          {label === "Terminal" && (
+            <span className="flex items-center gap-1.5" aria-hidden="true">
+              <span className="size-2 rounded-full bg-blue-300/80" />
+              <span className="size-2 rounded-full bg-neutral-300" />
+              <span className="size-2 rounded-full bg-neutral-300 dark:bg-neutral-500" />
+            </span>
+          )}
+          <span className="select-none truncate text-xs font-medium text-neutral-600">
+            {label}
+          </span>
+        </div>
         <CopyIconButton text={code} />
       </div>
       {preRenderedHtml ? (
         <div
-          className={`overflow-x-auto [&_pre]:bg-transparent [&_pre]:p-4 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono${
+          className={`overflow-x-auto bg-white text-ink dark:bg-neutral-100 [&_pre]:bg-transparent [&_pre]:p-4 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono${
             lineNumbers
               ? " [&_.line]:before:mr-6 [&_.line]:before:inline-block [&_.line]:before:w-4 [&_.line]:before:text-right [&_.line]:before:text-neutral-400 [&_.line]:before:content-[counter(line)] [&_.line]:before:[counter-increment:line] [&_code]:[counter-reset:line]"
               : ""
@@ -179,9 +190,9 @@ function CodeBlock({
           dangerouslySetInnerHTML={{ __html: preRenderedHtml }}
         />
       ) : (
-        <div className="overflow-x-auto p-4">
+        <div className="overflow-x-auto bg-white p-4 dark:bg-neutral-100">
           <pre className="bg-transparent text-sm leading-relaxed">
-            <code className="font-mono text-neutral-700">{code}</code>
+            <code className="font-mono text-ink">{code}</code>
           </pre>
         </div>
       )}

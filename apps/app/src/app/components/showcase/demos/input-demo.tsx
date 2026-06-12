@@ -1,6 +1,6 @@
-import { Input } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Input } from "@components-kit/react";
 
 function InputPreview() {
   return (

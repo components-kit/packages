@@ -1,9 +1,9 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import { ReactNode } from "react";
 import { ExternalToast, toast as sonnerToast } from "sonner";
-
-import type { VariantFor } from "../../types/register";
 
 import { Button, ButtonProps } from "../button/button";
 

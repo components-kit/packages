@@ -1,6 +1,6 @@
-import { Pagination } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Pagination } from "@components-kit/react";
 
 function PaginationPreview() {
   return (

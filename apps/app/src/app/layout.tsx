@@ -8,7 +8,7 @@ import { Toaster } from "sonner";
 
 import { CK_BUNDLE_URL } from "./lib/api";
 
-const DEFAULT_BUNDLE_HREF = `${CK_BUNDLE_URL}?borderRadius=8&grayScale=slate&primaryColor=blue`;
+const DEFAULT_BUNDLE_HREF = `${CK_BUNDLE_URL}?borderRadius=8&grayScale=neutral&primaryColor=blue`;
 
 const instrumentSans = Instrument_Sans({
   display: "swap",

@@ -68,7 +68,16 @@ const eslintConfig = defineConfig([
     },
   },
   // React Hooks
-  reactHooks.configs["recommended-latest"],
+  {
+    plugins: {
+      "react-hooks": reactHooks,
+    },
+    rules: {
+      ...reactHooks.configs["recommended-latest"].rules,
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
   // TypeScript
   tseslint.configs.recommended,
   tseslint.config({
@@ -104,12 +113,11 @@ const eslintConfig = defineConfig([
             "side-effect",
             "side-effect-style",
             "type",
-            ["builtin", "external"],
-            "internal-type",
-            "internal",
-            ["parent-type", "sibling-type", "index-type"],
-            ["parent", "sibling", "index"],
-            "object",
+            ["value-builtin", "value-external"],
+            "type-internal",
+            "value-internal",
+            ["type-parent", "type-sibling", "type-index"],
+            ["value-parent", "value-sibling", "value-index"],
             "unknown",
           ],
         },
@@ -124,14 +132,14 @@ const eslintConfig = defineConfig([
       "perfectionist/sort-jsx-props": [
         "error",
         {
-          customGroups: {
-            callback: "^on.+",
-            classname: "^className$",
-            id: "^id$",
-            key: "^key$",
-            ref: "^ref$",
-            style: "^style$",
-          },
+          customGroups: [
+            { elementNamePattern: "^key$", groupName: "key" },
+            { elementNamePattern: "^id$", groupName: "id" },
+            { elementNamePattern: "^className$", groupName: "classname" },
+            { elementNamePattern: "^style$", groupName: "style" },
+            { elementNamePattern: "^on.+", groupName: "callback" },
+            { elementNamePattern: "^ref$", groupName: "ref" },
+          ],
           groups: [
             "key",
             "id",

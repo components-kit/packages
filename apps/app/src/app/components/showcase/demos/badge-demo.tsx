@@ -1,6 +1,6 @@
-import { Badge } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Badge } from "@components-kit/react";
 
 function BadgePreview() {
   return (

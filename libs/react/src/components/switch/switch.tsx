@@ -1,8 +1,8 @@
 "use client";
 
-import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { ChangeEvent, forwardRef, InputHTMLAttributes, useState } from "react";
 
 /**
  * A toggle switch component for binary on/off choices.

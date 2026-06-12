@@ -1,6 +1,6 @@
-import { Tabs } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Tabs } from "@components-kit/react";
 
 function TabsPreview() {
   return (

@@ -1,8 +1,8 @@
 "use client";
 
-import { CSSProperties, forwardRef, HTMLAttributes } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { CSSProperties, forwardRef, HTMLAttributes } from "react";
 
 /**
  * A placeholder loading component that indicates content is being loaded.

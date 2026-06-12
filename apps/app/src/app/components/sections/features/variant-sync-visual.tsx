@@ -38,11 +38,11 @@ const GRAY_PALETTES: Record<string, Record<string, string>> = {
 function DevToolsPanel() {
   const { darkMode, grayScale, primaryColor } = useTheme();
 
-  const panelBg = darkMode ? "#1e1e1e" : "oklch(97.5% 0.003 70)";
-  const chromeBg = darkMode ? "#181818" : "oklch(96% 0.004 70)";
+  const panelBg = darkMode ? "#1e1e1e" : "oklch(98% 0 0)";
+  const chromeBg = darkMode ? "#181818" : "oklch(96% 0 0)";
 
   const primaryPalette = PRIMARY_PALETTES[primaryColor] ?? PRIMARY_PALETTES.blue;
-  const grayPalette = GRAY_PALETTES[grayScale] ?? GRAY_PALETTES.slate;
+  const grayPalette = GRAY_PALETTES[grayScale] ?? GRAY_PALETTES.neutral;
 
   const cssVariables = useMemo(
     () => [
@@ -123,17 +123,17 @@ export function VariantSyncVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(39% 0.025 68 / 0.5)", position: "-top-20 right-1/4", size: "h-56 w-56" },
-          { blur: "blur-3xl", color: "oklch(40% 0.015 75 / 0.6)", position: "top-1/3 -left-16", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(38% 0.025 55 / 0.4)", position: "-bottom-16 -right-12", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(48% 0.11 155 / 0.34)", position: "-top-20 right-1/4", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(44% 0.09 145 / 0.28)", position: "top-1/3 -left-16", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(50% 0.085 165 / 0.22)", position: "-bottom-16 -right-12", size: "h-44 w-44" },
         ]}
-        darkGradient="linear-gradient(110deg, oklch(40% 0.008 70) 0%, oklch(39% 0.015 65) 50%, oklch(38% 0.02 60) 100%)"
+        darkGradient="linear-gradient(110deg, oklch(22% 0.016 155) 0%, oklch(18.5% 0.018 145) 50%, oklch(16% 0.016 165) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(93% 0.018 68 / 0.5)", position: "-top-20 right-1/4", size: "h-56 w-56" },
-          { blur: "blur-3xl", color: "oklch(96% 0.008 75 / 0.6)", position: "top-1/3 -left-16", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(91% 0.02 55 / 0.4)", position: "-bottom-16 -right-12", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(84% 0.13 155 / 0.42)", position: "-top-20 right-1/4", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(86% 0.105 145 / 0.32)", position: "top-1/3 -left-16", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(85% 0.105 165 / 0.24)", position: "-bottom-16 -right-12", size: "h-44 w-44" },
         ]}
-        gradient="linear-gradient(110deg, oklch(97% 0.005 70) 0%, oklch(94% 0.01 65) 50%, oklch(91% 0.015 60) 100%)"
+        gradient="linear-gradient(110deg, oklch(96% 0.024 155) 0%, oklch(92.5% 0.038 145) 52%, oklch(90% 0.034 165) 100%)"
       />
       <DevToolsPanel />
     </div>

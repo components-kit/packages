@@ -1,5 +1,7 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   ButtonHTMLAttributes,
   cloneElement,
@@ -9,8 +11,6 @@ import {
   MouseEvent,
   ReactNode,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 import { Slot } from "../slot/slot";
 

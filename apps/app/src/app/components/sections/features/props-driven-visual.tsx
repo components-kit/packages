@@ -7,19 +7,19 @@ export function PropsDrivenVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(38% 0.04 55 / 0.5)", position: "-top-20 -right-20", size: "h-64 w-64" },
-          { blur: "blur-3xl", color: "oklch(39% 0.02 85 / 0.6)", position: "top-1/3 -left-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(36% 0.045 40 / 0.35)", position: "-bottom-16 right-1/4", size: "h-56 w-56" },
-          { blur: "blur-2xl", color: "oklch(39% 0.015 258 / 0.4)", position: "bottom-1/4 left-1/3", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(46% 0.09 245 / 0.36)", position: "-top-20 -right-20", size: "h-64 w-64" },
+          { blur: "blur-3xl", color: "oklch(45% 0.075 205 / 0.34)", position: "top-1/3 -left-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(48% 0.095 285 / 0.28)", position: "-bottom-16 right-1/4", size: "h-56 w-56" },
+          { blur: "blur-2xl", color: "oklch(50% 0.065 175 / 0.26)", position: "bottom-1/4 left-1/3", size: "h-44 w-44" },
         ]}
-        darkGradient="linear-gradient(135deg, oklch(40% 0.02 75) 0%, oklch(38% 0.03 60) 50%, oklch(36% 0.035 45) 100%)"
+        darkGradient="linear-gradient(135deg, oklch(23% 0.018 255) 0%, oklch(19% 0.02 235) 52%, oklch(16% 0.018 285) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(90% 0.035 55 / 0.5)", position: "-top-20 -right-20", size: "h-64 w-64" },
-          { blur: "blur-3xl", color: "oklch(95% 0.015 85 / 0.6)", position: "top-1/3 -left-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(87% 0.04 40 / 0.35)", position: "-bottom-16 right-1/4", size: "h-56 w-56" },
-          { blur: "blur-2xl", color: "oklch(93% 0.01 258 / 0.4)", position: "bottom-1/4 left-1/3", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(78% 0.13 245 / 0.58)", position: "-top-20 -right-20", size: "h-64 w-64" },
+          { blur: "blur-3xl", color: "oklch(82% 0.105 205 / 0.54)", position: "top-1/3 -left-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(78% 0.13 285 / 0.4)", position: "-bottom-16 right-1/4", size: "h-56 w-56" },
+          { blur: "blur-2xl", color: "oklch(84% 0.09 175 / 0.38)", position: "bottom-1/4 left-1/3", size: "h-44 w-44" },
         ]}
-        gradient="linear-gradient(135deg, oklch(96% 0.015 75) 0%, oklch(91% 0.025 60) 50%, oklch(87% 0.03 45) 100%)"
+        gradient="linear-gradient(135deg, oklch(94% 0.028 245) 0%, oklch(89.5% 0.045 205) 48%, oklch(86% 0.058 285) 100%)"
       />
       <TerminalVisual />
     </div>

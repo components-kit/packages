@@ -1,6 +1,6 @@
-import { Separator } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Separator } from "@components-kit/react";
 
 function SeparatorPreview() {
   return (

@@ -1,8 +1,8 @@
 "use client";
 
-import { forwardRef, InputHTMLAttributes } from "react";
-
 import type { VariantFor } from "../../types/register";
+
+import { forwardRef, InputHTMLAttributes } from "react";
 
 /**
  * A checkbox input component for boolean selections.

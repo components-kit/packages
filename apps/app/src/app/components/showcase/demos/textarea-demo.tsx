@@ -1,6 +1,6 @@
-import { Textarea } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Textarea } from "@components-kit/react";
 
 function TextareaPreview() {
   return (

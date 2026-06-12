@@ -1,6 +1,6 @@
-import { MultiSelect } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { MultiSelect } from "@components-kit/react";
 
 function MultiSelectPreview() {
   return (

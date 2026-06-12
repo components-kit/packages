@@ -1,6 +1,6 @@
-import { Combobox } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Combobox } from "@components-kit/react";
 
 function ComboboxPreview() {
   return (

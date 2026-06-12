@@ -15,19 +15,19 @@ export function ModularVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(39% 0.03 60 / 0.45)", position: "-top-20 -right-20", size: "h-64 w-64" },
-          { blur: "blur-3xl", color: "oklch(37% 0.04 250 / 0.4)", position: "top-1/3 -left-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(39% 0.02 55 / 0.5)", position: "-bottom-16 right-1/3", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(36% 0.04 245 / 0.3)", position: "bottom-1/4 left-1/4", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(43% 0.085 270 / 0.28)", position: "-top-20 -right-20", size: "h-64 w-64" },
+          { blur: "blur-3xl", color: "oklch(42% 0.075 255 / 0.3)", position: "top-1/3 -left-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(45% 0.075 280 / 0.26)", position: "-bottom-16 right-1/3", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(41% 0.065 245 / 0.22)", position: "bottom-1/4 left-1/4", size: "h-44 w-44" },
         ]}
-        darkGradient="linear-gradient(125deg, oklch(39% 0.015 65) 0%, oklch(38% 0.012 258) 40%, oklch(36% 0.03 248) 100%)"
+        darkGradient="linear-gradient(125deg, oklch(21% 0.014 270) 0%, oklch(18.5% 0.016 255) 45%, oklch(16% 0.014 280) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(93% 0.02 60 / 0.45)", position: "-top-20 -right-20", size: "h-64 w-64" },
-          { blur: "blur-3xl", color: "oklch(89% 0.03 250 / 0.4)", position: "top-1/3 -left-16", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(94% 0.015 55 / 0.5)", position: "-bottom-16 right-1/3", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(87% 0.035 245 / 0.3)", position: "bottom-1/4 left-1/4", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(80% 0.105 270 / 0.34)", position: "-top-20 -right-20", size: "h-64 w-64" },
+          { blur: "blur-3xl", color: "oklch(83% 0.09 255 / 0.32)", position: "top-1/3 -left-16", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(80% 0.095 280 / 0.28)", position: "-bottom-16 right-1/3", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(82% 0.075 245 / 0.24)", position: "bottom-1/4 left-1/4", size: "h-44 w-44" },
         ]}
-        gradient="linear-gradient(125deg, oklch(95% 0.012 65) 0%, oklch(91% 0.008 258) 40%, oklch(87% 0.025 248) 100%)"
+        gradient="linear-gradient(125deg, oklch(95.5% 0.02 270) 0%, oklch(92% 0.028 255) 45%, oklch(89.5% 0.026 280) 100%)"
       />
 
       {/* Dependency tree overlay */}

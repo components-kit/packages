@@ -1,5 +1,7 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -17,8 +19,6 @@ import {
   useId,
   useRef,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 import { useExitTransition } from "../../hooks";
 import { mergeRefs } from "../../utils/merge-refs";

@@ -1,5 +1,7 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   forwardRef,
   InputEvent,
@@ -8,8 +10,6 @@ import {
   useEffect,
   useRef,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 import { mergeRefs } from "../../utils/merge-refs";
 

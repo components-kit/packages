@@ -1,6 +1,6 @@
-import { type ReactElement } from "react";
-
 import type { NormalizedItem, RenderItem } from "../types/select";
+
+import { type ReactElement } from "react";
 
 /**
  * Configuration for the shared dropdown item renderer.

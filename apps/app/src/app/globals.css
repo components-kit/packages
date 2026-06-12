@@ -22,19 +22,19 @@
   --color-blue-900: oklch(37.91% 0.126 266.57);
   --color-blue-950: oklch(28.24% 0.091 267.94);
 
-  /* ── Neutral Scale (Cool Slate · oklch) ── */
+  /* ── Neutral Scale ── */
   --color-neutral-0: oklch(100% 0 0);
-  --color-neutral-50: oklch(98.5% 0.005 258);
-  --color-neutral-100: oklch(96.5% 0.009 258);
-  --color-neutral-200: oklch(92.5% 0.013 256);
-  --color-neutral-300: oklch(87% 0.018 255);
-  --color-neutral-400: oklch(71% 0.03 257);
-  --color-neutral-500: oklch(55.5% 0.035 258);
-  --color-neutral-600: oklch(44.5% 0.032 258);
-  --color-neutral-700: oklch(37% 0.03 259);
-  --color-neutral-800: oklch(27.5% 0.025 260);
-  --color-neutral-900: oklch(21% 0.025 262);
-  --color-neutral-950: oklch(14% 0.025 264);
+  --color-neutral-50: oklch(98.5% 0 0);
+  --color-neutral-100: oklch(96.5% 0 0);
+  --color-neutral-200: oklch(92.5% 0 0);
+  --color-neutral-300: oklch(87% 0 0);
+  --color-neutral-400: oklch(71% 0 0);
+  --color-neutral-500: oklch(55.5% 0 0);
+  --color-neutral-600: oklch(44.5% 0 0);
+  --color-neutral-700: oklch(37% 0 0);
+  --color-neutral-800: oklch(27.5% 0 0);
+  --color-neutral-900: oklch(21% 0 0);
+  --color-neutral-950: oklch(14% 0 0);
 
   /* ── Brand Colors ── */
   --color-brand: oklch(62.31% 0.209 259.53);
@@ -44,8 +44,8 @@
 
 /* ── Semantic Surface Tokens (reference other theme vars) ── */
 @theme inline {
-  --color-studio: var(--color-neutral-50);
-  --color-surface: var(--color-neutral-100);
+  --color-studio: var(--color-neutral-0);
+  --color-surface: var(--color-neutral-50);
   --color-ink: var(--color-neutral-950);
 }
 
@@ -205,6 +205,28 @@ html[data-theme="dark"] {
 
   html[data-theme="dark"] [data-ck="progress"] [data-ck="progress-track"] {
     background-color: var(--color-neutral-200);
+  }
+
+  /* ── Landing Showcase Table Surface ── */
+  [data-ck="table"] {
+    background-color: var(--color-neutral-0);
+    border-color: var(--color-neutral-200);
+  }
+
+  [data-ck="table-header"],
+  [data-ck="table-head"] {
+    background-color: var(--color-neutral-50);
+  }
+
+  [data-ck="table-row"],
+  [data-ck="table-cell"] {
+    background-color: var(--color-neutral-0);
+    border-color: var(--color-neutral-200);
+  }
+
+  [data-ck="table-head"],
+  [data-ck="table-cell"] {
+    color: var(--color-ink);
   }
 }
 

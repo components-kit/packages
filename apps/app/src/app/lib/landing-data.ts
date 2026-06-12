@@ -1,7 +1,6 @@
-import type { Token, Tokens } from "marked";
-
 import type { GitHubRelease } from "@/app/types/landing";
 import type { ComponentDocs } from "@/app/types/showcase";
+import type { Token, Tokens } from "marked";
 
 // Generated at build time by scripts/generate-component-docs.mjs.
 // This avoids runtime fs reads that fail in Vercel's serverless environment.

@@ -1,6 +1,6 @@
-import { Progress } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Progress } from "@components-kit/react";
 
 function ProgressPreview() {
   return <Progress label="Uploading..." value={60} variantName="default" />;

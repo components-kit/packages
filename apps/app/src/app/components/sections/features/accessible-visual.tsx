@@ -57,17 +57,17 @@ export function AccessibleVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(38% 0.02 258 / 0.5)", position: "-top-16 right-1/4", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(39% 0.015 260 / 0.6)", position: "bottom-1/3 -left-16", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(38% 0.02 255 / 0.4)", position: "-bottom-20 -right-12", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(49% 0.095 170 / 0.32)", position: "-top-16 right-1/4", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(46% 0.085 160 / 0.28)", position: "bottom-1/3 -left-16", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(50% 0.075 180 / 0.22)", position: "-bottom-20 -right-12", size: "h-56 w-56" },
         ]}
-        darkGradient="linear-gradient(170deg, oklch(40% 0.008 258) 0%, oklch(39% 0.012 256) 50%, oklch(38% 0.015 254) 100%)"
+        darkGradient="linear-gradient(170deg, oklch(22% 0.014 170) 0%, oklch(19% 0.016 160) 50%, oklch(16.5% 0.014 180) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(92% 0.01 258 / 0.5)", position: "-top-16 right-1/4", size: "h-52 w-52" },
-          { blur: "blur-3xl", color: "oklch(95% 0.006 260 / 0.6)", position: "bottom-1/3 -left-16", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(91% 0.014 255 / 0.4)", position: "-bottom-20 -right-12", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(85% 0.11 170 / 0.36)", position: "-top-16 right-1/4", size: "h-52 w-52" },
+          { blur: "blur-3xl", color: "oklch(87% 0.095 160 / 0.3)", position: "bottom-1/3 -left-16", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(86% 0.085 180 / 0.24)", position: "-bottom-20 -right-12", size: "h-56 w-56" },
         ]}
-        gradient="linear-gradient(170deg, oklch(96.5% 0.004 258) 0%, oklch(93.5% 0.008 256) 50%, oklch(90.5% 0.012 254) 100%)"
+        gradient="linear-gradient(170deg, oklch(96% 0.022 170) 0%, oklch(92.5% 0.034 160) 54%, oklch(90% 0.03 180) 100%)"
       />
 
       <div className="absolute inset-0 flex items-start justify-center px-6 pt-12 sm:pt-10 md:pt-12">

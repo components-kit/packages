@@ -45,21 +45,21 @@ export async function LlmsVisual() {
       <GradientVisual
         className="absolute inset-0"
         darkGlows={[
-          { blur: "blur-3xl", color: "oklch(37% 0.045 45 / 0.45)", position: "-top-20 -left-16", size: "h-56 w-56" },
-          { blur: "blur-3xl", color: "oklch(39% 0.025 55 / 0.5)", position: "top-1/4 -right-12", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(36% 0.05 38 / 0.35)", position: "-bottom-16 left-1/3", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(45% 0.105 250 / 0.34)", position: "-top-20 -left-16", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(47% 0.095 235 / 0.3)", position: "top-1/4 -right-12", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(43% 0.09 265 / 0.24)", position: "-bottom-16 left-1/3", size: "h-44 w-44" },
         ]}
-        darkGradient="linear-gradient(145deg, oklch(39% 0.025 50) 0%, oklch(37% 0.04 42) 50%, oklch(36% 0.045 35) 100%)"
+        darkGradient="linear-gradient(145deg, oklch(22% 0.016 250) 0%, oklch(18.5% 0.018 235) 50%, oklch(16% 0.016 265) 100%)"
         glows={[
-          { blur: "blur-3xl", color: "oklch(88% 0.04 45 / 0.45)", position: "-top-20 -left-16", size: "h-56 w-56" },
-          { blur: "blur-3xl", color: "oklch(93% 0.02 55 / 0.5)", position: "top-1/4 -right-12", size: "h-48 w-48" },
-          { blur: "blur-2xl", color: "oklch(86% 0.045 38 / 0.35)", position: "-bottom-16 left-1/3", size: "h-44 w-44" },
+          { blur: "blur-3xl", color: "oklch(82% 0.125 250 / 0.4)", position: "-top-20 -left-16", size: "h-56 w-56" },
+          { blur: "blur-3xl", color: "oklch(84% 0.11 235 / 0.32)", position: "top-1/4 -right-12", size: "h-48 w-48" },
+          { blur: "blur-2xl", color: "oklch(80% 0.105 265 / 0.26)", position: "-bottom-16 left-1/3", size: "h-44 w-44" },
         ]}
-        gradient="linear-gradient(145deg, oklch(94% 0.02 50) 0%, oklch(89.5% 0.035 42) 50%, oklch(85.5% 0.04 35) 100%)"
+        gradient="linear-gradient(145deg, oklch(96% 0.024 250) 0%, oklch(92% 0.034 235) 52%, oklch(89.5% 0.032 265) 100%)"
       />
       <EditorPanel
         className="absolute top-6 left-6 sm:top-10 sm:left-10 -right-4 -bottom-8 sm:-right-6 sm:-bottom-12 flex flex-col rounded-tl-lg overflow-hidden border border-neutral-200 shadow-2xl"
-        style={{ backgroundColor: "oklch(97.5% 0.003 70)" }}
+        style={{ backgroundColor: "oklch(98% 0 0)" }}
         darkStyle={{ backgroundColor: "#1e1e1e" }}
         filename="llms.txt"
         html={html}

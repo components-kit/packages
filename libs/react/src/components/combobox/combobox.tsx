@@ -1,5 +1,8 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+import type { NormalizedItem, SelectOption } from "../../types/select";
+
 import { FloatingPortal, type Placement } from "@floating-ui/react";
 import { useCombobox } from "downshift";
 import {
@@ -13,9 +16,6 @@ import {
   useRef,
   useState,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
-import type { NormalizedItem, SelectOption } from "../../types/select";
 
 import {
   useExitTransition,

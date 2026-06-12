@@ -1,6 +1,6 @@
-import { Slider } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Slider } from "@components-kit/react";
 
 function SliderPreview() {
   return <Slider aria-label="Volume" defaultValue={50} variantName="default" />;

@@ -1,6 +1,6 @@
-import { Heading } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Heading } from "@components-kit/react";
 
 function HeadingPreview() {
   return (

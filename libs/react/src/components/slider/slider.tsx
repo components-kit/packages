@@ -1,12 +1,12 @@
 "use client";
 
+import type { VariantFor } from "../../types/register";
+
 import {
   CSSProperties,
   forwardRef,
   HTMLAttributes,
 } from "react";
-
-import type { VariantFor } from "../../types/register";
 
 import { useSlider } from "./use-slider";
 

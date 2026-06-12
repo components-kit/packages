@@ -1,6 +1,6 @@
-import { Select } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Select } from "@components-kit/react";
 
 function SelectPreview() {
   return (

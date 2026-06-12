@@ -1,6 +1,6 @@
-import { Alert } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Alert } from "@components-kit/react";
 
 function AlertPreview() {
   return (

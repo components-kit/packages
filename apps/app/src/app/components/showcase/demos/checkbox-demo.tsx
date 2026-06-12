@@ -1,6 +1,6 @@
-import { Checkbox } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Checkbox } from "@components-kit/react";
 
 function CheckboxPreview() {
   return (

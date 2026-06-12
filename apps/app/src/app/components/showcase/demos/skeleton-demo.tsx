@@ -1,6 +1,6 @@
-import { Skeleton } from "@components-kit/react";
-
 import type { ShowcaseDemo } from "../types";
+
+import { Skeleton } from "@components-kit/react";
 
 function SkeletonPreview() {
   return (

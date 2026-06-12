@@ -15,7 +15,7 @@ export function EditorPanel({
   lineCount: number;
   style?: CSSProperties;
 }) {
-  const titleBarLight = "oklch(96% 0.004 70)";
+  const titleBarLight = "oklch(96% 0 0)";
   const titleBarDark = "#181818";
 
   const content = (titleBarBg: string) => (

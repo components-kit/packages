@@ -1,6 +1,6 @@
-import { marked } from "marked";
-
 import type { GitHubRelease } from "@/app/types/landing";
+
+import { marked } from "marked";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {

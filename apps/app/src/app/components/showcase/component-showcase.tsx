@@ -15,15 +15,15 @@ export function ComponentShowcase({ componentDocs }: ComponentShowcaseProps) {
     <div className="mt-10 grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {componentShowcaseRegistry.map((demo) => {
         const card = (
-          <div className="min-w-0 flex flex-col rounded-lg bg-neutral-200/60 overflow-hidden transition-colors hover:bg-neutral-200 group">
+          <div className="group min-w-0 flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white transition-colors hover:bg-neutral-50 dark:bg-neutral-100 dark:hover:bg-neutral-200">
             <div className="p-1.5 pb-0 sm:p-2 sm:pb-0">
-              <div className="flex h-36 sm:h-44 items-center justify-center p-4 sm:p-6 rounded-md bg-neutral-0 overflow-hidden **:pointer-events-none">
+              <div className="flex h-36 items-center justify-center overflow-hidden rounded-md bg-white p-4 sm:h-44 sm:p-6 dark:bg-neutral-0 **:pointer-events-none">
                 {demo.preview}
               </div>
             </div>
-            <div className="flex items-center justify-between mt-auto px-3 py-2.5 sm:px-4 sm:py-3">
+            <div className="mt-auto flex items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3">
               <h3 className="text-sm font-medium">{demo.name}</h3>
-              <span className="text-neutral-400 transition-transform group-hover:scale-110">
+              <span className="text-neutral-400 transition-colors group-hover:text-blue-600">
                 <ExpandIcon />
               </span>
             </div>

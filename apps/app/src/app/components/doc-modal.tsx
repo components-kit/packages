@@ -46,7 +46,7 @@ export function DocModal({
   return (
     <>
       <div
-        className="min-w-0 cursor-pointer"
+        className="min-w-0 cursor-pointer rounded-xl outline-none transition focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-studio"
         aria-label={`View ${title} documentation`}
         role="button"
         tabIndex={0}
