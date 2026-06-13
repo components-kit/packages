@@ -1,13 +1,34 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { EXCEL_PRODUCT_LINK, NAV_LINKS } from "@/app/constants/navigation";
+import {
+  COMPONENTS_PRODUCT_LINK,
+  EXCEL_PRODUCT_LINK,
+  NAV_LINKS,
+  SOCIAL_LINKS,
+} from "@/app/constants/navigation";
+import {
+  OPEN_WORKBOOK_GITHUB_URL,
+  OPEN_WORKSHEET_PRODUCT_NAME,
+} from "@/app/excel/constants";
 
 import { SocialLinks } from "./ui/social-links";
 
+const EXCEL_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
+  item.ariaLabel === "GitHub"
+    ? { ...item, href: OPEN_WORKBOOK_GITHUB_URL }
+    : item,
+);
+
 export function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [hasPassedExcelHero, setHasPassedExcelHero] = useState(false);
+  const isExcelPage = pathname === "/excel";
+  const isLandingPage = pathname === "/";
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -20,70 +41,131 @@ export function Navbar() {
     setIsOpen(false);
   }
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isExcelPage) {
+      setHasPassedExcelHero(false);
+      return () => {};
+    }
+
+    function updateHeaderSurface() {
+      const hero = document.getElementById("excel-hero");
+      if (!hero) return;
+
+      setHasPassedExcelHero(hero.getBoundingClientRect().bottom <= 64);
+    }
+
+    updateHeaderSurface();
+    window.addEventListener("scroll", updateHeaderSurface, { passive: true });
+    window.addEventListener("resize", updateHeaderSurface);
+
+    return () => {
+      window.removeEventListener("scroll", updateHeaderSurface);
+      window.removeEventListener("resize", updateHeaderSurface);
+    };
+  }, [isExcelPage]);
+
+  if (!isExcelPage && !isLandingPage) return null;
+
   return (
     <>
-      <nav className="fixed inset-x-0 top-0 z-50 bg-studio">
+      <nav
+        className={`fixed inset-x-0 top-0 z-50 bg-studio transition-colors duration-300 ${
+          isExcelPage ? "pointer-events-none" : ""
+        } ${isExcelPage && hasPassedExcelHero ? "border-b" : ""}`}
+      >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          {/* Logo */}
-          <a href="#">
-            <img className="h-9" alt="ComponentsKit" src="/logo-symbol.svg" />
-          </a>
-
-          {/* Nav links — desktop */}
-          <div className="hidden items-center gap-6 md:flex">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                className="text-sm text-neutral-500 transition-colors hover:text-ink"
-                href={link.href}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          <div className="hidden items-center gap-5 md:flex">
-            <a
-              className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
-              href={EXCEL_PRODUCT_LINK.href}
-            >
-              {EXCEL_PRODUCT_LINK.label}
-            </a>
-            <SocialLinks className="flex items-center gap-5" />
-          </div>
-
-          {/* Hamburger — mobile */}
-          <button
-            className="text-neutral-600 md:hidden"
-            aria-label="Open menu"
-            type="button"
-            onClick={() => setIsOpen(true)}
+          <Link
+            className={`inline-flex items-center gap-2 ${
+              isExcelPage ? "pointer-events-auto" : ""
+            }`}
+            aria-label="ComponentsKit home"
+            href={isExcelPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
           >
-            <svg
-              className="size-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            <img className="h-9" alt="ComponentsKit" src="/logo-symbol.svg" />
+            {isExcelPage && (
+              <>
+                <span className="text-neutral-300">/</span>
+                <span className="text-sm font-medium text-ink">
+                  {OPEN_WORKSHEET_PRODUCT_NAME}
+                </span>
+              </>
+            )}
+          </Link>
+
+          {isLandingPage && (
+            <>
+              <div className="hidden items-center gap-6 md:flex">
+                {NAV_LINKS.map((link) => (
+                  <a
+                    key={link.href}
+                    className="text-sm text-neutral-500 transition-colors hover:text-ink"
+                    href={link.href}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+
+              <div className="hidden items-center gap-5 md:flex">
+                <Link
+                  className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
+                  href={EXCEL_PRODUCT_LINK.href}
+                >
+                  {EXCEL_PRODUCT_LINK.label}
+                </Link>
+                <SocialLinks className="flex items-center gap-5" />
+              </div>
+
+              <button
+                className="text-neutral-600 md:hidden"
+                aria-label="Open menu"
+                type="button"
+                onClick={() => setIsOpen(true)}
+              >
+                <svg
+                  className="size-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </>
+          )}
+
+          {isExcelPage && (
+            <div className="pointer-events-auto flex items-center gap-4">
+              <Link
+                className="components-product-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium"
+                href={COMPONENTS_PRODUCT_LINK.href}
+              >
+                {COMPONENTS_PRODUCT_LINK.label}
+              </Link>
+              <SocialLinks
+                className="flex items-center gap-5"
+                links={EXCEL_SOCIAL_LINKS}
               />
-            </svg>
-          </button>
+            </div>
+          )}
         </div>
       </nav>
 
-      {/* Fullscreen mobile menu */}
-      {isOpen && (
+      {isLandingPage && isOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-studio md:hidden">
-          {/* Header */}
           <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-            <a href="#" onClick={close}>
+            <Link href="#" onClick={close}>
               <img className="h-9" alt="ComponentsKit" src="/logo-symbol.svg" />
-            </a>
+            </Link>
             <button
               className="text-neutral-600"
               aria-label="Close menu"
@@ -106,7 +188,6 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Nav links */}
           <div className="flex flex-1 flex-col items-center justify-center gap-8">
             {NAV_LINKS.map((link) => (
               <a
@@ -118,16 +199,15 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
-            <a
+            <Link
               className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
               href={EXCEL_PRODUCT_LINK.href}
               onClick={close}
             >
               {EXCEL_PRODUCT_LINK.label}
-            </a>
+            </Link>
           </div>
 
-          {/* Social links */}
           <SocialLinks
             className="flex items-center justify-center gap-6 pb-10"
             iconProfile="mobile"

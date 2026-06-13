@@ -6,6 +6,7 @@ import { Instrument_Sans } from "next/font/google";
 import Script from "next/script";
 import { Toaster } from "sonner";
 
+import { Navbar } from "./components/navbar";
 import { CK_BUNDLE_URL } from "./lib/api";
 
 const DEFAULT_BUNDLE_HREF = `${CK_BUNDLE_URL}?borderRadius=8&grayScale=neutral&primaryColor=blue`;
@@ -90,6 +91,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Navbar />
         {children}
         <Toaster />
       </body>

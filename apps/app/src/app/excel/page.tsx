@@ -8,17 +8,17 @@ import Marquee from "react-fast-marquee";
 import { CopyIconButton } from "@/app/components/copy-button";
 import { ChangelogSection } from "@/app/components/sections/changelog-section";
 import { FooterSection } from "@/app/components/sections/footer-section";
+import { COMPONENTS_PRODUCT_LINK, SOCIAL_LINKS } from "@/app/constants/navigation";
+
 import {
-  COMPONENTS_PRODUCT_LINK,
-  SOCIAL_LINKS,
-} from "@/app/constants/navigation";
+  EXCEL_PAGE_DESCRIPTION,
+  EXCEL_PAGE_TITLE,
+  OPEN_WORKBOOK_GITHUB_URL,
+} from "./constants";
 
-import { EXCEL_PAGE_DESCRIPTION, EXCEL_PAGE_TITLE } from "./constants";
-
-const EXCEL_GITHUB_URL = "https://github.com/components-kit/open-workbook";
 const EXCEL_GITHUB_RELEASES_API =
   "https://api.github.com/repos/components-kit/open-workbook/releases";
-const EXCEL_GITHUB_RELEASES_URL = `${EXCEL_GITHUB_URL}/releases`;
+const EXCEL_GITHUB_RELEASES_URL = `${OPEN_WORKBOOK_GITHUB_URL}/releases`;
 const EXCEL_SETUP_CMD = "npx -y @component-kit/open-workbook setup";
 const EXCEL_SKILLS_CMD =
   "npx skills add components-kit/open-workbook \\\n--skill open-workbook-excel";
@@ -31,7 +31,9 @@ const EXCEL_FOOTER_NAV_LINKS = [
 ] as const;
 
 const EXCEL_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
-  item.ariaLabel === "GitHub" ? { ...item, href: EXCEL_GITHUB_URL } : item,
+  item.ariaLabel === "GitHub"
+    ? { ...item, href: OPEN_WORKBOOK_GITHUB_URL }
+    : item,
 );
 
 const AI_PROVIDERS = [
@@ -81,37 +83,6 @@ function AITrustBar() {
           <AIProviderLogo key={provider.name} {...provider} />
         ))}
       </Marquee>
-    </div>
-  );
-}
-
-function ExcelSocialLinks() {
-  return (
-    <div className="pointer-events-auto flex items-center gap-5">
-      {SOCIAL_LINKS.map((item) => {
-        const href =
-          item.ariaLabel === "GitHub" ? EXCEL_GITHUB_URL : item.href;
-
-        return (
-          <a
-            key={item.ariaLabel}
-            className="text-neutral-600 transition-colors hover:text-ink"
-            aria-label={item.ariaLabel}
-            href={href}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <svg
-              fill="currentColor"
-              height={item.desktop.height}
-              viewBox={item.viewBox}
-              width={item.desktop.width}
-            >
-              <path d={item.path} />
-            </svg>
-          </a>
-        );
-      })}
     </div>
   );
 }
@@ -169,52 +140,6 @@ function ExcelChangelog() {
       releases={releases}
       releasesUrl={EXCEL_GITHUB_RELEASES_URL}
     />
-  );
-}
-
-function ExcelHeader() {
-  const [hasPassedHero, setHasPassedHero] = useState(false);
-
-  useEffect(() => {
-    function updateHeaderSurface() {
-      const hero = document.getElementById("excel-hero");
-      if (!hero) return;
-
-      setHasPassedHero(hero.getBoundingClientRect().bottom <= 64);
-    }
-
-    updateHeaderSurface();
-    window.addEventListener("scroll", updateHeaderSurface, { passive: true });
-    window.addEventListener("resize", updateHeaderSurface);
-
-    return () => {
-      window.removeEventListener("scroll", updateHeaderSurface);
-      window.removeEventListener("resize", updateHeaderSurface);
-    };
-  }, []);
-
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 pointer-events-none bg-studio transition-colors duration-300 ${
-        hasPassedHero ? "border-b" : ""
-      }`}
-    >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <a className="pointer-events-auto" aria-label="ComponentsKit home" href="/">
-          <img className="h-9" alt="ComponentsKit" src="/logo-symbol.svg" />
-        </a>
-
-        <div className="pointer-events-auto flex items-center gap-4">
-          <a
-            className="components-product-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium"
-            href={COMPONENTS_PRODUCT_LINK.href}
-          >
-            {COMPONENTS_PRODUCT_LINK.label}
-          </a>
-          <ExcelSocialLinks />
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -980,7 +905,6 @@ export default function ExcelPage() {
 
   return (
     <>
-      <ExcelHeader />
       <main>
         <section
           id="excel-hero"

@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { codeToHtml } from "shiki";
 
 import { GetStarted } from "@/app/components/get-started";
-import { Navbar } from "@/app/components/navbar";
 import { ChangelogSection } from "@/app/components/sections/changelog-section";
 import { FeaturesSection } from "@/app/components/sections/features-section";
 import { FooterSection } from "@/app/components/sections/footer-section";
@@ -60,7 +59,6 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar />
       <HeroSection />
       <ThemeProvider>
         <FeaturesSection />
