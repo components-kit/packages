@@ -13,6 +13,8 @@ import {
   SOCIAL_LINKS,
 } from "@/app/constants/navigation";
 
+import { EXCEL_PAGE_DESCRIPTION, EXCEL_PAGE_TITLE } from "./constants";
+
 const EXCEL_GITHUB_URL = "https://github.com/components-kit/open-workbook";
 const EXCEL_GITHUB_RELEASES_API =
   "https://api.github.com/repos/components-kit/open-workbook/releases";
@@ -987,12 +989,10 @@ export default function ExcelPage() {
           <div className="pointer-events-none relative mx-auto flex w-full max-w-7xl flex-col px-4 pt-32 pb-14 text-left sm:px-6 sm:pt-40 sm:pb-16">
             <div className="max-w-xl">
               <h1 className="text-3xl font-medium tracking-tighter sm:text-4xl">
-                Excel your spreadsheet with any AI agent
+                {EXCEL_PAGE_TITLE}
               </h1>
               <p className="mt-4 text-base text-neutral-600 sm:text-lg">
-                Local-first MCP automation for live desktop Excel workbooks,
-                with template-aware edits, safe backups, rollback, formulas,
-                tables, and style fidelity.
+                {EXCEL_PAGE_DESCRIPTION}
               </p>
               <div className="pointer-events-auto mt-6 inline-flex max-w-full overflow-hidden rounded-lg border">
                 <div className="flex min-w-0 max-w-full">
