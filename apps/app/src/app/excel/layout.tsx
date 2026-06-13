@@ -8,7 +8,7 @@ import {
 
 const EXCEL_PAGE_URL = "https://componentskit.com/excel";
 const EXCEL_METADATA_TITLE = `${OPEN_WORKBOOK_PRODUCT_NAME} — ${EXCEL_PAGE_TITLE}`;
-const EXCEL_OG_IMAGE = "/excel/opengraph-image";
+const EXCEL_OG_IMAGE = "/og/openworkbook-excel.png";
 
 export const metadata: Metadata = {
   alternates: { canonical: EXCEL_PAGE_URL },

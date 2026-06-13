@@ -27,7 +27,7 @@ const DESCRIPTION =
 const OG_TITLE = "ComponentsKit — Accessible React Components, Zero Complexity";
 const OG_DESCRIPTION =
   "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
-const OG_IMAGE = "/opengraph-image";
+const OG_IMAGE = "/og/componentskit-props-driven.png";
 
 const JSON_LD = [
   {
