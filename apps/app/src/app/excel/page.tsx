@@ -19,7 +19,7 @@ import {
 const EXCEL_GITHUB_RELEASES_API =
   "https://api.github.com/repos/components-kit/open-workbook/releases";
 const EXCEL_GITHUB_RELEASES_URL = `${OPEN_WORKBOOK_GITHUB_URL}/releases`;
-const EXCEL_SETUP_CMD = "npx -y @component-kit/open-workbook setup";
+const EXCEL_SETUP_CMD = "npx -y @components-kit/open-workbook setup";
 const EXCEL_SKILLS_CMD =
   "npx skills add components-kit/open-workbook \\\n--skill open-workbook-excel";
 const EXCEL_INSTALL_CMD = `${EXCEL_SETUP_CMD}\n${EXCEL_SKILLS_CMD}`;
@@ -931,7 +931,7 @@ export default function ExcelPage() {
                             {" -y"}
                           </span>
                           <span className="excel-install-token-package">
-                            {" @component-kit/open-workbook"}
+                            {" @components-kit/open-workbook"}
                           </span>
                           <span className="excel-install-token-package">
                             {" setup"}
