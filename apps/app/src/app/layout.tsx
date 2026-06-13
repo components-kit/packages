@@ -27,6 +27,7 @@ const DESCRIPTION =
 const OG_TITLE = "ComponentsKit — Accessible React Components, Zero Complexity";
 const OG_DESCRIPTION =
   "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
+const OG_IMAGE = "/opengraph-image";
 
 const JSON_LD = [
   {
@@ -57,7 +58,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://componentskit.com"),
   openGraph: {
     description: OG_DESCRIPTION,
-    images: [{ height: 630, url: "/og-image.png", width: 1200 }],
+    images: [{ height: 630, url: OG_IMAGE, width: 1200 }],
     locale: "en_US",
     siteName: "ComponentsKit",
     title: OG_TITLE,
@@ -68,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     description: OG_DESCRIPTION,
-    images: ["/og-image.png"],
+    images: [OG_IMAGE],
     title: OG_TITLE,
   },
 };

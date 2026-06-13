@@ -8,13 +8,14 @@ import {
 
 const EXCEL_PAGE_URL = "https://componentskit.com/excel";
 const EXCEL_METADATA_TITLE = `${OPEN_WORKBOOK_PRODUCT_NAME} — ${EXCEL_PAGE_TITLE}`;
+const EXCEL_OG_IMAGE = "/excel/opengraph-image";
 
 export const metadata: Metadata = {
   alternates: { canonical: EXCEL_PAGE_URL },
   description: EXCEL_PAGE_DESCRIPTION,
   openGraph: {
     description: EXCEL_PAGE_DESCRIPTION,
-    images: [{ height: 630, url: "/og-image.png", width: 1200 }],
+    images: [{ height: 630, url: EXCEL_OG_IMAGE, width: 1200 }],
     title: EXCEL_METADATA_TITLE,
     type: "website",
     url: EXCEL_PAGE_URL,
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     description: EXCEL_PAGE_DESCRIPTION,
-    images: ["/og-image.png"],
+    images: [EXCEL_OG_IMAGE],
     title: EXCEL_METADATA_TITLE,
   },
 };
