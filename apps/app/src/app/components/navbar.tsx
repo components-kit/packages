@@ -22,6 +22,9 @@ const EXCEL_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
     ? { ...item, href: OPEN_WORKBOOK_GITHUB_URL }
     : item,
 );
+const EXCEL_GITHUB_LINK = EXCEL_SOCIAL_LINKS.find(
+  (item) => item.ariaLabel === "GitHub",
+);
 
 export function Navbar() {
   const pathname = usePathname();
@@ -148,17 +151,23 @@ export function Navbar() {
           )}
 
           {isExcelPage && (
-            <div className="pointer-events-auto hidden items-center gap-4 sm:flex">
+            <div className="pointer-events-auto flex items-center gap-4">
               <Link
-                className="components-product-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium"
+                className="components-product-badge-selected hidden h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium sm:inline-flex"
                 href={COMPONENTS_PRODUCT_LINK.href}
               >
                 {COMPONENTS_PRODUCT_LINK.label}
               </Link>
               <SocialLinks
-                className="flex items-center gap-5"
+                className="hidden items-center gap-5 sm:flex"
                 links={EXCEL_SOCIAL_LINKS}
               />
+              {EXCEL_GITHUB_LINK && (
+                <SocialLinks
+                  className="flex items-center gap-5 sm:hidden"
+                  links={[EXCEL_GITHUB_LINK]}
+                />
+              )}
             </div>
           )}
         </div>
