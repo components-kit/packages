@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import {
   EXCEL_PAGE_DESCRIPTION,
   EXCEL_PAGE_TITLE,
-  OPEN_WORKSHEET_PRODUCT_NAME,
+  OPEN_WORKBOOK_PRODUCT_NAME,
 } from "./constants";
 
 const EXCEL_PAGE_URL = "https://componentskit.com/excel";
-const EXCEL_METADATA_TITLE = `${OPEN_WORKSHEET_PRODUCT_NAME} — ${EXCEL_PAGE_TITLE}`;
+const EXCEL_METADATA_TITLE = `${OPEN_WORKBOOK_PRODUCT_NAME} — ${EXCEL_PAGE_TITLE}`;
 
 export const metadata: Metadata = {
   alternates: { canonical: EXCEL_PAGE_URL },

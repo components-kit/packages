@@ -3,7 +3,7 @@ export const EXCEL_PAGE_DESCRIPTION =
 
 export const EXCEL_PAGE_TITLE = "Excel your spreadsheet with any AI agent";
 
-export const OPEN_WORKSHEET_PRODUCT_NAME = "OpenWorksheet";
+export const OPEN_WORKBOOK_PRODUCT_NAME = "OpenWorkbook";
 
 export const OPEN_WORKBOOK_GITHUB_URL =
   "https://github.com/components-kit/open-workbook";

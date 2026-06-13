@@ -12,7 +12,7 @@ import {
 } from "@/app/constants/navigation";
 import {
   OPEN_WORKBOOK_GITHUB_URL,
-  OPEN_WORKSHEET_PRODUCT_NAME,
+  OPEN_WORKBOOK_PRODUCT_NAME,
 } from "@/app/excel/constants";
 
 import { SocialLinks } from "./ui/social-links";
@@ -79,18 +79,22 @@ export function Navbar() {
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link
-            className={`inline-flex items-center gap-2 ${
+            className={`inline-flex min-w-0 items-center gap-2 ${
               isExcelPage ? "pointer-events-auto" : ""
             }`}
             aria-label="ComponentsKit home"
             href={isExcelPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
           >
-            <img className="h-9" alt="ComponentsKit" src="/logo-symbol.svg" />
+            <img
+              className="h-9 shrink-0"
+              alt="ComponentsKit"
+              src="/logo-symbol.svg"
+            />
             {isExcelPage && (
               <>
-                <span className="text-neutral-300">/</span>
-                <span className="text-sm font-medium text-ink">
-                  {OPEN_WORKSHEET_PRODUCT_NAME}
+                <span className="shrink-0 text-neutral-300">/</span>
+                <span className="truncate text-sm font-medium text-ink">
+                  {OPEN_WORKBOOK_PRODUCT_NAME}
                 </span>
               </>
             )}
@@ -144,7 +148,7 @@ export function Navbar() {
           )}
 
           {isExcelPage && (
-            <div className="pointer-events-auto flex items-center gap-4">
+            <div className="pointer-events-auto hidden items-center gap-4 sm:flex">
               <Link
                 className="components-product-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium"
                 href={COMPONENTS_PRODUCT_LINK.href}
