@@ -14,10 +14,13 @@ import {
 } from "@/app/constants/navigation";
 
 const EXCEL_GITHUB_URL = "https://github.com/components-kit/open-workbook";
-const EXCEL_INSTALL_CMD = "npx -y @component-kit/open-workbook setup";
 const EXCEL_GITHUB_RELEASES_API =
   "https://api.github.com/repos/components-kit/open-workbook/releases";
 const EXCEL_GITHUB_RELEASES_URL = `${EXCEL_GITHUB_URL}/releases`;
+const EXCEL_SETUP_CMD = "npx -y @component-kit/open-workbook setup";
+const EXCEL_SKILLS_CMD =
+  "npx skills add components-kit/open-workbook \\\n--skill open-workbook-excel";
+const EXCEL_INSTALL_CMD = `${EXCEL_SETUP_CMD}\n${EXCEL_SKILLS_CMD}`;
 
 const EXCEL_FOOTER_NAV_LINKS = [
   { href: "#excel-hero", label: "Home" },
@@ -987,29 +990,57 @@ export default function ExcelPage() {
                 Excel your spreadsheet with any AI agent
               </h1>
               <p className="mt-4 text-base text-neutral-600 sm:text-lg">
-                From reports to formulas, let AI take care of the busy work.
+                Local-first MCP automation for live desktop Excel workbooks,
+                with template-aware edits, safe backups, rollback, formulas,
+                tables, and style fidelity.
               </p>
               <div className="pointer-events-auto mt-6 inline-flex max-w-full overflow-hidden rounded-lg border">
-                <div className="overflow-x-auto [&_pre]:bg-transparent [&_pre]:px-4 [&_pre]:py-3 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono">
-                  <pre className="shiki shiki-themes github-dark-dimmed github-light">
-                    <code>
-                      <span className="line whitespace-nowrap">
-                        <span className="excel-install-token-command">
-                          npx
+                <div className="flex min-w-0 max-w-full">
+                  <div className="min-w-0 flex-1 overflow-x-auto [&_pre]:bg-transparent [&_pre]:px-4 [&_pre]:py-3 [&_pre]:text-sm [&_pre]:leading-relaxed [&_code]:font-mono">
+                    <pre className="shiki shiki-themes github-dark-dimmed github-light">
+                      <code>
+                        <span className="line block whitespace-nowrap">
+                          <span className="excel-install-token-command">
+                            npx
+                          </span>
+                          <span className="excel-install-token-option">
+                            {" -y"}
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" @component-kit/open-workbook"}
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" setup"}
+                          </span>
                         </span>
-                        <span className="excel-install-token-option"> -y</span>
-                        <span className="excel-install-token-package">
-                          {" @component-kit/open-workbook"}
+                        <span className="line block whitespace-nowrap">
+                          <span className="excel-install-token-command">
+                            npx
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" skills"}
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" add components-kit/open-workbook"}
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" \\"}
+                          </span>
                         </span>
-                        <span className="excel-install-token-package">
-                          {" setup"}
+                        <span className="line block whitespace-nowrap">
+                          <span className="excel-install-token-option">
+                            --skill
+                          </span>
+                          <span className="excel-install-token-package">
+                            {" open-workbook-excel"}
+                          </span>
                         </span>
-                      </span>
-                    </code>
-                  </pre>
-                </div>
-                <div className="flex items-center border-l bg-surface px-3">
-                  <CopyIconButton text={EXCEL_INSTALL_CMD} />
+                      </code>
+                    </pre>
+                  </div>
+                  <div className="flex shrink-0 items-center border-l bg-surface px-3">
+                    <CopyIconButton text={EXCEL_INSTALL_CMD} />
+                  </div>
                 </div>
               </div>
             </div>
