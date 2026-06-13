@@ -1,8 +1,23 @@
+export const COMPONENTS_PRODUCT_LINK = {
+  href: "/",
+  label: "ComponentsKit",
+} as const;
+
+export const EXCEL_PRODUCT_LINK = {
+  href: "/excel",
+  label: "OpenWorkbook (Excel)",
+} as const;
+
 export const NAV_LINKS = [
   { href: "#features", label: "Features" },
   { href: "#showcase", label: "Showcase" },
   { href: "#get-started", label: "Get Started" },
   { href: "#changelog", label: "Changelog" },
+] as const;
+
+export const LANDING_FOOTER_NAV_LINKS = [
+  ...NAV_LINKS,
+  EXCEL_PRODUCT_LINK,
 ] as const;
 
 export const SOCIAL_LINKS = [

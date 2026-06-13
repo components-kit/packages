@@ -1,0 +1,4 @@
+# Agent Notes
+
+- Do not run a full build after every routine code or visual change. Prefer focused checks such as TypeScript, lint, or targeted tests when they are relevant.
+- Husky runs the project build on commit, so reserve manual builds for broader changes, release checks, or when a build failure is likely from the edit.

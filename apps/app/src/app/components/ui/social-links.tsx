@@ -4,19 +4,29 @@ import { SOCIAL_LINKS } from "@/app/constants/navigation";
 import { cn } from "@/app/utils/cn";
 
 const linkVariants = cva("text-neutral-600 transition-colors hover:text-ink");
+export interface SocialLink {
+  ariaLabel: string;
+  desktop: { height: number; width: number };
+  href: string;
+  mobile: { height: number; width: number };
+  path: string;
+  viewBox: string;
+}
 
 interface SocialLinksProps {
   className?: string;
   iconProfile?: "desktop" | "mobile";
+  links?: ReadonlyArray<SocialLink>;
 }
 
 export function SocialLinks({
   className,
   iconProfile = "desktop",
+  links = [...SOCIAL_LINKS],
 }: SocialLinksProps) {
   return (
     <div className={className}>
-      {SOCIAL_LINKS.map((item) => {
+      {links.map((item) => {
         const size = item[iconProfile];
 
         return (

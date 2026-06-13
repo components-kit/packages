@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { NAV_LINKS } from "@/app/constants/navigation";
+import { EXCEL_PRODUCT_LINK, NAV_LINKS } from "@/app/constants/navigation";
 
 import { SocialLinks } from "./ui/social-links";
 
@@ -42,8 +42,15 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* Social links — desktop */}
-          <SocialLinks className="hidden items-center gap-5 md:flex" />
+          <div className="hidden items-center gap-5 md:flex">
+            <a
+              className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
+              href={EXCEL_PRODUCT_LINK.href}
+            >
+              {EXCEL_PRODUCT_LINK.label}
+            </a>
+            <SocialLinks className="flex items-center gap-5" />
+          </div>
 
           {/* Hamburger — mobile */}
           <button
@@ -111,6 +118,13 @@ export function Navbar() {
                 {link.label}
               </a>
             ))}
+            <a
+              className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
+              href={EXCEL_PRODUCT_LINK.href}
+              onClick={close}
+            >
+              {EXCEL_PRODUCT_LINK.label}
+            </a>
           </div>
 
           {/* Social links */}
