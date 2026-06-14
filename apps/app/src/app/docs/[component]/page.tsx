@@ -7,6 +7,12 @@ import {
   getComponentDisplayName,
   getComponentDocBySlug,
 } from "@/app/lib/landing-data";
+import {
+  absoluteUrl,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_METADATA,
+  SITE_NAME,
+} from "@/app/metadata";
 
 function formatSlug(slug: string): string {
   return slug
@@ -35,23 +41,34 @@ export async function generateMetadata({
     : `Documentation and interactive preview for the ${displayName} component.`;
 
   const title = `${displayName} — ComponentsKit`;
+  const canonicalUrl = absoluteUrl(`/docs/${component}`);
 
   return {
     alternates: {
-      canonical: `https://componentskit.com/docs/${component}`,
+      canonical: canonicalUrl,
     },
     description,
+    keywords: [
+      displayName,
+      `${displayName} React component`,
+      `${displayName} accessibility`,
+      "ComponentsKit docs",
+      "React component documentation",
+      "TypeScript React components",
+    ],
     openGraph: {
       description,
-      siteName: "ComponentsKit",
+      images: [DEFAULT_OG_IMAGE_METADATA],
+      siteName: SITE_NAME,
       title,
       type: "article",
-      url: `https://componentskit.com/docs/${component}`,
+      url: canonicalUrl,
     },
     title,
     twitter: {
       card: "summary_large_image",
       description,
+      images: [DEFAULT_OG_IMAGE],
       title,
     },
   };

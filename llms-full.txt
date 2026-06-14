@@ -120,7 +120,7 @@ The Table component re-exports these types from `@tanstack/react-table`:
 
 ## Components Reference
 
-Below is the full API reference for all 22 components.
+Below is the full API reference for all 23 components.
 
 ---
 

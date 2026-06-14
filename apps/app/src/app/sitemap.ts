@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { COMPONENT_IDS } from "@/app/constants/components";
-
-const BASE_URL = "https://componentskit.com";
+import { absoluteUrl } from "@/app/metadata";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -12,7 +11,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       lastModified: now,
       priority: 1.0,
-      url: BASE_URL,
+      url: absoluteUrl(),
+    },
+    {
+      changeFrequency: "weekly",
+      lastModified: now,
+      priority: 0.9,
+      url: absoluteUrl("/excel"),
     },
   ];
 
@@ -23,7 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       lastModified: now,
       priority: 0.8,
-      url: `${BASE_URL}/docs/${slug}`,
+      url: absoluteUrl(`/docs/${slug}`),
     });
   }
 

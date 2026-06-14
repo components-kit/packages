@@ -8,6 +8,18 @@ import { Toaster } from "sonner";
 
 import { Navbar } from "./components/navbar";
 import { CK_BUNDLE_URL } from "./lib/api";
+import {
+  absoluteUrl,
+  DEFAULT_KEYWORDS,
+  DEFAULT_META_DESCRIPTION,
+  DEFAULT_OG_DESCRIPTION,
+  DEFAULT_OG_IMAGE,
+  DEFAULT_OG_IMAGE_METADATA,
+  DEFAULT_OG_TITLE,
+  SITE_LOCALE,
+  SITE_NAME,
+  SITE_URL,
+} from "./metadata";
 
 const DEFAULT_BUNDLE_HREF = `${CK_BUNDLE_URL}?borderRadius=8&grayScale=neutral&primaryColor=blue`;
 
@@ -21,56 +33,74 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('ck-dark-mode');var d=s==='true';if(d){document.documentElement.classList.add('dark');document.documentElement.setAttribute('data-theme','dark')}}catch(e){}})()`;
 
-const DESCRIPTION =
-  "Simplify your workflow with an AI-ready component bundle. Sync designer-led variants via CLI for full type-safety—accessible, props-driven, and ready to ship with zero complexity.";
-
-const OG_TITLE = "ComponentsKit — Accessible React Components, Zero Complexity";
-const OG_DESCRIPTION =
-  "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
-const OG_IMAGE = "/og/componentskit-props-driven.png";
-
 const JSON_LD = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    logo: "https://componentskit.com/logo-symbol.svg",
-    name: "ComponentsKit",
+    logo: absoluteUrl("/logo-symbol.svg"),
+    name: SITE_NAME,
     sameAs: [
       "https://github.com/components-kit/packages",
       "https://x.com/componentskit",
     ],
-    url: "https://componentskit.com",
+    url: SITE_URL,
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    description: DEFAULT_META_DESCRIPTION,
+    name: SITE_NAME,
+    url: SITE_URL,
   },
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     applicationCategory: "DeveloperApplication",
-    description: DESCRIPTION,
-    name: "ComponentsKit",
+    description: DEFAULT_META_DESCRIPTION,
+    name: SITE_NAME,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     operatingSystem: "Any",
+    url: SITE_URL,
   },
 ];
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://componentskit.com" },
-  description: DESCRIPTION,
-  metadataBase: new URL("https://componentskit.com"),
+  alternates: { canonical: SITE_URL },
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  category: "developer tools",
+  creator: SITE_NAME,
+  description: DEFAULT_META_DESCRIPTION,
+  keywords: [...DEFAULT_KEYWORDS],
+  metadataBase: new URL(SITE_URL),
   openGraph: {
-    description: OG_DESCRIPTION,
-    images: [{ height: 630, url: OG_IMAGE, width: 1200 }],
-    locale: "en_US",
-    siteName: "ComponentsKit",
-    title: OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE_METADATA],
+    locale: SITE_LOCALE,
+    siteName: SITE_NAME,
+    title: DEFAULT_OG_TITLE,
     type: "website",
-    url: "https://componentskit.com",
+    url: SITE_URL,
+  },
+  publisher: SITE_NAME,
+  robots: {
+    follow: true,
+    googleBot: {
+      follow: true,
+      index: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+    index: true,
   },
   title: "ComponentsKit — Accessible React Components, Zero Complexity",
   twitter: {
     card: "summary_large_image",
-    description: OG_DESCRIPTION,
-    images: [OG_IMAGE],
-    title: OG_TITLE,
+    description: DEFAULT_OG_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+    site: "@componentskit",
+    title: DEFAULT_OG_TITLE,
   },
 };
 
