@@ -6,10 +6,10 @@ export const DEFAULT_OG_TITLE =
   "ComponentsKit — Accessible React Components, Zero Complexity";
 
 export const DEFAULT_META_DESCRIPTION =
-  "Simplify your workflow with an AI-ready component bundle. Sync designer-led variants via CLI for full type-safety, accessible React components, and zero complexity.";
+  "AI-ready React components with designer-led variants. Sync via CLI for type-safe, accessible UI with less setup.";
 
 export const DEFAULT_OG_DESCRIPTION =
-  "AI-ready component bundle with designer-led variants. Sync via CLI for full type-safety—accessible, props-driven, ready to ship.";
+  "AI-ready React components with designer-led variants. Sync via CLI for type-safe, accessible UI with less setup.";
 
 export const DEFAULT_OG_IMAGE = "/og/componentskit-props-driven.png";
 export const DEFAULT_OG_IMAGE_ALT =
