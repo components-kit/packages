@@ -886,9 +886,245 @@ function ExcelHeroMockup({
   );
 }
 
+type AgentPortalWindow = "excel" | "terminal" | "workspace";
+
+function AgentPortalTerminalMock({
+  isTop,
+  onFocus,
+}: {
+  isTop: boolean;
+  onFocus: () => void;
+}) {
+  return (
+    <div
+      className={`absolute left-2 bottom-2 hidden h-72 w-[440px] max-w-[78%] flex-col overflow-hidden rounded-lg border border-white/10 bg-[#111318] text-left font-mono text-[10px] text-neutral-200 shadow-2xl sm:left-3 sm:bottom-3 sm:flex sm:h-[25rem] sm:w-[540px] sm:text-[11px] lg:left-4 lg:bottom-4 lg:h-[28rem] lg:w-[600px] ${
+        isTop ? "z-50" : "z-30"
+      }`}
+      aria-label="Terminal Excel workflow mockup"
+      role="button"
+      tabIndex={0}
+      onClick={onFocus}
+      onFocus={onFocus}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") onFocus();
+      }}
+    >
+      <div className="flex h-8 items-center gap-2 border-b border-white/10 bg-white/[0.03] px-3">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+        <span className="ml-2 text-[10px] text-neutral-400">
+          workbook-agent
+        </span>
+      </div>
+
+      <div className="min-h-0 flex-1 space-y-3 overflow-hidden p-3 leading-relaxed sm:p-4">
+        <div className="rounded bg-[#24262d] px-3 py-2 text-neutral-100">
+          <span className="text-neutral-500">&gt;</span> Update Status for
+          budget variances over 10% and keep Excel open.
+        </div>
+
+        <p className="text-neutral-300">
+          I&apos;ll inspect the live workbook first, then update only the
+          Accounting table cells that need review.
+        </p>
+
+        <div className="space-y-1">
+          <p className="text-neutral-300">Explored 1 search</p>
+          <p className="text-neutral-100">Open-Workbook-Excel</p>
+        </div>
+
+        <div className="space-y-2.5">
+          {[
+            [
+              "openworkbook_excel_runtime_get_status",
+              "probeFileBridge=false",
+            ],
+            ["openworkbook_excel_runtime_get_active_context", ""],
+            ["openworkbook_excel_workbook_get_workbook_map", ""],
+            [
+              "openworkbook_excel_runtime_get_capabilities",
+              "includePreview=false",
+            ],
+            [
+              "openworkbook_excel_collab_get_status",
+              "workbookId=May Close Tracker.xlsx",
+            ],
+          ].map(([tool, detail]) => (
+            <p key={tool} className="flex min-w-0 gap-2">
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-lime-300" />
+              <span className="min-w-0">
+                Called{" "}
+                <span className="text-neutral-100">`{tool}`</span>{" "}
+                <span className="text-neutral-500">{detail}</span>
+              </span>
+            </p>
+          ))}
+        </div>
+
+        <p className="text-neutral-300">
+          The workbook has live monthly close data. I found the Accounting
+          table and will read the active range before writing changes.
+        </p>
+
+        <div className="space-y-2.5">
+          {[
+            [
+              "openworkbook_excel_range_read_values",
+              "sheetName=Accounting address=A1:F16",
+            ],
+            [
+              "openworkbook_excel_range_write_values",
+              "sheetName=Accounting address=F2:F16",
+            ],
+            [
+              "openworkbook_excel_workbook_validate",
+              "formulas=true styles=true",
+            ],
+          ].map(([tool, detail]) => (
+            <p key={tool} className="flex min-w-0 gap-2">
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-lime-300" />
+              <span className="min-w-0">
+                Called{" "}
+                <span className="text-neutral-100">`{tool}`</span>{" "}
+                <span className="text-neutral-500">{detail}</span>
+              </span>
+            </p>
+          ))}
+        </div>
+
+        <p className="text-neutral-300">
+          Updated the workbook in real time: 5 over-threshold rows are marked
+          for review, formulas passed, and Excel stayed open.
+        </p>
+      </div>
+
+      <div className="border-t border-white/10 bg-[#0f1117] px-3 py-2">
+        <div className="rounded bg-[#24262d] px-2 py-1.5 text-neutral-100">
+          <span className="text-neutral-500">&gt;</span> Update the workbook and
+          validate formulas
+        </div>
+      </div>
+
+      <div className="flex h-8 items-center gap-2 overflow-hidden border-t border-white/10 bg-[#0b0d11] px-3 text-[10px] text-neutral-400 whitespace-nowrap">
+        <span className="rounded bg-emerald-400/15 px-2 py-0.5 text-emerald-300">
+          Excel: connected
+        </span>
+        <span>model: DeepSeek V3.1</span>
+        <span className="ml-auto text-neutral-500">MCP</span>
+      </div>
+    </div>
+  );
+}
+
+function AgentPortalWorkspaceMock({
+  isTop,
+  onFocus,
+}: {
+  isTop: boolean;
+  onFocus: () => void;
+}) {
+  return (
+    <div
+      className={`absolute top-6 left-3 flex h-80 w-[82%] max-w-none flex-col overflow-hidden rounded-lg border bg-neutral-0/96 text-left shadow-2xl backdrop-blur-xl sm:top-8 sm:left-12 sm:h-[25rem] sm:w-[540px] sm:max-w-[80%] lg:top-10 lg:left-20 lg:h-[28rem] lg:w-[600px] dark:bg-neutral-50/95 ${
+        isTop ? "z-50" : "z-40"
+      }`}
+      aria-label="AI workspace Excel workflow mockup"
+      role="button"
+      tabIndex={0}
+      onClick={onFocus}
+      onFocus={onFocus}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") onFocus();
+      }}
+    >
+      <div className="flex h-8 items-center gap-2 border-b bg-neutral-50 px-3 dark:bg-neutral-100">
+        <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+        <span className="ml-2 text-[10px] font-medium text-neutral-500">
+          workbook review
+        </span>
+        <span className="ml-auto rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
+          Excel live
+        </span>
+      </div>
+
+      <div className="grid min-h-0 flex-1 grid-cols-1 text-[11px] sm:grid-cols-[156px_1fr] lg:grid-cols-[176px_1fr]">
+        <div className="hidden border-r bg-neutral-50/80 p-3 text-neutral-500 sm:block dark:bg-neutral-100/70">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
+            Workspace
+          </p>
+          {[
+            "May Close Tracker.xlsx",
+            "Accounting!A1:F16",
+            "Status column",
+            "Variance > 10%",
+          ].map((item, index) => (
+            <div
+              key={item}
+              className={`mt-2 truncate rounded px-2 py-1.5 ${
+                index === 0
+                  ? "bg-neutral-0 font-medium text-ink shadow-sm"
+                  : "text-neutral-500"
+              }`}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex min-w-0 flex-col">
+          <div className="flex items-center gap-2 border-b px-3 py-2 text-[10px] text-neutral-500 whitespace-nowrap">
+            <span className="rounded bg-neutral-100 px-2 py-1 text-ink">
+              DeepSeek V3.1
+            </span>
+            <span>via MCP</span>
+          </div>
+          <div className="min-h-0 flex-1 space-y-2 overflow-hidden p-3">
+            <div className="ml-6 rounded-lg bg-neutral-100 px-3 py-2 text-ink">
+              Mark rows over 10% variance for review.
+            </div>
+            <div className="mr-6 rounded-lg border px-3 py-2 text-neutral-600">
+              I&apos;ll inspect the open workbook and update only the Status
+              column.
+            </div>
+            <div className="rounded border bg-neutral-50 px-3 py-2 font-mono text-[10px] text-neutral-500">
+              Called `openworkbook_excel_range_read_values`
+            </div>
+            <div className="mr-6 rounded-lg border px-3 py-2 text-neutral-600">
+              Found five matching rows: Software, Travel, Contractor,
+              Training, Security.
+            </div>
+            <div className="rounded border bg-neutral-50 px-3 py-2 font-mono text-[10px] text-neutral-500">
+              Called `openworkbook_excel_range_write_values`
+            </div>
+            <div className="mr-6 rounded-lg border px-3 py-2 text-neutral-600">
+              Updated live Excel. Formulas passed and table styling stayed
+              intact.
+            </div>
+          </div>
+          <div className="border-t bg-neutral-50 p-2 dark:bg-neutral-100">
+            <div className="flex items-center gap-2 rounded border bg-neutral-0 px-2 py-1.5 text-[10px] text-neutral-500">
+              <span className="flex-1 truncate">
+                Ask the agent to inspect, edit, or validate this workbook...
+              </span>
+              <span className="rounded bg-ink px-2 py-1 font-medium text-neutral-0">
+                Send
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ExcelPage() {
   const [selectedDepartment, setSelectedDepartment] =
     useState<(typeof EXCEL_DEPARTMENTS)[number]>("Accounting");
+  const [agentPortalTopWindow, setAgentPortalTopWindow] =
+    useState<AgentPortalWindow>("terminal");
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -1015,6 +1251,309 @@ export default function ExcelPage() {
                   department={selectedDepartment}
                 />
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="agent-portals"
+          className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-24"
+        >
+          <div className="max-w-2xl text-left">
+            <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+              Agent workspace ready
+            </p>
+            <h2 className="mt-3 text-2xl font-medium tracking-tighter sm:text-3xl">
+              Update Excel from any AI workflow.
+            </h2>
+            <p className="mt-4 text-base text-neutral-600 sm:text-lg">
+              OpenWorkbook connects live Excel workbooks to MCP, letting agents
+              inspect, edit, and validate spreadsheets from the terminal,
+              code editors, or any compatible assistant while your workbook
+              stays open.
+            </p>
+          </div>
+
+          <div
+            className="excel-hero-card mt-10 h-[30rem] overflow-hidden rounded-lg border sm:mt-12 sm:h-[34rem] lg:h-[38rem]"
+          >
+            <div className="relative z-10 h-full">
+              <div
+                className={`absolute top-10 right-0 bottom-0 w-[82%] max-w-none origin-top-right scale-100 overflow-hidden rounded-tl-lg border bg-neutral-0/96 shadow-2xl backdrop-blur-xl sm:-top-20 sm:bottom-0 sm:w-[660px] sm:max-w-[86%] sm:scale-[0.96] lg:w-[700px] lg:scale-100 dark:bg-neutral-50/94 ${
+                  agentPortalTopWindow === "excel" ? "z-50" : "z-10"
+                }`}
+                aria-label="Excel workbook mockup"
+                role="button"
+                tabIndex={0}
+                onClick={() => setAgentPortalTopWindow("excel")}
+                onFocus={() => setAgentPortalTopWindow("excel")}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    setAgentPortalTopWindow("excel");
+                  }
+                }}
+              >
+                <div className="flex h-9 items-center gap-3 border-b bg-neutral-50/85 px-3 dark:bg-neutral-100/72">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                  </div>
+                  <span className="text-[10px] font-medium text-neutral-500">
+                    AutoSave
+                  </span>
+                  <span className="h-3.5 w-7 rounded-full bg-neutral-300" />
+                  <div className="ml-2 flex items-center gap-2 text-[13px] text-neutral-500">
+                    <span>⌂</span>
+                    <span>□</span>
+                    <span>↺</span>
+                  </div>
+                  <span className="ml-auto text-[11px] font-medium text-neutral-500">
+                    May Close Tracker
+                  </span>
+                </div>
+
+                <div className="border-b bg-neutral-0 dark:bg-neutral-50">
+                  <div className="flex h-8 items-end gap-6 overflow-hidden px-3 text-[11px] font-medium whitespace-nowrap text-neutral-700">
+                    {[
+                      "Home",
+                      "Insert",
+                      "Page Layout",
+                      "Formulas",
+                      "Data",
+                      "Review",
+                      "View",
+                      "Table",
+                    ].map((item) => (
+                      <span
+                        key={item}
+                        className={`shrink-0 pb-2 ${
+                          item === "Home"
+                            ? "border-b-2 border-emerald-700 text-ink"
+                            : item === "Table"
+                              ? "text-emerald-700"
+                            : ""
+                        }`}
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex h-10 items-center gap-3 overflow-hidden border-t px-3 text-[11px] whitespace-nowrap text-neutral-500">
+                    <div className="flex items-center gap-2">
+                      <span className="h-6 w-7 rounded border bg-neutral-50" />
+                      <span>Paste</span>
+                    </div>
+                    <div className="h-6 w-px bg-neutral-200" />
+                    <div className="h-6 w-28 rounded border bg-neutral-0 px-2 leading-6 text-ink">
+                      Calibri (Body)
+                    </div>
+                    <div className="h-6 w-10 rounded border bg-neutral-0 px-2 leading-6 text-ink">
+                      11
+                    </div>
+                    <span className="font-semibold text-ink">B</span>
+                    <span className="underline">U</span>
+                    <div className="h-6 w-px bg-neutral-200" />
+                    <span className="rounded bg-neutral-100 px-2 py-1 text-ink">
+                      Wrap Text
+                    </span>
+                    <div className="h-6 w-20 rounded border bg-neutral-0 px-2 leading-6 text-ink">
+                      General
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex h-[calc(100%-7.375rem)] min-h-0">
+                  <div className="min-w-0 flex-1 overflow-hidden bg-neutral-0 dark:bg-neutral-50">
+                    <div className="flex h-8 items-center gap-2 border-b px-2 text-[11px]">
+                      <div className="h-6 w-14 rounded border bg-neutral-0 px-2 leading-6 text-neutral-600">
+                        A9
+                      </div>
+                      <span className="font-serif text-sm text-neutral-500">
+                        fx
+                      </span>
+                      <div className="h-6 flex-1 rounded border bg-neutral-0 px-2 leading-6 text-neutral-500" />
+                    </div>
+                    <div className="h-full w-full">
+                      <div className="grid min-h-full grid-cols-[28px_1.15fr_0.95fr_0.95fr_0.85fr_1fr_1.1fr] grid-rows-[24px_repeat(16,32px)] text-[10px]">
+                        <div className="border-r border-b bg-neutral-100" />
+                        {["A", "B", "C", "D", "E", "F"].map((column) => (
+                          <div
+                            key={column}
+                            className="border-r border-b bg-neutral-100 px-2 leading-6 text-center font-medium whitespace-nowrap text-neutral-500"
+                          >
+                            {column}
+                          </div>
+                        ))}
+                        {[
+                          [
+                            "Account",
+                            "Budget",
+                            "Actual",
+                            "Var.",
+                            "Owner",
+                            "Status",
+                          ],
+                          [
+                            "Software",
+                            "$18.4K",
+                            "$21.1K",
+                            "+14.8%",
+                            "M. Chen",
+                            "Review",
+                          ],
+                          [
+                            "Travel",
+                            "$9.2K",
+                            "$11.1K",
+                            "+20.1%",
+                            "A. Wells",
+                            "Needs note",
+                          ],
+                          [
+                            "Contractor",
+                            "$24.0K",
+                            "$26.5K",
+                            "+10.4%",
+                            "S. Kim",
+                            "Ready",
+                          ],
+                          [
+                            "Facilities",
+                            "$7.8K",
+                            "$7.6K",
+                            "-2.1%",
+                            "N. Brooks",
+                            "Ready",
+                          ],
+                          [
+                            "Training",
+                            "$4.5K",
+                            "$5.3K",
+                            "+16.9%",
+                            "J. Rivera",
+                            "Review",
+                          ],
+                          [
+                            "Licenses",
+                            "$12.0K",
+                            "$12.4K",
+                            "+3.3%",
+                            "M. Chen",
+                            "Ready",
+                          ],
+                          [
+                            "Payroll",
+                            "$86.0K",
+                            "$85.6K",
+                            "-0.5%",
+                            "S. Kim",
+                            "Ready",
+                          ],
+                          [
+                            "Benefits",
+                            "$18.0K",
+                            "$19.2K",
+                            "+6.7%",
+                            "A. Wells",
+                            "Review",
+                          ],
+                          [
+                            "Hosting",
+                            "$15.5K",
+                            "$16.0K",
+                            "+3.2%",
+                            "N. Brooks",
+                            "Ready",
+                          ],
+                          [
+                            "Security",
+                            "$6.2K",
+                            "$7.1K",
+                            "+14.5%",
+                            "J. Rivera",
+                            "Review",
+                          ],
+                          [
+                            "Supplies",
+                            "$3.8K",
+                            "$3.4K",
+                            "-10.5%",
+                            "A. Wells",
+                            "Ready",
+                          ],
+                          [
+                            "Legal",
+                            "$10.0K",
+                            "$9.7K",
+                            "-3.0%",
+                            "M. Chen",
+                            "Ready",
+                          ],
+                          [
+                            "Events",
+                            "$5.0K",
+                            "$6.2K",
+                            "+24.0%",
+                            "N. Brooks",
+                            "Review",
+                          ],
+                          [
+                            "Banking",
+                            "$1.2K",
+                            "$1.1K",
+                            "-8.3%",
+                            "S. Kim",
+                            "Ready",
+                          ],
+                          [
+                            "Taxes",
+                            "$28.0K",
+                            "$28.4K",
+                            "+1.4%",
+                            "M. Chen",
+                            "Ready",
+                          ],
+                        ].map((row, rowIndex) => (
+                          <Fragment key={`agent-card-row-${rowIndex}`}>
+                            <div className="border-r border-b bg-neutral-50 px-2 leading-8 text-center font-medium text-neutral-400">
+                              {rowIndex + 1}
+                            </div>
+                            {row.map((cell, cellIndex) => (
+                              <div
+                                key={`${rowIndex}-${cellIndex}`}
+                                className={`overflow-hidden border-r border-b px-2 leading-8 ${
+                                  rowIndex === 0
+                                    ? "bg-[#4f81bd] font-semibold whitespace-nowrap text-white"
+                                    : rowIndex % 2 === 0
+                                      ? "bg-[#dbeafe] text-ink"
+                                      : "bg-neutral-0 text-ink"
+                                } ${
+                                  rowIndex === 8 && cellIndex === 5
+                                    ? "ring-2 ring-inset ring-emerald-700"
+                                    : ""
+                                }`}
+                              >
+                                <span className="block truncate">{cell}</span>
+                              </div>
+                            ))}
+                          </Fragment>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <AgentPortalWorkspaceMock
+                isTop={agentPortalTopWindow === "workspace"}
+                onFocus={() => setAgentPortalTopWindow("workspace")}
+              />
+              <AgentPortalTerminalMock
+                isTop={agentPortalTopWindow === "terminal"}
+                onFocus={() => setAgentPortalTopWindow("terminal")}
+              />
             </div>
           </div>
         </section>
