@@ -1010,7 +1010,7 @@ function AgentPortalTerminalMock({
         <span className="rounded bg-emerald-400/15 px-2 py-0.5 text-emerald-300">
           Excel: connected
         </span>
-        <span>model: DeepSeek V3.1</span>
+        <span>model: DeepSeek V4 Flash</span>
         <span className="ml-auto text-neutral-500">MCP</span>
       </div>
     </div>
@@ -1026,7 +1026,7 @@ function AgentPortalWorkspaceMock({
 }) {
   return (
     <div
-      className={`absolute top-6 left-3 flex h-80 w-[82%] max-w-none flex-col overflow-hidden rounded-lg border bg-neutral-0/96 text-left shadow-2xl backdrop-blur-xl sm:top-8 sm:left-12 sm:h-[25rem] sm:w-[540px] sm:max-w-[80%] lg:top-10 lg:left-20 lg:h-[28rem] lg:w-[600px] dark:bg-neutral-50/95 ${
+      className={`absolute top-2 left-3 flex h-[22rem] w-[82%] max-w-none flex-col overflow-hidden rounded-lg border bg-neutral-0/96 text-left shadow-2xl backdrop-blur-xl sm:top-8 sm:left-12 sm:h-[25rem] sm:w-[540px] sm:max-w-[80%] lg:top-10 lg:left-20 lg:h-[28rem] lg:w-[600px] dark:bg-neutral-50/95 ${
         isTop ? "z-50" : "z-40"
       }`}
       aria-label="AI workspace Excel workflow mockup"
@@ -1074,10 +1074,10 @@ function AgentPortalWorkspaceMock({
           ))}
         </div>
 
-        <div className="flex min-w-0 flex-col">
+        <div className="flex min-h-0 min-w-0 flex-col">
           <div className="flex items-center gap-2 border-b px-3 py-2 text-[10px] text-neutral-500 whitespace-nowrap">
             <span className="rounded bg-neutral-100 px-2 py-1 text-ink">
-              DeepSeek V3.1
+              DeepSeek V4 Flash
             </span>
             <span>via MCP</span>
           </div>
