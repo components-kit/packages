@@ -3,9 +3,9 @@ export const COMPONENTS_PRODUCT_LINK = {
   label: "ComponentsKit",
 } as const;
 
-export const EXCEL_PRODUCT_LINK = {
-  href: "/excel",
-  label: "OpenWorkbook (Excel)",
+export const SPREADSHEETS_PRODUCT_LINK = {
+  href: "/spreadsheets",
+  label: "OpenWorkbook (Spreadsheets)",
 } as const;
 
 export const NAV_LINKS = [
@@ -17,7 +17,7 @@ export const NAV_LINKS = [
 
 export const LANDING_FOOTER_NAV_LINKS = [
   ...NAV_LINKS,
-  EXCEL_PRODUCT_LINK,
+  SPREADSHEETS_PRODUCT_LINK,
 ] as const;
 
 export const SOCIAL_LINKS = [

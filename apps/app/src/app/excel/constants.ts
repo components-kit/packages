@@ -1,9 +1,0 @@
-export const EXCEL_PAGE_DESCRIPTION =
-  "Local-first MCP automation for live Excel workbooks with safe backups, rollback, formulas, tables, and style fidelity.";
-
-export const EXCEL_PAGE_TITLE = "Excel your spreadsheet with any AI agent";
-
-export const OPEN_WORKBOOK_PRODUCT_NAME = "OpenWorkbook";
-
-export const OPEN_WORKBOOK_GITHUB_URL =
-  "https://github.com/components-kit/open-workbook";

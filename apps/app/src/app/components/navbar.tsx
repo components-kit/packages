@@ -6,31 +6,32 @@ import { useEffect, useState } from "react";
 
 import {
   COMPONENTS_PRODUCT_LINK,
-  EXCEL_PRODUCT_LINK,
   NAV_LINKS,
   SOCIAL_LINKS,
+  SPREADSHEETS_PRODUCT_LINK,
 } from "@/app/constants/navigation";
 import {
   OPEN_WORKBOOK_GITHUB_URL,
   OPEN_WORKBOOK_PRODUCT_NAME,
-} from "@/app/excel/constants";
+} from "@/app/spreadsheets/constants";
 
 import { SocialLinks } from "./ui/social-links";
 
-const EXCEL_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
+const SPREADSHEETS_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
   item.ariaLabel === "GitHub"
     ? { ...item, href: OPEN_WORKBOOK_GITHUB_URL }
     : item,
 );
-const EXCEL_GITHUB_LINK = EXCEL_SOCIAL_LINKS.find(
+const SPREADSHEETS_GITHUB_LINK = SPREADSHEETS_SOCIAL_LINKS.find(
   (item) => item.ariaLabel === "GitHub",
 );
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [hasPassedExcelHero, setHasPassedExcelHero] = useState(false);
-  const isExcelPage = pathname === "/excel";
+  const [hasPassedSpreadsheetsHero, setHasPassedSpreadsheetsHero] =
+    useState(false);
+  const isSpreadsheetsPage = pathname === "/spreadsheets";
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
@@ -49,16 +50,16 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isExcelPage) {
-      setHasPassedExcelHero(false);
+    if (!isSpreadsheetsPage) {
+      setHasPassedSpreadsheetsHero(false);
       return () => {};
     }
 
     function updateHeaderSurface() {
-      const hero = document.getElementById("excel-hero");
+      const hero = document.getElementById("spreadsheets-hero");
       if (!hero) return;
 
-      setHasPassedExcelHero(hero.getBoundingClientRect().bottom <= 64);
+      setHasPassedSpreadsheetsHero(hero.getBoundingClientRect().bottom <= 64);
     }
 
     updateHeaderSurface();
@@ -69,31 +70,31 @@ export function Navbar() {
       window.removeEventListener("scroll", updateHeaderSurface);
       window.removeEventListener("resize", updateHeaderSurface);
     };
-  }, [isExcelPage]);
+  }, [isSpreadsheetsPage]);
 
-  if (!isExcelPage && !isLandingPage) return null;
+  if (!isSpreadsheetsPage && !isLandingPage) return null;
 
   return (
     <>
       <nav
         className={`fixed inset-x-0 top-0 z-50 bg-studio transition-colors duration-300 ${
-          isExcelPage ? "pointer-events-none" : ""
-        } ${isExcelPage && hasPassedExcelHero ? "border-b" : ""}`}
+          isSpreadsheetsPage ? "pointer-events-none" : ""
+        } ${isSpreadsheetsPage && hasPassedSpreadsheetsHero ? "border-b" : ""}`}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link
             className={`inline-flex min-w-0 items-center gap-2 ${
-              isExcelPage ? "pointer-events-auto" : ""
+              isSpreadsheetsPage ? "pointer-events-auto" : ""
             }`}
             aria-label="ComponentsKit home"
-            href={isExcelPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
+            href={isSpreadsheetsPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
           >
             <img
               className="h-9 shrink-0"
               alt="ComponentsKit"
               src="/logo-symbol.svg"
             />
-            {isExcelPage && (
+            {isSpreadsheetsPage && (
               <>
                 <span className="shrink-0 text-neutral-300">/</span>
                 <span className="truncate text-sm font-medium text-ink">
@@ -120,9 +121,9 @@ export function Navbar() {
               <div className="hidden items-center gap-5 md:flex">
                 <Link
                   className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
-                  href={EXCEL_PRODUCT_LINK.href}
+                  href={SPREADSHEETS_PRODUCT_LINK.href}
                 >
-                  {EXCEL_PRODUCT_LINK.label}
+                  {SPREADSHEETS_PRODUCT_LINK.label}
                 </Link>
                 <SocialLinks className="flex items-center gap-5" />
               </div>
@@ -150,7 +151,7 @@ export function Navbar() {
             </>
           )}
 
-          {isExcelPage && (
+          {isSpreadsheetsPage && (
             <div className="pointer-events-auto flex items-center gap-4">
               <Link
                 className="components-product-badge-selected hidden h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium sm:inline-flex"
@@ -160,12 +161,12 @@ export function Navbar() {
               </Link>
               <SocialLinks
                 className="hidden items-center gap-5 sm:flex"
-                links={EXCEL_SOCIAL_LINKS}
+                links={SPREADSHEETS_SOCIAL_LINKS}
               />
-              {EXCEL_GITHUB_LINK && (
+              {SPREADSHEETS_GITHUB_LINK && (
                 <SocialLinks
                   className="flex items-center gap-5 sm:hidden"
-                  links={[EXCEL_GITHUB_LINK]}
+                  links={[SPREADSHEETS_GITHUB_LINK]}
                 />
               )}
             </div>
@@ -214,10 +215,10 @@ export function Navbar() {
             ))}
             <Link
               className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
-              href={EXCEL_PRODUCT_LINK.href}
+              href={SPREADSHEETS_PRODUCT_LINK.href}
               onClick={close}
             >
-              {EXCEL_PRODUCT_LINK.label}
+              {SPREADSHEETS_PRODUCT_LINK.label}
             </Link>
           </div>
 
