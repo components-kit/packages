@@ -7,7 +7,7 @@ import {
   OPEN_WORKBOOK_PRODUCT_NAME,
 } from "./constants";
 
-const EXCEL_PAGE_URL = absoluteUrl("/spreadsheets");
+const EXCEL_PAGE_URL = absoluteUrl("/openworkbook");
 const EXCEL_METADATA_TITLE = `${OPEN_WORKBOOK_PRODUCT_NAME} — ${EXCEL_PAGE_TITLE}`;
 const EXCEL_OG_IMAGE = "/og/openworkbook-excel.png";
 const EXCEL_OG_IMAGE_ALT =

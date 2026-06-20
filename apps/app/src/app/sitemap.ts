@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       lastModified: now,
       priority: 0.9,
-      url: absoluteUrl("/spreadsheets"),
+      url: absoluteUrl("/openworkbook"),
     },
   ];
 

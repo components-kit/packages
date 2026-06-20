@@ -25,7 +25,7 @@ const EXCEL_SKILLS_CMD =
 const EXCEL_INSTALL_CMD = `${EXCEL_SETUP_CMD}\n${EXCEL_SKILLS_CMD}`;
 
 const EXCEL_FOOTER_NAV_LINKS = [
-  { href: "#spreadsheets-hero", label: "Home" },
+  { href: "#openworkbook-hero", label: "Home" },
   { href: "#changelog", label: "Changelog" },
   COMPONENTS_PRODUCT_LINK,
 ] as const;
@@ -37,15 +37,15 @@ const EXCEL_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
 );
 
 const AI_PROVIDERS = [
-  { logo: "/spreadsheets/ai/ollama.svg", name: "Ollama" },
-  { logo: "/spreadsheets/ai/huggingface.svg", name: "Hugging Face" },
-  { logo: "/spreadsheets/ai/meta.svg", name: "Meta" },
-  { logo: "/spreadsheets/ai/mistralai.svg", name: "Mistral AI" },
-  { logo: "/spreadsheets/ai/deepseek.svg", name: "DeepSeek" },
-  { logo: "/spreadsheets/ai/anthropic.svg", name: "Anthropic" },
-  { logo: "/spreadsheets/ai/openai.svg", name: "OpenAI" },
-  { logo: "/spreadsheets/ai/googlegemini.svg", name: "Gemini" },
-  { logo: "/spreadsheets/ai/xai.svg", name: "xAI" },
+  { logo: "/openworkbook/ai/ollama.svg", name: "Ollama" },
+  { logo: "/openworkbook/ai/huggingface.svg", name: "Hugging Face" },
+  { logo: "/openworkbook/ai/meta.svg", name: "Meta" },
+  { logo: "/openworkbook/ai/mistralai.svg", name: "Mistral AI" },
+  { logo: "/openworkbook/ai/deepseek.svg", name: "DeepSeek" },
+  { logo: "/openworkbook/ai/anthropic.svg", name: "Anthropic" },
+  { logo: "/openworkbook/ai/openai.svg", name: "OpenAI" },
+  { logo: "/openworkbook/ai/googlegemini.svg", name: "Gemini" },
+  { logo: "/openworkbook/ai/xai.svg", name: "xAI" },
 ] as const;
 
 const EXCEL_DEPARTMENTS = [
@@ -1143,7 +1143,7 @@ export default function ExcelPage() {
     <>
       <main>
         <section
-          id="spreadsheets-hero"
+          id="openworkbook-hero"
           className="relative overflow-hidden"
         >
           <div className="pointer-events-none relative mx-auto flex w-full max-w-7xl flex-col px-4 pt-32 pb-14 text-left sm:px-6 sm:pt-40 sm:pb-16">

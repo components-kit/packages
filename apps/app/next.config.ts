@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
       source: "/(.*)",
     },
   ],
+  redirects: async () => [
+    {
+      destination: "/openworkbook",
+      permanent: true,
+      source: "/spreadsheets",
+    },
+  ],
   transpilePackages: ["@components-kit/react"],
 };
 

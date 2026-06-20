@@ -7,31 +7,31 @@ import { useEffect, useState } from "react";
 import {
   COMPONENTS_PRODUCT_LINK,
   NAV_LINKS,
+  OPEN_WORKBOOK_PRODUCT_LINK,
   SOCIAL_LINKS,
-  SPREADSHEETS_PRODUCT_LINK,
 } from "@/app/constants/navigation";
 import {
   OPEN_WORKBOOK_GITHUB_URL,
   OPEN_WORKBOOK_PRODUCT_NAME,
-} from "@/app/spreadsheets/constants";
+} from "@/app/openworkbook/constants";
 
 import { SocialLinks } from "./ui/social-links";
 
-const SPREADSHEETS_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
+const OPEN_WORKBOOK_SOCIAL_LINKS = SOCIAL_LINKS.map((item) =>
   item.ariaLabel === "GitHub"
     ? { ...item, href: OPEN_WORKBOOK_GITHUB_URL }
     : item,
 );
-const SPREADSHEETS_GITHUB_LINK = SPREADSHEETS_SOCIAL_LINKS.find(
+const OPEN_WORKBOOK_GITHUB_LINK = OPEN_WORKBOOK_SOCIAL_LINKS.find(
   (item) => item.ariaLabel === "GitHub",
 );
 
 export function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [hasPassedSpreadsheetsHero, setHasPassedSpreadsheetsHero] =
+  const [hasPassedOpenWorkbookHero, setHasPassedOpenWorkbookHero] =
     useState(false);
-  const isSpreadsheetsPage = pathname === "/spreadsheets";
+  const isOpenWorkbookPage = pathname === "/openworkbook";
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
@@ -50,16 +50,16 @@ export function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!isSpreadsheetsPage) {
-      setHasPassedSpreadsheetsHero(false);
+    if (!isOpenWorkbookPage) {
+      setHasPassedOpenWorkbookHero(false);
       return () => {};
     }
 
     function updateHeaderSurface() {
-      const hero = document.getElementById("spreadsheets-hero");
+      const hero = document.getElementById("openworkbook-hero");
       if (!hero) return;
 
-      setHasPassedSpreadsheetsHero(hero.getBoundingClientRect().bottom <= 64);
+      setHasPassedOpenWorkbookHero(hero.getBoundingClientRect().bottom <= 64);
     }
 
     updateHeaderSurface();
@@ -70,31 +70,31 @@ export function Navbar() {
       window.removeEventListener("scroll", updateHeaderSurface);
       window.removeEventListener("resize", updateHeaderSurface);
     };
-  }, [isSpreadsheetsPage]);
+  }, [isOpenWorkbookPage]);
 
-  if (!isSpreadsheetsPage && !isLandingPage) return null;
+  if (!isOpenWorkbookPage && !isLandingPage) return null;
 
   return (
     <>
       <nav
         className={`fixed inset-x-0 top-0 z-50 bg-studio transition-colors duration-300 ${
-          isSpreadsheetsPage ? "pointer-events-none" : ""
-        } ${isSpreadsheetsPage && hasPassedSpreadsheetsHero ? "border-b" : ""}`}
+          isOpenWorkbookPage ? "pointer-events-none" : ""
+        } ${isOpenWorkbookPage && hasPassedOpenWorkbookHero ? "border-b" : ""}`}
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link
             className={`inline-flex min-w-0 items-center gap-2 ${
-              isSpreadsheetsPage ? "pointer-events-auto" : ""
+              isOpenWorkbookPage ? "pointer-events-auto" : ""
             }`}
             aria-label="ComponentsKit home"
-            href={isSpreadsheetsPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
+            href={isOpenWorkbookPage ? COMPONENTS_PRODUCT_LINK.href : "#"}
           >
             <img
               className="h-9 shrink-0"
               alt="ComponentsKit"
               src="/logo-symbol.svg"
             />
-            {isSpreadsheetsPage && (
+            {isOpenWorkbookPage && (
               <>
                 <span className="shrink-0 text-neutral-300">/</span>
                 <span className="truncate text-sm font-medium text-ink">
@@ -121,9 +121,9 @@ export function Navbar() {
               <div className="hidden items-center gap-5 md:flex">
                 <Link
                   className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
-                  href={SPREADSHEETS_PRODUCT_LINK.href}
+                  href={OPEN_WORKBOOK_PRODUCT_LINK.href}
                 >
-                  {SPREADSHEETS_PRODUCT_LINK.label}
+                  {OPEN_WORKBOOK_PRODUCT_LINK.label}
                 </Link>
                 <SocialLinks className="flex items-center gap-5" />
               </div>
@@ -151,7 +151,7 @@ export function Navbar() {
             </>
           )}
 
-          {isSpreadsheetsPage && (
+          {isOpenWorkbookPage && (
             <div className="pointer-events-auto flex items-center gap-4">
               <Link
                 className="components-product-badge-selected hidden h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium sm:inline-flex"
@@ -161,12 +161,12 @@ export function Navbar() {
               </Link>
               <SocialLinks
                 className="hidden items-center gap-5 sm:flex"
-                links={SPREADSHEETS_SOCIAL_LINKS}
+                links={OPEN_WORKBOOK_SOCIAL_LINKS}
               />
-              {SPREADSHEETS_GITHUB_LINK && (
+              {OPEN_WORKBOOK_GITHUB_LINK && (
                 <SocialLinks
                   className="flex items-center gap-5 sm:hidden"
-                  links={[SPREADSHEETS_GITHUB_LINK]}
+                  links={[OPEN_WORKBOOK_GITHUB_LINK]}
                 />
               )}
             </div>
@@ -215,10 +215,10 @@ export function Navbar() {
             ))}
             <Link
               className="excel-department-badge-selected inline-flex h-7 items-center justify-center rounded-full px-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200"
-              href={SPREADSHEETS_PRODUCT_LINK.href}
+              href={OPEN_WORKBOOK_PRODUCT_LINK.href}
               onClick={close}
             >
-              {SPREADSHEETS_PRODUCT_LINK.label}
+              {OPEN_WORKBOOK_PRODUCT_LINK.label}
             </Link>
           </div>
 
